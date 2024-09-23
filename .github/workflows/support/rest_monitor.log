@@ -1,0 +1,477 @@
+2024-07-30T22:03:24.910Z INFO Loaded configuration source: /home/node/app/config/default.serverlist.json
+2024-07-30T22:03:24.912Z WARN Skipping configuration source /home/node/app/config/serverlist.json: Error: ENOENT: no such file or directory, open '/home/node/app/config/serverlist.json'
+2024-07-30T22:03:24.912Z INFO Loaded configuration source: /config/serverlist.json
+2024-07-30T22:03:24.913Z INFO Loaded configuration: {"port":3000,"servers":[{"baseUrl":"http://fullstack-deployment-rest:80","name":"kubernetes","restJavaUrl":"http://fullstack-deployment-restjava:80","web3Url":"http://fullstack-deployment-web3:80"}],"freshness":true,"interval":60,"retry":{"maxAttempts":4,"minBackoff":1000},"shard":0,"timeout":30,"account":{"enabled":true,"intervalMultiplier":1,"limit":10,"stakingRewardAccountId":null,"cryptoAllowanceOwnerId":null,"nftAllowanceOwnerId":null,"nftAccountId":null,"tokenAllowanceOwnerId":null,"tokenRelationshipEnabled":true},"balance":{"enabled":true,"freshnessThreshold":1000,"intervalMultiplier":1,"limit":10},"block":{"enabled":true,"freshnessThreshold":50,"intervalMultiplier":1,"limit":10},"contract":{"call":true,"contractId":"","enabled":true,"intervalMultiplier":1,"limit":2,"logs":true},"network":{"enabled":true,"intervalMultiplier":1,"limit":2},"schedule":{"enabled":true,"intervalMultiplier":1,"limit":2},"stateproof":{"enabled":true,"intervalMultiplier":10},"transaction":{"enabled":true,"freshnessThreshold":50,"intervalMultiplier":1,"limit":10},"topic":{"enabled":true,"freshnessThreshold":100,"intervalMultiplier":1,"limit":10,"topicId":""},"token":{"enabled":true,"freshnessThreshold":0,"intervalMultiplier":1,"tokenId":"","nftTokenId":"","limit":2}}
+2024-07-30T22:03:26.446Z INFO Running test #1
+2024-07-30T22:03:26.653Z INFO Server running on port: 3000
+2024-07-30T22:03:26.712Z WARN Attempt #1 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/accounts?limit=10
+2024-07-30T22:03:26.810Z WARN Attempt #1 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/accounts?limit=10
+2024-07-30T22:03:26.843Z WARN Attempt #1 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/tokens?limit=1&order=asc
+2024-07-30T22:03:26.843Z WARN Attempt #1 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/accounts?limit=10
+2024-07-30T22:03:26.843Z WARN Attempt #1 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/accounts?limit=10
+2024-07-30T22:03:26.850Z WARN Attempt #1 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/accounts?limit=10
+2024-07-30T22:03:27.697Z WARN Attempt #1 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-web3:80/api/v1/contracts/call
+2024-07-30T22:03:28.701Z WARN Attempt #2 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-web3:80/api/v1/contracts/call
+2024-07-30T22:03:29.705Z WARN Attempt #3 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-web3:80/api/v1/contracts/call
+2024-07-30T22:03:30.709Z WARN Attempt #4 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-web3:80/api/v1/contracts/call
+2024-07-30T22:03:31.717Z WARN Attempt #5 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-web3:80/api/v1/contracts/call
+2024-07-30T22:03:32.720Z ERROR contract test #1 failed for kubernetes: Retries exhausted with fetch failed. Cause: undefined
+2024-07-30T22:03:32.817Z WARN Attempt #2 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/accounts?limit=10
+2024-07-30T22:03:33.821Z WARN Attempt #3 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/accounts?limit=10
+2024-07-30T22:03:34.823Z WARN Attempt #4 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/accounts?limit=10
+2024-07-30T22:03:35.825Z WARN Attempt #5 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/accounts?limit=10
+2024-07-30T22:03:36.619Z WARN Attempt #1 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/accounts?limit=10
+2024-07-30T22:03:36.619Z WARN Attempt #1 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/balances?limit=10
+2024-07-30T22:03:36.619Z WARN Attempt #1 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/balances?limit=10
+2024-07-30T22:03:36.644Z WARN Attempt #1 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/balances?timestamp=1722377006.642&limit=1&order=desc
+2024-07-30T22:03:36.644Z WARN Attempt #1 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/blocks?limit=10
+2024-07-30T22:03:36.644Z WARN Attempt #1 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/blocks?limit=1&order=desc
+2024-07-30T22:03:36.644Z WARN Attempt #1 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/contracts?limit=2
+2024-07-30T22:03:36.647Z WARN Attempt #1 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/contracts/results?limit=2
+2024-07-30T22:03:36.647Z WARN Attempt #1 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/contracts/results?limit=2
+2024-07-30T22:03:36.649Z WARN Attempt #1 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/contracts?limit=2
+2024-07-30T22:03:36.649Z WARN Attempt #1 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/contracts/results?limit=2
+2024-07-30T22:03:36.649Z WARN Attempt #1 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/exchangerate
+2024-07-30T22:03:36.649Z WARN Attempt #1 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/fees
+2024-07-30T22:03:36.651Z WARN Attempt #1 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/nodes?limit=2
+2024-07-30T22:03:36.651Z WARN Attempt #1 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/stake
+2024-07-30T22:03:36.651Z WARN Attempt #1 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/supply
+2024-07-30T22:03:36.651Z WARN Attempt #1 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/schedules?limit=2
+2024-07-30T22:03:36.652Z WARN Attempt #1 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/transactions?limit=1&order=desc&result=success
+2024-07-30T22:03:36.652Z WARN Attempt #1 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/transactions?limit=10&type=credit
+2024-07-30T22:03:36.652Z WARN Attempt #1 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/transactions?order=asc&limit=10
+2024-07-30T22:03:36.652Z WARN Attempt #1 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/transactions?limit=10
+2024-07-30T22:03:36.652Z WARN Attempt #1 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/transactions?limit=1
+2024-07-30T22:03:36.652Z WARN Attempt #1 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/transactions?limit=1&result=success
+2024-07-30T22:03:36.652Z WARN Attempt #1 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/transactions?limit=1&order=desc
+2024-07-30T22:03:36.827Z ERROR account test #1 failed for kubernetes: Retries exhausted with fetch failed. Cause: undefined
+2024-07-30T22:03:37.623Z WARN Attempt #2 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/balances?limit=10
+2024-07-30T22:03:37.655Z WARN Attempt #2 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/supply
+2024-07-30T22:03:37.845Z WARN Attempt #2 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/accounts?limit=10
+2024-07-30T22:03:37.845Z WARN Attempt #2 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/tokens?limit=1&order=asc
+2024-07-30T22:03:37.846Z WARN Attempt #2 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/accounts?limit=10
+2024-07-30T22:03:37.846Z WARN Attempt #2 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/accounts?limit=10
+2024-07-30T22:03:37.853Z WARN Attempt #2 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/accounts?limit=10
+2024-07-30T22:03:38.661Z WARN Attempt #3 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/supply
+2024-07-30T22:03:39.664Z WARN Attempt #4 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/supply
+2024-07-30T22:03:40.668Z WARN Attempt #5 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/supply
+2024-07-30T22:03:41.669Z ERROR network test #1 failed for kubernetes: Retries exhausted with fetch failed. Cause: undefined
+2024-07-30T22:03:41.713Z WARN Attempt #2 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/accounts?limit=10
+2024-07-30T22:03:42.715Z WARN Attempt #3 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/accounts?limit=10
+2024-07-30T22:03:43.717Z WARN Attempt #4 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/accounts?limit=10
+2024-07-30T22:03:44.721Z WARN Attempt #5 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/accounts?limit=10
+2024-07-30T22:03:45.723Z ERROR account test #1 failed for kubernetes: Retries exhausted with fetch failed. Cause: undefined
+2024-07-30T22:03:45.809Z WARN Attempt #3 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/balances?limit=10
+2024-07-30T22:03:46.812Z WARN Attempt #4 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/balances?limit=10
+2024-07-30T22:03:47.624Z WARN Attempt #2 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/balances?limit=10
+2024-07-30T22:03:47.646Z WARN Attempt #2 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/balances?timestamp=1722377006.642&limit=1&order=desc
+2024-07-30T22:03:47.646Z WARN Attempt #2 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/blocks?limit=10
+2024-07-30T22:03:47.646Z WARN Attempt #2 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/blocks?limit=1&order=desc
+2024-07-30T22:03:47.646Z WARN Attempt #2 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/contracts?limit=2
+2024-07-30T22:03:47.649Z WARN Attempt #2 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/contracts/results?limit=2
+2024-07-30T22:03:47.649Z WARN Attempt #2 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/contracts/results?limit=2
+2024-07-30T22:03:47.651Z WARN Attempt #2 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/contracts?limit=2
+2024-07-30T22:03:47.651Z WARN Attempt #2 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/contracts/results?limit=2
+2024-07-30T22:03:47.651Z WARN Attempt #2 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/exchangerate
+2024-07-30T22:03:47.651Z WARN Attempt #2 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/fees
+2024-07-30T22:03:47.652Z WARN Attempt #2 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/nodes?limit=2
+2024-07-30T22:03:47.652Z WARN Attempt #2 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/stake
+2024-07-30T22:03:47.654Z WARN Attempt #2 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/schedules?limit=2
+2024-07-30T22:03:47.654Z WARN Attempt #2 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/transactions?limit=1&order=desc&result=success
+2024-07-30T22:03:47.654Z WARN Attempt #2 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/transactions?limit=10&type=credit
+2024-07-30T22:03:47.654Z WARN Attempt #2 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/transactions?order=asc&limit=10
+2024-07-30T22:03:47.654Z WARN Attempt #2 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/transactions?limit=10
+2024-07-30T22:03:47.654Z WARN Attempt #2 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/transactions?limit=1
+2024-07-30T22:03:47.654Z WARN Attempt #2 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/transactions?limit=1&result=success
+2024-07-30T22:03:47.655Z WARN Attempt #2 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/transactions?limit=1&order=desc
+2024-07-30T22:03:47.814Z WARN Attempt #5 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/balances?limit=10
+2024-07-30T22:03:48.655Z WARN Attempt #3 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/contracts?limit=2
+2024-07-30T22:03:48.815Z ERROR balance test #1 failed for kubernetes: Retries exhausted with fetch failed. Cause: undefined
+2024-07-30T22:03:48.847Z WARN Attempt #3 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/accounts?limit=10
+2024-07-30T22:03:48.847Z WARN Attempt #3 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/tokens?limit=1&order=asc
+2024-07-30T22:03:48.847Z WARN Attempt #3 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/accounts?limit=10
+2024-07-30T22:03:48.848Z WARN Attempt #3 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/accounts?limit=10
+2024-07-30T22:03:48.855Z WARN Attempt #3 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/accounts?limit=10
+2024-07-30T22:03:49.658Z WARN Attempt #4 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/contracts?limit=2
+2024-07-30T22:03:50.661Z WARN Attempt #5 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/contracts?limit=2
+2024-07-30T22:03:51.744Z ERROR contract test #1 failed for kubernetes: Retries exhausted with fetch failed. Cause: undefined
+2024-07-30T22:03:51.745Z WARN Attempt #3 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/balances?timestamp=1722377006.642&limit=1&order=desc
+2024-07-30T22:03:52.721Z WARN Attempt #3 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/balances?limit=10
+2024-07-30T22:03:53.725Z WARN Attempt #4 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/balances?limit=10
+2024-07-30T22:03:54.739Z WARN Attempt #5 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/balances?limit=10
+2024-07-30T22:03:55.740Z ERROR balance test #1 failed for kubernetes: Retries exhausted with fetch failed. Cause: undefined
+2024-07-30T22:03:55.793Z WARN Attempt #3 failed with fetch failed, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/blocks?limit=10
+2024-07-30T22:03:56.616Z WARN Attempt #4 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/accounts?limit=10
+2024-07-30T22:03:56.616Z WARN Attempt #4 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/tokens?limit=1&order=asc
+2024-07-30T22:03:56.616Z WARN Attempt #4 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/accounts?limit=10
+2024-07-30T22:03:56.618Z WARN Attempt #4 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/accounts?limit=10
+2024-07-30T22:03:56.618Z WARN Attempt #4 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/accounts?limit=10
+2024-07-30T22:03:56.643Z WARN Attempt #4 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/balances?timestamp=1722377006.642&limit=1&order=desc
+2024-07-30T22:03:56.643Z WARN Attempt #3 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/blocks?limit=1&order=desc
+2024-07-30T22:03:56.644Z WARN Attempt #3 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/contracts?limit=2
+2024-07-30T22:03:56.647Z WARN Attempt #3 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/contracts/results?limit=2
+2024-07-30T22:03:56.647Z WARN Attempt #3 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/contracts/results?limit=2
+2024-07-30T22:03:56.649Z WARN Attempt #3 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/contracts/results?limit=2
+2024-07-30T22:03:56.649Z WARN Attempt #3 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/exchangerate
+2024-07-30T22:03:56.649Z WARN Attempt #3 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/fees
+2024-07-30T22:03:56.649Z WARN Attempt #3 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/nodes?limit=2
+2024-07-30T22:03:56.651Z WARN Attempt #3 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/stake
+2024-07-30T22:03:56.651Z WARN Attempt #3 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/schedules?limit=2
+2024-07-30T22:03:56.651Z WARN Attempt #3 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/transactions?limit=1&order=desc&result=success
+2024-07-30T22:03:56.651Z WARN Attempt #3 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/transactions?limit=10&type=credit
+2024-07-30T22:03:56.651Z WARN Attempt #3 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/transactions?order=asc&limit=10
+2024-07-30T22:03:56.651Z WARN Attempt #3 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/transactions?limit=10
+2024-07-30T22:03:56.653Z WARN Attempt #3 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/transactions?limit=1
+2024-07-30T22:03:56.653Z WARN Attempt #3 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/transactions?limit=1&result=success
+2024-07-30T22:03:56.653Z WARN Attempt #3 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/transactions?limit=1&order=desc
+2024-07-30T22:03:56.795Z WARN Attempt #4 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/blocks?limit=10
+2024-07-30T22:03:57.617Z WARN Attempt #5 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/accounts?limit=10
+2024-07-30T22:03:57.617Z WARN Attempt #5 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/tokens?limit=1&order=asc
+2024-07-30T22:03:57.617Z WARN Attempt #5 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/accounts?limit=10
+2024-07-30T22:03:57.619Z WARN Attempt #5 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/accounts?limit=10
+2024-07-30T22:03:57.619Z WARN Attempt #5 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/accounts?limit=10
+2024-07-30T22:03:57.644Z WARN Attempt #5 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/balances?timestamp=1722377006.642&limit=1&order=desc
+2024-07-30T22:03:57.644Z WARN Attempt #4 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/blocks?limit=1&order=desc
+2024-07-30T22:03:57.644Z WARN Attempt #4 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/contracts?limit=2
+2024-07-30T22:03:57.648Z WARN Attempt #4 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/contracts/results?limit=2
+2024-07-30T22:03:57.648Z WARN Attempt #4 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/contracts/results?limit=2
+2024-07-30T22:03:57.650Z WARN Attempt #4 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/contracts/results?limit=2
+2024-07-30T22:03:57.650Z WARN Attempt #4 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/exchangerate
+2024-07-30T22:03:57.650Z WARN Attempt #4 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/fees
+2024-07-30T22:03:57.650Z WARN Attempt #4 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/nodes?limit=2
+2024-07-30T22:03:57.652Z WARN Attempt #4 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/stake
+2024-07-30T22:03:57.652Z WARN Attempt #4 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/schedules?limit=2
+2024-07-30T22:03:57.652Z WARN Attempt #4 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/transactions?limit=1&order=desc&result=success
+2024-07-30T22:03:57.652Z WARN Attempt #4 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/transactions?limit=10&type=credit
+2024-07-30T22:03:57.653Z WARN Attempt #4 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/transactions?order=asc&limit=10
+2024-07-30T22:03:57.653Z WARN Attempt #4 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/transactions?limit=10
+2024-07-30T22:03:57.655Z WARN Attempt #4 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/transactions?limit=1
+2024-07-30T22:03:57.655Z WARN Attempt #4 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/transactions?limit=1&result=success
+2024-07-30T22:03:57.655Z WARN Attempt #4 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/transactions?limit=1&order=desc
+2024-07-30T22:03:57.796Z WARN Attempt #5 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/blocks?limit=10
+2024-07-30T22:03:58.618Z ERROR account test #1 failed for kubernetes: Retries exhausted with This operation was aborted. Cause: undefined
+2024-07-30T22:03:58.618Z ERROR account test #1 failed for kubernetes: Retries exhausted with This operation was aborted. Cause: undefined
+2024-07-30T22:03:58.618Z ERROR account test #1 failed for kubernetes: Retries exhausted with This operation was aborted. Cause: undefined
+2024-07-30T22:03:58.620Z ERROR account test #1 failed for kubernetes: Retries exhausted with This operation was aborted. Cause: undefined
+2024-07-30T22:03:58.620Z ERROR account test #1 failed for kubernetes: Retries exhausted with This operation was aborted. Cause: undefined
+2024-07-30T22:03:58.645Z ERROR balance test #1 failed for kubernetes: Retries exhausted with This operation was aborted. Cause: undefined
+2024-07-30T22:03:58.645Z WARN Attempt #5 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/blocks?limit=1&order=desc
+2024-07-30T22:03:58.645Z WARN Attempt #5 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/contracts?limit=2
+2024-07-30T22:03:58.648Z WARN Attempt #5 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/contracts/results?limit=2
+2024-07-30T22:03:58.648Z WARN Attempt #5 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/contracts/results?limit=2
+2024-07-30T22:03:58.651Z WARN Attempt #5 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/contracts/results?limit=2
+2024-07-30T22:03:58.651Z WARN Attempt #5 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/exchangerate
+2024-07-30T22:03:58.651Z WARN Attempt #5 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/fees
+2024-07-30T22:03:58.651Z WARN Attempt #5 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/nodes?limit=2
+2024-07-30T22:03:58.652Z WARN Attempt #5 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/stake
+2024-07-30T22:03:58.652Z WARN Attempt #5 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/schedules?limit=2
+2024-07-30T22:03:58.652Z WARN Attempt #5 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/transactions?limit=1&order=desc&result=success
+2024-07-30T22:03:58.653Z WARN Attempt #5 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/transactions?limit=10&type=credit
+2024-07-30T22:03:58.653Z WARN Attempt #5 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/transactions?order=asc&limit=10
+2024-07-30T22:03:58.653Z WARN Attempt #5 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/transactions?limit=10
+2024-07-30T22:03:58.656Z WARN Attempt #5 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/transactions?limit=1
+2024-07-30T22:03:58.656Z WARN Attempt #5 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/transactions?limit=1&result=success
+2024-07-30T22:03:58.656Z WARN Attempt #5 failed with This operation was aborted, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/transactions?limit=1&order=desc
+2024-07-30T22:03:58.797Z ERROR block test #1 failed for kubernetes: Retries exhausted with This operation was aborted. Cause: undefined
+2024-07-30T22:03:59.647Z ERROR block test #1 failed for kubernetes: Retries exhausted with This operation was aborted. Cause: undefined
+2024-07-30T22:03:59.647Z ERROR contract test #1 failed for kubernetes: Retries exhausted with This operation was aborted. Cause: undefined
+2024-07-30T22:03:59.649Z ERROR contract test #1 failed for kubernetes: Retries exhausted with This operation was aborted. Cause: undefined
+2024-07-30T22:03:59.649Z ERROR contract test #1 failed for kubernetes: Retries exhausted with This operation was aborted. Cause: undefined
+2024-07-30T22:03:59.652Z ERROR contract test #1 failed for kubernetes: Retries exhausted with This operation was aborted. Cause: undefined
+2024-07-30T22:03:59.652Z ERROR network test #1 failed for kubernetes: Retries exhausted with This operation was aborted. Cause: undefined
+2024-07-30T22:03:59.652Z ERROR network test #1 failed for kubernetes: Retries exhausted with This operation was aborted. Cause: undefined
+2024-07-30T22:03:59.652Z ERROR network test #1 failed for kubernetes: Retries exhausted with This operation was aborted. Cause: undefined
+2024-07-30T22:03:59.652Z ERROR network test #1 failed for kubernetes: Retries exhausted with This operation was aborted. Cause: undefined
+2024-07-30T22:03:59.652Z ERROR schedule test #1 failed for kubernetes: Retries exhausted with This operation was aborted. Cause: undefined
+2024-07-30T22:03:59.652Z ERROR stateproof test #1 failed for kubernetes: Retries exhausted with This operation was aborted. Cause: undefined
+2024-07-30T22:03:59.654Z ERROR transaction test #1 failed for kubernetes: Retries exhausted with This operation was aborted. Cause: undefined
+2024-07-30T22:03:59.654Z ERROR transaction test #1 failed for kubernetes: Retries exhausted with This operation was aborted. Cause: undefined
+2024-07-30T22:03:59.654Z ERROR transaction test #1 failed for kubernetes: Retries exhausted with This operation was aborted. Cause: undefined
+2024-07-30T22:03:59.657Z ERROR transaction test #1 failed for kubernetes: Retries exhausted with This operation was aborted. Cause: undefined
+2024-07-30T22:03:59.657Z ERROR transaction test #1 failed for kubernetes: Retries exhausted with This operation was aborted. Cause: undefined
+2024-07-30T22:03:59.657Z ERROR transaction test #1 failed for kubernetes: Retries exhausted with This operation was aborted. Cause: undefined
+2024-07-30T22:03:59.657Z INFO Completed test run #1 for kubernetes with 0/31 tests passed in 33211 ms
+2024-07-30T22:03:59.657Z INFO Finished test run #1 in 33211 ms
+2024-07-30T22:04:59.666Z INFO Running test #2
+2024-07-30T22:04:59.864Z ERROR block test #2 failed for kubernetes: Stale block was 4y 294d 7h 56m 10s old
+2024-07-30T22:04:59.944Z WARN Attempt #1 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/fees
+2024-07-30T22:04:59.950Z WARN Attempt #1 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/supply
+2024-07-30T22:05:00.047Z WARN Attempt #1 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/stake
+2024-07-30T22:05:00.073Z ERROR schedule test #2 failed for kubernetes: schedules.length of 0 was expected to be 2
+2024-07-30T22:05:00.156Z WARN Attempt #1 failed with  500, retry in 1000 ms: http://fullstack-deployment-web3:80/api/v1/contracts/call
+2024-07-30T22:05:00.242Z ERROR balance test #2 failed for kubernetes: Stale balance was 54y 224d 22h 5m old
+2024-07-30T22:05:00.450Z ERROR transaction test #2 failed for kubernetes: Stale transaction was 4y 294d 7h 56m 6s old
+2024-07-30T22:05:00.542Z ERROR contract test #2 failed for kubernetes: logs.length of 0 was expected to be 2
+2024-07-30T22:05:00.951Z WARN Attempt #2 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/fees
+2024-07-30T22:05:00.954Z WARN Attempt #2 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/supply
+2024-07-30T22:05:01.051Z WARN Attempt #2 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/stake
+2024-07-30T22:05:01.164Z WARN Attempt #2 failed with  500, retry in 1000 ms: http://fullstack-deployment-web3:80/api/v1/contracts/call
+2024-07-30T22:05:01.955Z WARN Attempt #3 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/fees
+2024-07-30T22:05:01.957Z WARN Attempt #3 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/supply
+2024-07-30T22:05:02.054Z WARN Attempt #3 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/stake
+2024-07-30T22:05:02.171Z WARN Attempt #3 failed with  500, retry in 1000 ms: http://fullstack-deployment-web3:80/api/v1/contracts/call
+2024-07-30T22:05:02.960Z WARN Attempt #4 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/fees
+2024-07-30T22:05:02.961Z WARN Attempt #4 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/supply
+2024-07-30T22:05:03.057Z WARN Attempt #4 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/stake
+2024-07-30T22:05:03.177Z WARN Attempt #4 failed with  500, retry in 1000 ms: http://fullstack-deployment-web3:80/api/v1/contracts/call
+2024-07-30T22:05:03.965Z WARN Attempt #5 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/fees
+2024-07-30T22:05:03.965Z WARN Attempt #5 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/supply
+2024-07-30T22:05:04.061Z WARN Attempt #5 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/stake
+2024-07-30T22:05:04.184Z WARN Attempt #5 failed with  500, retry in 1000 ms: http://fullstack-deployment-web3:80/api/v1/contracts/call
+2024-07-30T22:05:04.965Z ERROR network test #2 failed for kubernetes: Retries exhausted with Not Found 404. Cause: undefined
+2024-07-30T22:05:04.965Z ERROR network test #2 failed for kubernetes: Retries exhausted with Not Found 404. Cause: undefined
+2024-07-30T22:05:05.063Z ERROR network test #2 failed for kubernetes: Retries exhausted with Not Found 404. Cause: undefined
+2024-07-30T22:05:05.185Z ERROR contract test #2 failed for kubernetes: Retries exhausted with  500. Cause: undefined
+2024-07-30T22:05:05.185Z INFO Completed test run #2 for kubernetes with 21/31 tests passed in 5519 ms
+2024-07-30T22:05:05.185Z INFO Finished test run #2 in 5519 ms
+2024-07-30T22:05:59.668Z INFO Running test #3
+2024-07-30T22:05:59.693Z WARN Attempt #1 failed with  500, retry in 1000 ms: http://fullstack-deployment-web3:80/api/v1/contracts/call
+2024-07-30T22:05:59.745Z ERROR block test #3 failed for kubernetes: Stale block was 4y 294d 6h 48m 22s old
+2024-07-30T22:05:59.795Z WARN Attempt #1 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/supply
+2024-07-30T22:05:59.795Z WARN Attempt #1 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/stake
+2024-07-30T22:05:59.843Z ERROR schedule test #3 failed for kubernetes: schedules.length of 0 was expected to be 2
+2024-07-30T22:06:00.045Z ERROR balance test #3 failed for kubernetes: Stale balance was 54y 224d 22h 6m old
+2024-07-30T22:06:00.052Z ERROR transaction test #3 failed for kubernetes: Stale transaction was 4y 294d 6h 48m 23s old
+2024-07-30T22:06:00.054Z ERROR contract test #3 failed for kubernetes: logs.length of 0 was expected to be 2
+2024-07-30T22:06:00.700Z WARN Attempt #2 failed with  500, retry in 1000 ms: http://fullstack-deployment-web3:80/api/v1/contracts/call
+2024-07-30T22:06:00.800Z WARN Attempt #2 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/supply
+2024-07-30T22:06:00.800Z WARN Attempt #2 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/stake
+2024-07-30T22:06:01.706Z WARN Attempt #3 failed with  500, retry in 1000 ms: http://fullstack-deployment-web3:80/api/v1/contracts/call
+2024-07-30T22:06:01.804Z WARN Attempt #3 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/stake
+2024-07-30T22:06:01.805Z WARN Attempt #3 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/supply
+2024-07-30T22:06:02.712Z WARN Attempt #4 failed with  500, retry in 1000 ms: http://fullstack-deployment-web3:80/api/v1/contracts/call
+2024-07-30T22:06:02.845Z WARN Attempt #4 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/stake
+2024-07-30T22:06:02.852Z WARN Attempt #4 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/supply
+2024-07-30T22:06:03.718Z WARN Attempt #5 failed with  500, retry in 1000 ms: http://fullstack-deployment-web3:80/api/v1/contracts/call
+2024-07-30T22:06:03.846Z WARN Attempt #5 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/stake
+2024-07-30T22:06:03.856Z WARN Attempt #5 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/supply
+2024-07-30T22:06:04.719Z ERROR contract test #3 failed for kubernetes: Retries exhausted with  500. Cause: undefined
+2024-07-30T22:06:04.847Z ERROR network test #3 failed for kubernetes: Retries exhausted with Not Found 404. Cause: undefined
+2024-07-30T22:06:04.857Z ERROR network test #3 failed for kubernetes: Retries exhausted with Not Found 404. Cause: undefined
+2024-07-30T22:06:04.857Z INFO Completed test run #3 for kubernetes with 22/31 tests passed in 5189 ms
+2024-07-30T22:06:04.857Z INFO Finished test run #3 in 5189 ms
+2024-07-30T22:06:59.670Z INFO Running test #4
+2024-07-30T22:06:59.682Z WARN Attempt #1 failed with  500, retry in 1000 ms: http://fullstack-deployment-web3:80/api/v1/contracts/call
+2024-07-30T22:06:59.744Z ERROR block test #4 failed for kubernetes: Stale block was 4y 294d 5h 36m 1s old
+2024-07-30T22:06:59.942Z WARN Attempt #1 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/stake
+2024-07-30T22:06:59.942Z WARN Attempt #1 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/supply
+2024-07-30T22:06:59.943Z ERROR schedule test #4 failed for kubernetes: schedules.length of 0 was expected to be 2
+2024-07-30T22:06:59.948Z ERROR transaction test #4 failed for kubernetes: Stale transaction was 4y 294d 5h 36m 1s old
+2024-07-30T22:06:59.951Z ERROR balance test #4 failed for kubernetes: Stale balance was 54y 224d 22h 6m 59s old
+2024-07-30T22:07:00.044Z ERROR contract test #4 failed for kubernetes: logs.length of 0 was expected to be 2
+2024-07-30T22:07:00.689Z WARN Attempt #2 failed with  500, retry in 1000 ms: http://fullstack-deployment-web3:80/api/v1/contracts/call
+2024-07-30T22:07:00.946Z WARN Attempt #2 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/stake
+2024-07-30T22:07:00.946Z WARN Attempt #2 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/supply
+2024-07-30T22:07:01.695Z WARN Attempt #3 failed with  500, retry in 1000 ms: http://fullstack-deployment-web3:80/api/v1/contracts/call
+2024-07-30T22:07:01.950Z WARN Attempt #3 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/stake
+2024-07-30T22:07:01.951Z WARN Attempt #3 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/supply
+2024-07-30T22:07:02.701Z WARN Attempt #4 failed with  500, retry in 1000 ms: http://fullstack-deployment-web3:80/api/v1/contracts/call
+2024-07-30T22:07:02.955Z WARN Attempt #4 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/stake
+2024-07-30T22:07:02.955Z WARN Attempt #4 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/supply
+2024-07-30T22:07:03.707Z WARN Attempt #5 failed with  500, retry in 1000 ms: http://fullstack-deployment-web3:80/api/v1/contracts/call
+2024-07-30T22:07:03.959Z WARN Attempt #5 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/stake
+2024-07-30T22:07:03.959Z WARN Attempt #5 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/supply
+2024-07-30T22:07:04.708Z ERROR contract test #4 failed for kubernetes: Retries exhausted with  500. Cause: undefined
+2024-07-30T22:07:04.960Z ERROR network test #4 failed for kubernetes: Retries exhausted with Not Found 404. Cause: undefined
+2024-07-30T22:07:04.960Z ERROR network test #4 failed for kubernetes: Retries exhausted with Not Found 404. Cause: undefined
+2024-07-30T22:07:04.960Z INFO Completed test run #4 for kubernetes with 22/31 tests passed in 5290 ms
+2024-07-30T22:07:04.960Z INFO Finished test run #4 in 5290 ms
+2024-07-30T22:07:59.670Z INFO Running test #5
+2024-07-30T22:07:59.683Z WARN Attempt #1 failed with  500, retry in 1000 ms: http://fullstack-deployment-web3:80/api/v1/contracts/call
+2024-07-30T22:07:59.700Z ERROR block test #5 failed for kubernetes: Stale block was 4y 294d 5h 28m 28s old
+2024-07-30T22:07:59.756Z WARN Attempt #1 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/stake
+2024-07-30T22:07:59.759Z WARN Attempt #1 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/supply
+2024-07-30T22:07:59.760Z ERROR schedule test #5 failed for kubernetes: schedules.length of 0 was expected to be 2
+2024-07-30T22:07:59.844Z ERROR balance test #5 failed for kubernetes: Stale balance was 54y 224d 22h 7m 59s old
+2024-07-30T22:07:59.873Z ERROR transaction test #5 failed for kubernetes: Stale transaction was 4y 294d 5h 28m 28s old
+2024-07-30T22:07:59.945Z ERROR contract test #5 failed for kubernetes: logs.length of 0 was expected to be 2
+2024-07-30T22:08:00.688Z WARN Attempt #2 failed with  500, retry in 1000 ms: http://fullstack-deployment-web3:80/api/v1/contracts/call
+2024-07-30T22:08:00.760Z WARN Attempt #2 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/stake
+2024-07-30T22:08:00.761Z WARN Attempt #2 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/supply
+2024-07-30T22:08:01.694Z WARN Attempt #3 failed with  500, retry in 1000 ms: http://fullstack-deployment-web3:80/api/v1/contracts/call
+2024-07-30T22:08:01.764Z WARN Attempt #3 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/stake
+2024-07-30T22:08:01.765Z WARN Attempt #3 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/supply
+2024-07-30T22:08:02.699Z WARN Attempt #4 failed with  500, retry in 1000 ms: http://fullstack-deployment-web3:80/api/v1/contracts/call
+2024-07-30T22:08:02.769Z WARN Attempt #4 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/stake
+2024-07-30T22:08:02.769Z WARN Attempt #4 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/supply
+2024-07-30T22:08:03.704Z WARN Attempt #5 failed with  500, retry in 1000 ms: http://fullstack-deployment-web3:80/api/v1/contracts/call
+2024-07-30T22:08:03.772Z WARN Attempt #5 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/stake
+2024-07-30T22:08:03.773Z WARN Attempt #5 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/supply
+2024-07-30T22:08:04.704Z ERROR contract test #5 failed for kubernetes: Retries exhausted with  500. Cause: undefined
+2024-07-30T22:08:04.772Z ERROR network test #5 failed for kubernetes: Retries exhausted with Not Found 404. Cause: undefined
+2024-07-30T22:08:04.774Z ERROR network test #5 failed for kubernetes: Retries exhausted with Not Found 404. Cause: undefined
+2024-07-30T22:08:04.774Z INFO Completed test run #5 for kubernetes with 22/31 tests passed in 5104 ms
+2024-07-30T22:08:04.774Z INFO Finished test run #5 in 5104 ms
+2024-07-30T22:08:59.672Z INFO Running test #6
+2024-07-30T22:08:59.683Z WARN Attempt #1 failed with  500, retry in 1000 ms: http://fullstack-deployment-web3:80/api/v1/contracts/call
+2024-07-30T22:08:59.700Z ERROR block test #6 failed for kubernetes: Stale block was 4y 294d 5h 29m 28s old
+2024-07-30T22:08:59.765Z WARN Attempt #1 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/supply
+2024-07-30T22:08:59.845Z WARN Attempt #1 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/stake
+2024-07-30T22:08:59.849Z ERROR schedule test #6 failed for kubernetes: schedules.length of 0 was expected to be 2
+2024-07-30T22:08:59.874Z ERROR transaction test #6 failed for kubernetes: Stale transaction was 4y 294d 5h 29m 28s old
+2024-07-30T22:08:59.943Z ERROR balance test #6 failed for kubernetes: Stale balance was 54y 224d 22h 8m 59s old
+2024-07-30T22:08:59.957Z ERROR contract test #6 failed for kubernetes: logs.length of 0 was expected to be 2
+2024-07-30T22:09:00.689Z WARN Attempt #2 failed with  500, retry in 1000 ms: http://fullstack-deployment-web3:80/api/v1/contracts/call
+2024-07-30T22:09:00.769Z WARN Attempt #2 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/supply
+2024-07-30T22:09:00.849Z WARN Attempt #2 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/stake
+2024-07-30T22:09:01.694Z WARN Attempt #3 failed with  500, retry in 1000 ms: http://fullstack-deployment-web3:80/api/v1/contracts/call
+2024-07-30T22:09:01.772Z WARN Attempt #3 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/supply
+2024-07-30T22:09:01.853Z WARN Attempt #3 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/stake
+2024-07-30T22:09:02.699Z WARN Attempt #4 failed with  500, retry in 1000 ms: http://fullstack-deployment-web3:80/api/v1/contracts/call
+2024-07-30T22:09:02.776Z WARN Attempt #4 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/supply
+2024-07-30T22:09:02.856Z WARN Attempt #4 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/stake
+2024-07-30T22:09:03.706Z WARN Attempt #5 failed with  500, retry in 1000 ms: http://fullstack-deployment-web3:80/api/v1/contracts/call
+2024-07-30T22:09:03.780Z WARN Attempt #5 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/supply
+2024-07-30T22:09:03.859Z WARN Attempt #5 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/stake
+2024-07-30T22:09:04.707Z ERROR contract test #6 failed for kubernetes: Retries exhausted with  500. Cause: undefined
+2024-07-30T22:09:04.781Z ERROR network test #6 failed for kubernetes: Retries exhausted with Not Found 404. Cause: undefined
+2024-07-30T22:09:04.860Z ERROR network test #6 failed for kubernetes: Retries exhausted with Not Found 404. Cause: undefined
+2024-07-30T22:09:04.860Z INFO Completed test run #6 for kubernetes with 22/31 tests passed in 5188 ms
+2024-07-30T22:09:04.860Z INFO Finished test run #6 in 5188 ms
+2024-07-30T22:09:59.672Z INFO Running test #7
+2024-07-30T22:09:59.684Z WARN Attempt #1 failed with  500, retry in 1000 ms: http://fullstack-deployment-web3:80/api/v1/contracts/call
+2024-07-30T22:09:59.701Z ERROR block test #7 failed for kubernetes: Stale block was 4y 294d 5h 30m 28s old
+2024-07-30T22:09:59.757Z WARN Attempt #1 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/stake
+2024-07-30T22:09:59.844Z WARN Attempt #1 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/supply
+2024-07-30T22:09:59.845Z ERROR schedule test #7 failed for kubernetes: schedules.length of 0 was expected to be 2
+2024-07-30T22:09:59.862Z ERROR transaction test #7 failed for kubernetes: Stale transaction was 4y 294d 5h 30m 28s old
+2024-07-30T22:09:59.952Z ERROR balance test #7 failed for kubernetes: Stale balance was 54y 224d 22h 9m 59s old
+2024-07-30T22:09:59.970Z ERROR contract test #7 failed for kubernetes: logs.length of 0 was expected to be 2
+2024-07-30T22:10:00.690Z WARN Attempt #2 failed with  500, retry in 1000 ms: http://fullstack-deployment-web3:80/api/v1/contracts/call
+2024-07-30T22:10:00.761Z WARN Attempt #2 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/stake
+2024-07-30T22:10:00.848Z WARN Attempt #2 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/supply
+2024-07-30T22:10:01.695Z WARN Attempt #3 failed with  500, retry in 1000 ms: http://fullstack-deployment-web3:80/api/v1/contracts/call
+2024-07-30T22:10:01.764Z WARN Attempt #3 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/stake
+2024-07-30T22:10:01.851Z WARN Attempt #3 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/supply
+2024-07-30T22:10:02.701Z WARN Attempt #4 failed with  500, retry in 1000 ms: http://fullstack-deployment-web3:80/api/v1/contracts/call
+2024-07-30T22:10:02.768Z WARN Attempt #4 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/stake
+2024-07-30T22:10:02.855Z WARN Attempt #4 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/supply
+2024-07-30T22:10:03.708Z WARN Attempt #5 failed with  500, retry in 1000 ms: http://fullstack-deployment-web3:80/api/v1/contracts/call
+2024-07-30T22:10:03.772Z WARN Attempt #5 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/stake
+2024-07-30T22:10:03.859Z WARN Attempt #5 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/supply
+2024-07-30T22:10:04.709Z ERROR contract test #7 failed for kubernetes: Retries exhausted with  500. Cause: undefined
+2024-07-30T22:10:04.773Z ERROR network test #7 failed for kubernetes: Retries exhausted with Not Found 404. Cause: undefined
+2024-07-30T22:10:04.860Z ERROR network test #7 failed for kubernetes: Retries exhausted with Not Found 404. Cause: undefined
+2024-07-30T22:10:04.860Z INFO Completed test run #7 for kubernetes with 22/31 tests passed in 5188 ms
+2024-07-30T22:10:04.860Z INFO Finished test run #7 in 5188 ms
+2024-07-30T22:10:59.672Z INFO Running test #8
+2024-07-30T22:10:59.685Z WARN Attempt #1 failed with  500, retry in 1000 ms: http://fullstack-deployment-web3:80/api/v1/contracts/call
+2024-07-30T22:10:59.699Z ERROR block test #8 failed for kubernetes: Stale block was 4y 294d 5h 31m 28s old
+2024-07-30T22:10:59.756Z WARN Attempt #1 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/stake
+2024-07-30T22:10:59.759Z ERROR schedule test #8 failed for kubernetes: schedules.length of 0 was expected to be 2
+2024-07-30T22:10:59.759Z WARN Attempt #1 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/supply
+2024-07-30T22:10:59.775Z ERROR transaction test #8 failed for kubernetes: Stale transaction was 4y 294d 5h 31m 28s old
+2024-07-30T22:10:59.844Z ERROR balance test #8 failed for kubernetes: Stale balance was 54y 224d 22h 10m 59s old
+2024-07-30T22:10:59.948Z ERROR contract test #8 failed for kubernetes: logs.length of 0 was expected to be 2
+2024-07-30T22:11:00.691Z WARN Attempt #2 failed with  500, retry in 1000 ms: http://fullstack-deployment-web3:80/api/v1/contracts/call
+2024-07-30T22:11:00.759Z WARN Attempt #2 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/stake
+2024-07-30T22:11:00.762Z WARN Attempt #2 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/supply
+2024-07-30T22:11:01.697Z WARN Attempt #3 failed with  500, retry in 1000 ms: http://fullstack-deployment-web3:80/api/v1/contracts/call
+2024-07-30T22:11:01.763Z WARN Attempt #3 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/stake
+2024-07-30T22:11:01.764Z WARN Attempt #3 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/supply
+2024-07-30T22:11:02.701Z WARN Attempt #4 failed with  500, retry in 1000 ms: http://fullstack-deployment-web3:80/api/v1/contracts/call
+2024-07-30T22:11:02.767Z WARN Attempt #4 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/stake
+2024-07-30T22:11:02.767Z WARN Attempt #4 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/supply
+2024-07-30T22:11:03.707Z WARN Attempt #5 failed with  500, retry in 1000 ms: http://fullstack-deployment-web3:80/api/v1/contracts/call
+2024-07-30T22:11:03.770Z WARN Attempt #5 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/stake
+2024-07-30T22:11:03.770Z WARN Attempt #5 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/supply
+2024-07-30T22:11:04.707Z ERROR contract test #8 failed for kubernetes: Retries exhausted with  500. Cause: undefined
+2024-07-30T22:11:04.777Z ERROR network test #8 failed for kubernetes: Retries exhausted with Not Found 404. Cause: undefined
+2024-07-30T22:11:04.777Z ERROR network test #8 failed for kubernetes: Retries exhausted with Not Found 404. Cause: undefined
+2024-07-30T22:11:04.777Z INFO Completed test run #8 for kubernetes with 22/31 tests passed in 5105 ms
+2024-07-30T22:11:04.777Z INFO Finished test run #8 in 5105 ms
+2024-07-30T22:11:59.673Z INFO Running test #9
+2024-07-30T22:11:59.684Z WARN Attempt #1 failed with  500, retry in 1000 ms: http://fullstack-deployment-web3:80/api/v1/contracts/call
+2024-07-30T22:11:59.698Z ERROR block test #9 failed for kubernetes: Stale block was 4y 294d 5h 32m 28s old
+2024-07-30T22:11:59.757Z WARN Attempt #1 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/stake
+2024-07-30T22:11:59.760Z WARN Attempt #1 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/supply
+2024-07-30T22:11:59.845Z ERROR schedule test #9 failed for kubernetes: schedules.length of 0 was expected to be 2
+2024-07-30T22:11:59.850Z ERROR balance test #9 failed for kubernetes: Stale balance was 54y 224d 22h 11m 59s old
+2024-07-30T22:11:59.867Z ERROR transaction test #9 failed for kubernetes: Stale transaction was 4y 294d 5h 32m 28s old
+2024-07-30T22:12:00.043Z ERROR contract test #9 failed for kubernetes: logs.length of 0 was expected to be 2
+2024-07-30T22:12:00.691Z WARN Attempt #2 failed with  500, retry in 1000 ms: http://fullstack-deployment-web3:80/api/v1/contracts/call
+2024-07-30T22:12:00.761Z WARN Attempt #2 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/stake
+2024-07-30T22:12:00.761Z WARN Attempt #2 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/supply
+2024-07-30T22:12:01.697Z WARN Attempt #3 failed with  500, retry in 1000 ms: http://fullstack-deployment-web3:80/api/v1/contracts/call
+2024-07-30T22:12:01.764Z WARN Attempt #3 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/stake
+2024-07-30T22:12:01.764Z WARN Attempt #3 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/supply
+2024-07-30T22:12:02.703Z WARN Attempt #4 failed with  500, retry in 1000 ms: http://fullstack-deployment-web3:80/api/v1/contracts/call
+2024-07-30T22:12:02.768Z WARN Attempt #4 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/stake
+2024-07-30T22:12:02.768Z WARN Attempt #4 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/supply
+2024-07-30T22:12:03.709Z WARN Attempt #5 failed with  500, retry in 1000 ms: http://fullstack-deployment-web3:80/api/v1/contracts/call
+2024-07-30T22:12:03.772Z WARN Attempt #5 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/stake
+2024-07-30T22:12:03.772Z WARN Attempt #5 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/supply
+2024-07-30T22:12:04.710Z ERROR contract test #9 failed for kubernetes: Retries exhausted with  500. Cause: undefined
+2024-07-30T22:12:04.774Z ERROR network test #9 failed for kubernetes: Retries exhausted with Not Found 404. Cause: undefined
+2024-07-30T22:12:04.774Z ERROR network test #9 failed for kubernetes: Retries exhausted with Not Found 404. Cause: undefined
+2024-07-30T22:12:04.774Z INFO Completed test run #9 for kubernetes with 22/31 tests passed in 5101 ms
+2024-07-30T22:12:04.774Z INFO Finished test run #9 in 5101 ms
+2024-07-30T22:12:59.674Z INFO Running test #10
+2024-07-30T22:12:59.686Z WARN Attempt #1 failed with  500, retry in 1000 ms: http://fullstack-deployment-web3:80/api/v1/contracts/call
+2024-07-30T22:12:59.699Z ERROR balance test #10 failed for kubernetes: Stale balance was 54y 224d 22h 12m 59s old
+2024-07-30T22:12:59.703Z ERROR block test #10 failed for kubernetes: Stale block was 4y 294d 5h 33m 28s old
+2024-07-30T22:12:59.845Z WARN Attempt #1 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/stake
+2024-07-30T22:12:59.845Z WARN Attempt #1 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/supply
+2024-07-30T22:12:59.847Z ERROR schedule test #10 failed for kubernetes: schedules.length of 0 was expected to be 2
+2024-07-30T22:12:59.878Z ERROR transaction test #10 failed for kubernetes: Stale transaction was 4y 294d 5h 33m 28s old
+2024-07-30T22:12:59.958Z ERROR contract test #10 failed for kubernetes: logs.length of 0 was expected to be 2
+2024-07-30T22:13:00.692Z WARN Attempt #2 failed with  500, retry in 1000 ms: http://fullstack-deployment-web3:80/api/v1/contracts/call
+2024-07-30T22:13:00.849Z WARN Attempt #2 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/stake
+2024-07-30T22:13:00.849Z WARN Attempt #2 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/supply
+2024-07-30T22:13:01.698Z WARN Attempt #3 failed with  500, retry in 1000 ms: http://fullstack-deployment-web3:80/api/v1/contracts/call
+2024-07-30T22:13:01.854Z WARN Attempt #3 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/supply
+2024-07-30T22:13:01.854Z WARN Attempt #3 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/stake
+2024-07-30T22:13:02.703Z WARN Attempt #4 failed with  500, retry in 1000 ms: http://fullstack-deployment-web3:80/api/v1/contracts/call
+2024-07-30T22:13:02.857Z WARN Attempt #4 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/stake
+2024-07-30T22:13:02.858Z WARN Attempt #4 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/supply
+2024-07-30T22:13:03.709Z WARN Attempt #5 failed with  500, retry in 1000 ms: http://fullstack-deployment-web3:80/api/v1/contracts/call
+2024-07-30T22:13:03.861Z WARN Attempt #5 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/stake
+2024-07-30T22:13:03.862Z WARN Attempt #5 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/supply
+2024-07-30T22:13:04.710Z ERROR contract test #10 failed for kubernetes: Retries exhausted with  500. Cause: undefined
+2024-07-30T22:13:04.862Z ERROR network test #10 failed for kubernetes: Retries exhausted with Not Found 404. Cause: undefined
+2024-07-30T22:13:04.862Z ERROR network test #10 failed for kubernetes: Retries exhausted with Not Found 404. Cause: undefined
+2024-07-30T22:13:04.862Z INFO Completed test run #10 for kubernetes with 22/31 tests passed in 5188 ms
+2024-07-30T22:13:04.862Z INFO Finished test run #10 in 5188 ms
+2024-07-30T22:13:59.675Z INFO Running test #11
+2024-07-30T22:13:59.687Z WARN Attempt #1 failed with  500, retry in 1000 ms: http://fullstack-deployment-web3:80/api/v1/contracts/call
+2024-07-30T22:13:59.701Z ERROR block test #11 failed for kubernetes: Stale block was 4y 294d 5h 34m 28s old
+2024-07-30T22:13:59.752Z WARN Attempt #1 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/stake
+2024-07-30T22:13:59.752Z WARN Attempt #1 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/supply
+2024-07-30T22:13:59.753Z ERROR schedule test #11 failed for kubernetes: schedules.length of 0 was expected to be 2
+2024-07-30T22:13:59.767Z WARN Attempt #1 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/transactions/0.0.2-1570811961-258847000/stateproof?nonce=0&scheduled=false
+2024-07-30T22:13:59.845Z ERROR transaction test #11 failed for kubernetes: Stale transaction was 4y 294d 5h 34m 28s old
+2024-07-30T22:13:59.956Z ERROR balance test #11 failed for kubernetes: Stale balance was 54y 224d 22h 13m 59s old
+2024-07-30T22:13:59.958Z ERROR contract test #11 failed for kubernetes: logs.length of 0 was expected to be 2
+2024-07-30T22:14:00.696Z WARN Attempt #2 failed with  500, retry in 1000 ms: http://fullstack-deployment-web3:80/api/v1/contracts/call
+2024-07-30T22:14:00.755Z WARN Attempt #2 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/stake
+2024-07-30T22:14:00.756Z WARN Attempt #2 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/supply
+2024-07-30T22:14:00.769Z WARN Attempt #2 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/transactions/0.0.2-1570811961-258847000/stateproof?nonce=0&scheduled=false
+2024-07-30T22:14:01.701Z WARN Attempt #3 failed with  500, retry in 1000 ms: http://fullstack-deployment-web3:80/api/v1/contracts/call
+2024-07-30T22:14:01.758Z WARN Attempt #3 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/stake
+2024-07-30T22:14:01.758Z WARN Attempt #3 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/supply
+2024-07-30T22:14:01.772Z WARN Attempt #3 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/transactions/0.0.2-1570811961-258847000/stateproof?nonce=0&scheduled=false
+2024-07-30T22:14:02.724Z WARN Attempt #4 failed with  500, retry in 1000 ms: http://fullstack-deployment-web3:80/api/v1/contracts/call
+2024-07-30T22:14:02.762Z WARN Attempt #4 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/supply
+2024-07-30T22:14:02.763Z WARN Attempt #4 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/stake
+2024-07-30T22:14:02.774Z WARN Attempt #4 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/transactions/0.0.2-1570811961-258847000/stateproof?nonce=0&scheduled=false
+2024-07-30T22:14:03.730Z WARN Attempt #5 failed with  500, retry in 1000 ms: http://fullstack-deployment-web3:80/api/v1/contracts/call
+2024-07-30T22:14:03.767Z WARN Attempt #5 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/stake
+2024-07-30T22:14:03.767Z WARN Attempt #5 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/supply
+2024-07-30T22:14:03.776Z WARN Attempt #5 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/transactions/0.0.2-1570811961-258847000/stateproof?nonce=0&scheduled=false
+2024-07-30T22:14:04.731Z ERROR contract test #11 failed for kubernetes: Retries exhausted with  500. Cause: undefined
+2024-07-30T22:14:04.768Z ERROR network test #11 failed for kubernetes: Retries exhausted with Not Found 404. Cause: undefined
+2024-07-30T22:14:04.768Z ERROR network test #11 failed for kubernetes: Retries exhausted with Not Found 404. Cause: undefined
+2024-07-30T22:14:04.777Z ERROR stateproof test #11 failed for kubernetes: Retries exhausted with Not Found 404. Cause: undefined
+2024-07-30T22:14:04.777Z INFO Completed test run #11 for kubernetes with 22/31 tests passed in 5102 ms
+2024-07-30T22:14:04.777Z INFO Finished test run #11 in 5102 ms
+2024-07-30T22:14:59.676Z INFO Running test #12
+2024-07-30T22:14:59.687Z WARN Attempt #1 failed with  500, retry in 1000 ms: http://fullstack-deployment-web3:80/api/v1/contracts/call
+2024-07-30T22:14:59.701Z ERROR block test #12 failed for kubernetes: Stale block was 4y 294d 5h 35m 28s old
+2024-07-30T22:14:59.747Z WARN Attempt #1 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/stake
+2024-07-30T22:14:59.842Z WARN Attempt #1 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/supply
+2024-07-30T22:14:59.848Z ERROR schedule test #12 failed for kubernetes: schedules.length of 0 was expected to be 2
+2024-07-30T22:15:00.051Z ERROR balance test #12 failed for kubernetes: Stale balance was 54y 224d 22h 15m old
+2024-07-30T22:15:00.054Z ERROR transaction test #12 failed for kubernetes: Stale transaction was 4y 294d 5h 35m 29s old
+2024-07-30T22:15:00.149Z ERROR contract test #12 failed for kubernetes: logs.length of 0 was expected to be 2
+2024-07-30T22:15:00.752Z WARN Attempt #2 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/stake
+2024-07-30T22:15:00.845Z WARN Attempt #2 failed with Not Found 404, retry in 1000 ms: http://fullstack-deployment-rest:80/api/v1/network/supply

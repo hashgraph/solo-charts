@@ -1,0 +1,943 @@
+(node:1) ExperimentalWarning: The Node.js specifier resolution flag is experimental. It could change or be removed at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+2024-07-30T22:04:02.610Z INFO Startup Loaded configuration source: /home/node/app/config/application.yml
+2024-07-30T22:04:02.611Z INFO Startup Loaded configuration source: /usr/etc/hedera/application.yaml
+2024-07-30T22:04:02.612Z INFO Startup Override config with environment variable HEDERA_MIRROR_REST_REDIS_SENTINEL_ENABLED=true
+2024-07-30T22:04:02.612Z INFO Startup Override config with environment variable HEDERA_MIRROR_REST_REDIS_SENTINEL_HOST=fullstack-deployment-redis
+2024-07-30T22:04:02.612Z INFO Startup Override config with environment variable HEDERA_MIRROR_REST_REDIS_SENTINEL_PASSWORD=******
+2024-07-30T22:04:02.613Z INFO Startup Override config with environment variable HEDERA_MIRROR_REST_DB_USERNAME=mirror_rest
+2024-07-30T22:04:02.613Z INFO Startup Override config with environment variable HEDERA_MIRROR_REST_REDIS_SENTINEL_PORT=26379
+2024-07-30T22:04:02.613Z INFO Startup Override config with environment variable HEDERA_MIRROR_REST_DB_PASSWORD=******
+2024-07-30T22:04:02.613Z INFO Startup Override config with environment variable HEDERA_MIRROR_REST_DB_HOST=fullstack-deployment-postgres-pgpool
+2024-07-30T22:04:02.613Z INFO Startup Override config with environment variable HEDERA_MIRROR_REST_REDIS_URI=redis://:OhILmWibgnA28QxDNmVqOinYaFLnSc5aSFOSgSvh@fullstack-deployment-redis:6379
+2024-07-30T22:04:02.613Z INFO Startup Override config with environment variable HEDERA_MIRROR_REST_REDIS_SENTINEL_NAME=mirror
+2024-07-30T22:04:02.613Z INFO Startup Override config with environment variable HEDERA_MIRROR_REST_DB_NAME=mirror_node
+bigint: Failed to load bindings, pure JS will be used (try npm run rebuild?)
+2024-07-30T22:04:03.203Z INFO Startup Response compression is enabled
+2024-07-30T22:04:03.207Z INFO Startup stateproof REST API is disabled
+2024-07-30T22:04:03.210Z INFO Startup Server running on port: 5551
+2024-07-30T22:04:03.212Z ERROR Startup Error connecting to redis://***:***@fullstack-deployment-redis:6379: All sentinels are unreachable. Retrying from scratch after 10ms. Last error: Connection is closed.
+2024-07-30T22:04:03.236Z ERROR Startup Error connecting to redis://***:***@fullstack-deployment-redis:6379: All sentinels are unreachable. Retrying from scratch after 20ms. Last error: Connection is closed.
+2024-07-30T22:04:03.258Z ERROR Startup Error connecting to redis://***:***@fullstack-deployment-redis:6379: All sentinels are unreachable. Retrying from scratch after 30ms. Last error: Connection is closed.
+2024-07-30T22:04:03.290Z ERROR Startup Error connecting to redis://***:***@fullstack-deployment-redis:6379: All sentinels are unreachable. Retrying from scratch after 40ms. Last error: Connection is closed.
+2024-07-30T22:04:03.332Z ERROR Startup Error connecting to redis://***:***@fullstack-deployment-redis:6379: All sentinels are unreachable. Retrying from scratch after 50ms. Last error: Connection is closed.
+2024-07-30T22:04:03.384Z ERROR Startup Error connecting to redis://***:***@fullstack-deployment-redis:6379: All sentinels are unreachable. Retrying from scratch after 60ms. Last error: Connection is closed.
+2024-07-30T22:04:04.497Z ERROR Startup Error connecting to redis://***:***@fullstack-deployment-redis:6379: All sentinels are unreachable. Retrying from scratch after 70ms. Last error: Connection is closed.
+2024-07-30T22:04:05.585Z ERROR Startup Error connecting to redis://***:***@fullstack-deployment-redis:6379: All sentinels are unreachable. Retrying from scratch after 80ms. Last error: Connection is closed.
+2024-07-30T22:04:06.674Z ERROR Startup Error connecting to redis://***:***@fullstack-deployment-redis:6379: All sentinels are unreachable. Retrying from scratch after 90ms. Last error: Connection is closed.
+2024-07-30T22:04:07.826Z ERROR Startup Error connecting to redis://***:***@fullstack-deployment-redis:6379: All sentinels are unreachable. Retrying from scratch after 100ms. Last error: Connection is closed.
+2024-07-30T22:04:08.977Z ERROR Startup Error connecting to redis://***:***@fullstack-deployment-redis:6379: All sentinels are unreachable. Retrying from scratch after 110ms. Last error: Connection is closed.
+2024-07-30T22:04:10.129Z ERROR Startup Error connecting to redis://***:***@fullstack-deployment-redis:6379: All sentinels are unreachable. Retrying from scratch after 120ms. Last error: Connection is closed.
+2024-07-30T22:04:10.251Z ERROR Startup Error connecting to redis://***:***@fullstack-deployment-redis:6379: All sentinels are unreachable. Retrying from scratch after 130ms. Last error: Connection is closed.
+2024-07-30T22:04:11.410Z ERROR Startup Error connecting to redis://***:***@fullstack-deployment-redis:6379: All sentinels are unreachable. Retrying from scratch after 140ms. Last error: Connection is closed.
+2024-07-30T22:04:12.562Z ERROR Startup Error connecting to redis://***:***@fullstack-deployment-redis:6379: All sentinels are unreachable. Retrying from scratch after 150ms. Last error: Connection is closed.
+2024-07-30T22:04:13.777Z ERROR Startup Error connecting to redis://***:***@fullstack-deployment-redis:6379: All sentinels are unreachable. Retrying from scratch after 160ms. Last error: Connection is closed.
+2024-07-30T22:04:14.993Z ERROR Startup Error connecting to redis://***:***@fullstack-deployment-redis:6379: All sentinels are unreachable. Retrying from scratch after 170ms. Last error: Connection is closed.
+2024-07-30T22:04:16.209Z ERROR Startup Error connecting to redis://***:***@fullstack-deployment-redis:6379: All sentinels are unreachable. Retrying from scratch after 180ms. Last error: Connection is closed.
+2024-07-30T22:04:16.391Z ERROR Startup Error connecting to redis://***:***@fullstack-deployment-redis:6379: All sentinels are unreachable. Retrying from scratch after 190ms. Last error: Connection is closed.
+2024-07-30T22:04:17.617Z ERROR Startup Error connecting to redis://***:***@fullstack-deployment-redis:6379: All sentinels are unreachable. Retrying from scratch after 200ms. Last error: Connection is closed.
+2024-07-30T22:04:18.833Z ERROR Startup Error connecting to redis://***:***@fullstack-deployment-redis:6379: All sentinels are unreachable. Retrying from scratch after 210ms. Last error: Connection is closed.
+2024-07-30T22:04:20.049Z ERROR Startup Error connecting to redis://***:***@fullstack-deployment-redis:6379: All sentinels are unreachable. Retrying from scratch after 220ms. Last error: Connection is closed.
+2024-07-30T22:04:20.271Z ERROR Startup Error connecting to redis://***:***@fullstack-deployment-redis:6379: All sentinels are unreachable. Retrying from scratch after 230ms. Last error: Connection is closed.
+2024-07-30T22:04:21.521Z ERROR Startup Error connecting to redis://***:***@fullstack-deployment-redis:6379: All sentinels are unreachable. Retrying from scratch after 240ms. Last error: Connection is closed.
+2024-07-30T22:04:22.802Z ERROR Startup Error connecting to redis://***:***@fullstack-deployment-redis:6379: All sentinels are unreachable. Retrying from scratch after 250ms. Last error: Connection is closed.
+2024-07-30T22:04:24.081Z ERROR Startup Error connecting to redis://***:***@fullstack-deployment-redis:6379: All sentinels are unreachable. Retrying from scratch after 260ms. Last error: Connection is closed.
+2024-07-30T22:04:24.348Z ERROR Startup Error connecting to redis://***:***@fullstack-deployment-redis:6379: All sentinels are unreachable. Retrying from scratch after 270ms. Last error: Connection is closed.
+2024-07-30T22:04:25.681Z ERROR Startup Error connecting to redis://***:***@fullstack-deployment-redis:6379: All sentinels are unreachable. Retrying from scratch after 280ms. Last error: Connection is closed.
+2024-07-30T22:04:27.026Z ERROR Startup Error connecting to redis://***:***@fullstack-deployment-redis:6379: All sentinels are unreachable. Retrying from scratch after 290ms. Last error: Connection is closed.
+2024-07-30T22:04:27.320Z ERROR Startup Error connecting to redis://***:***@fullstack-deployment-redis:6379: All sentinels are unreachable. Retrying from scratch after 300ms. Last error: Connection is closed.
+2024-07-30T22:04:28.625Z ERROR Startup Error connecting to redis://***:***@fullstack-deployment-redis:6379: All sentinels are unreachable. Retrying from scratch after 310ms. Last error: Connection is closed.
+2024-07-30T22:04:29.969Z ERROR Startup Error connecting to redis://***:***@fullstack-deployment-redis:6379: All sentinels are unreachable. Retrying from scratch after 320ms. Last error: Connection is closed.
+2024-07-30T22:04:30.293Z ERROR Startup Error connecting to redis://***:***@fullstack-deployment-redis:6379: All sentinels are unreachable. Retrying from scratch after 330ms. Last error: Connection is closed.
+2024-07-30T22:04:31.634Z ERROR Startup Error connecting to redis://***:***@fullstack-deployment-redis:6379: All sentinels are unreachable. Retrying from scratch after 340ms. Last error: Connection is closed.
+2024-07-30T22:04:33.043Z ERROR Startup Error connecting to redis://***:***@fullstack-deployment-redis:6379: All sentinels are unreachable. Retrying from scratch after 350ms. Last error: Connection is closed.
+2024-07-30T22:04:33.397Z ERROR Startup Error connecting to redis://***:***@fullstack-deployment-redis:6379: All sentinels are unreachable. Retrying from scratch after 360ms. Last error: Connection is closed.
+2024-07-30T22:04:34.769Z ERROR Startup Error connecting to redis://***:***@fullstack-deployment-redis:6379: All sentinels are unreachable. Retrying from scratch after 370ms. Last error: Connection is closed.
+2024-07-30T22:04:37.201Z ERROR Startup Error connecting to redis://***:***@fullstack-deployment-redis:6379: All sentinels are unreachable. Retrying from scratch after 380ms. Last error: Connection is closed.
+2024-07-30T22:04:37.583Z ERROR Startup Error connecting to redis://***:***@fullstack-deployment-redis:6379: All sentinels are unreachable. Retrying from scratch after 390ms. Last error: Connection is closed.
+2024-07-30T22:04:38.994Z ERROR Startup Error connecting to redis://***:***@fullstack-deployment-redis:6379: All sentinels are unreachable. Retrying from scratch after 400ms. Last error: Connection is closed.
+2024-07-30T22:04:39.397Z ERROR Startup Error connecting to redis://***:***@fullstack-deployment-redis:6379: All sentinels are unreachable. Retrying from scratch after 410ms. Last error: Connection is closed.
+2024-07-30T22:04:40.850Z ERROR Startup Error connecting to redis://***:***@fullstack-deployment-redis:6379: All sentinels are unreachable. Retrying from scratch after 420ms. Last error: Connection is closed.
+2024-07-30T22:04:41.272Z ERROR Startup Error connecting to redis://***:***@fullstack-deployment-redis:6379: All sentinels are unreachable. Retrying from scratch after 430ms. Last error: Connection is closed.
+2024-07-30T22:04:42.770Z ERROR Startup Error connecting to redis://***:***@fullstack-deployment-redis:6379: All sentinels are unreachable. Retrying from scratch after 440ms. Last error: Connection is closed.
+2024-07-30T22:04:43.213Z ERROR Startup Error connecting to redis://***:***@fullstack-deployment-redis:6379: All sentinels are unreachable. Retrying from scratch after 450ms. Last error: Connection is closed.
+2024-07-30T22:04:44.689Z ERROR Startup Error connecting to redis://***:***@fullstack-deployment-redis:6379: All sentinels are unreachable. Retrying from scratch after 460ms. Last error: Connection is closed.
+2024-07-30T22:04:46.161Z ERROR Startup Error connecting to redis://***:***@fullstack-deployment-redis:6379: All sentinels are unreachable. Retrying from scratch after 470ms. Last error: Connection is closed.
+2024-07-30T22:04:46.633Z ERROR Startup Error connecting to redis://***:***@fullstack-deployment-redis:6379: All sentinels are unreachable. Retrying from scratch after 480ms. Last error: Connection is closed.
+2024-07-30T22:04:48.146Z ERROR Startup Error connecting to redis://***:***@fullstack-deployment-redis:6379: All sentinels are unreachable. Retrying from scratch after 490ms. Last error: Connection is closed.
+2024-07-30T22:04:48.638Z ERROR Startup Error connecting to redis://***:***@fullstack-deployment-redis:6379: All sentinels are unreachable. Retrying from scratch after 500ms. Last error: Connection is closed.
+2024-07-30T22:04:50.193Z ERROR Startup Error connecting to redis://***:***@fullstack-deployment-redis:6379: All sentinels are unreachable. Retrying from scratch after 510ms. Last error: Connection is closed.
+2024-07-30T22:04:50.705Z ERROR Startup Error connecting to redis://***:***@fullstack-deployment-redis:6379: All sentinels are unreachable. Retrying from scratch after 520ms. Last error: Connection is closed.
+2024-07-30T22:04:51.227Z ERROR Startup Error connecting to redis://***:***@fullstack-deployment-redis:6379: All sentinels are unreachable. Retrying from scratch after 530ms. Last error: Connection is closed.
+2024-07-30T22:04:52.817Z ERROR Startup Error connecting to redis://***:***@fullstack-deployment-redis:6379: All sentinels are unreachable. Retrying from scratch after 540ms. Last error: Connection is closed.
+2024-07-30T22:04:53.359Z ERROR Startup Error connecting to redis://***:***@fullstack-deployment-redis:6379: All sentinels are unreachable. Retrying from scratch after 550ms. Last error: Connection is closed.
+2024-07-30T22:04:54.929Z ERROR Startup Error connecting to redis://***:***@fullstack-deployment-redis:6379: All sentinels are unreachable. Retrying from scratch after 560ms. Last error: Connection is closed.
+2024-07-30T22:04:55.494Z INFO Startup Connected to redis://***:***@fullstack-deployment-redis:6379
+2024-07-30T22:04:59.805Z INFO 0cac617b ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 40 ms: 200
+2024-07-30T22:04:59.815Z INFO 231957cd ::ffff:10.244.0.10 GET /api/v1/blocks?limit=10 in 37 ms: 200
+2024-07-30T22:04:59.818Z INFO f4503d30 ::ffff:10.244.0.10 GET /api/v1/blocks?limit=1&order=desc in 39 ms: 200
+2024-07-30T22:04:59.824Z INFO ebc4e71b ::ffff:10.244.0.10 GET /api/v1/contracts?limit=2 in 44 ms: 200
+2024-07-30T22:04:59.838Z INFO 9c21984b ::ffff:10.244.0.10 GET /api/v1/contracts?limit=2 in 56 ms: 200
+2024-07-30T22:04:59.857Z INFO d2d63971 ::ffff:10.244.0.10 GET /api/v1/network/exchangerate in 74 ms: 200
+2024-07-30T22:04:59.866Z WARN 4b546dac ::ffff:10.244.0.10 GET /api/v1/network/fees in 81 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:04:59.875Z INFO 2ef48a4c ::ffff:10.244.0.10 GET /api/v1/network/nodes?limit=2 in 90 ms: 200
+2024-07-30T22:04:59.943Z WARN 9413d582 ::ffff:10.244.0.10 GET /api/v1/network/supply in 158 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:04:59.952Z WARN 4b76050d ::ffff:10.244.0.10 GET /api/v1/network/stake in 163 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:04:59.967Z INFO 2970a53a ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 193 ms: 200
+2024-07-30T22:04:59.971Z INFO d94d4700 ::ffff:10.244.0.10 GET /api/v1/schedules?limit=2 in 181 ms: 200
+2024-07-30T22:04:59.973Z INFO 41f9c307 ::ffff:10.244.0.10 GET /api/v1/balances?limit=10 in 199 ms: 200
+2024-07-30T22:05:00.040Z INFO e7dc4ba8 ::ffff:10.244.0.10 GET /api/v1/balances?limit=10 in 264 ms: 200
+2024-07-30T22:05:00.055Z INFO dbab2c05 ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 287 ms: 200
+2024-07-30T22:05:00.060Z INFO 0ccd3497 ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 287 ms: 200
+2024-07-30T22:05:00.061Z INFO 7b2e06d7 ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 288 ms: 200
+2024-07-30T22:05:00.066Z INFO 4fc370f2 ::ffff:10.244.0.10 GET /api/v1/blocks/30 in 103 ms: 200
+2024-07-30T22:05:00.067Z INFO 31663048 ::ffff:10.244.0.10 GET /api/v1/accounts?account.id=0.0.111159&limit=1 in 104 ms: 200
+2024-07-30T22:05:00.080Z INFO 30301716 ::ffff:10.244.0.10 GET /api/v1/contracts/results?limit=2 in 297 ms: 200
+2024-07-30T22:05:00.081Z INFO 9037795f ::ffff:10.244.0.10 GET /api/v1/contracts/results?limit=2 in 298 ms: 200
+2024-07-30T22:05:00.081Z INFO 94562f92 ::ffff:10.244.0.10 GET /api/v1/contracts/results?limit=2 in 300 ms: 200
+2024-07-30T22:05:00.142Z INFO 7f941b53 ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 371 ms: 200
+2024-07-30T22:05:00.147Z INFO 603b7117 ::ffff:10.244.0.10 GET /api/v1/transactions?limit=1&order=desc in 353 ms: 200
+2024-07-30T22:05:00.148Z INFO fa688a1c ::ffff:10.244.0.10 GET /api/v1/balances?timestamp=1722377099.741&limit=1&order=desc in 371 ms: 200
+2024-07-30T22:05:00.151Z INFO 454d85d5 ::ffff:10.244.0.10 GET /api/v1/transactions?limit=1&result=success in 358 ms: 200
+2024-07-30T22:05:00.156Z INFO a0443454 ::ffff:10.244.0.10 GET /api/v1/transactions?order=asc&limit=10 in 365 ms: 200
+2024-07-30T22:05:00.160Z INFO 6c643178 ::ffff:10.244.0.10 GET /api/v1/transactions?limit=10 in 368 ms: 200
+2024-07-30T22:05:00.166Z INFO 6ff22cd8 ::ffff:10.244.0.10 GET /api/v1/transactions?limit=10&type=credit in 378 ms: 200
+2024-07-30T22:05:00.167Z INFO d2e49c63 ::ffff:10.244.0.10 GET /api/v1/transactions?limit=1 in 375 ms: 200
+2024-07-30T22:05:00.169Z INFO ca692e76 ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.111169/state in 195 ms: 200
+2024-07-30T22:05:00.171Z INFO a68840ae ::ffff:10.244.0.10 GET /api/v1/balances?account.id=0.0.111187 in 90 ms: 200
+2024-07-30T22:05:00.174Z INFO 43cdc836 ::ffff:10.244.0.19 GET /api/v1/network/nodes?limit=25 in 103 ms: 200
+2024-07-30T22:05:00.175Z INFO 2761a2ff ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.111169 in 207 ms: 200
+2024-07-30T22:05:00.178Z INFO 0518e59c ::ffff:10.244.0.10 GET /api/v1/tokens?limit=1&order=asc in 407 ms: 200
+2024-07-30T22:05:00.181Z INFO ef72cbd1 ::ffff:10.244.0.19 GET /api/v1/network/nodes?limit=25 in 5 ms: 200
+2024-07-30T22:05:00.249Z INFO 4229b279 ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159/nfts?limit=10 in 6 ms: 200
+2024-07-30T22:05:00.356Z INFO f93b1710 ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159/allowances/tokens?limit=10 in 6 ms: 200
+2024-07-30T22:05:00.368Z INFO 783c08f7 ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159 in 19 ms: 200
+2024-07-30T22:05:00.368Z INFO d49942f1 ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159/allowances/crypto?limit=10 in 7 ms: 200
+2024-07-30T22:05:00.372Z INFO 5b00c6ce ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.111169/results in 9 ms: 200
+2024-07-30T22:05:00.383Z INFO 9173d092 ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.111169/results/logs in 30 ms: 200
+2024-07-30T22:05:00.394Z INFO c2e1d94a ::ffff:10.244.0.10 GET /api/v1/contracts/results/0x2a86cbea13e6e19d6e01fb4dcae383a9bf9f014566ce9ca01f3a4be2158d6f16 in 33 ms: 200
+2024-07-30T22:05:00.460Z INFO 16ea8477 ::ffff:10.244.0.10 GET /api/v1/contracts/results/logs?limit=2 in 10 ms: 200
+2024-07-30T22:05:00.461Z INFO ee3812d4 ::ffff:10.244.0.10 GET /api/v1/transactions/0.0.111165-1570802922-660965500?scheduled=false in 7 ms: 200
+2024-07-30T22:05:00.462Z INFO 48f53b70 ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.111169/results/1570802912.691212000 in 13 ms: 200
+2024-07-30T22:05:00.463Z INFO c372ca83 ::ffff:10.244.0.10 GET /api/v1/contracts/results/0x2a86cbea13e6e19d6e01fb4dcae383a9bf9f014566ce9ca01f3a4be2158d6f16/actions in 12 ms: 200
+2024-07-30T22:05:00.468Z INFO 3cd17e48 ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159/rewards?limit=10 in 14 ms: 200
+2024-07-30T22:05:00.469Z INFO 6cc8b91d ::ffff:10.244.0.10 GET /api/v1/transactions?account.id=0.0.98&type=credit&limit=1 in 12 ms: 200
+2024-07-30T22:05:00.470Z INFO 596fef72 ::ffff:10.244.0.10 GET /api/v1/transactions?timestamp=gt%3A1570802933.985136&timestamp=lt%3A1570802935.985136&limit=1 in 13 ms: 200
+2024-07-30T22:05:00.949Z WARN e676b72c ::ffff:10.244.0.10 GET /api/v1/network/fees in 2 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:05:00.953Z WARN 7efdd41e ::ffff:10.244.0.10 GET /api/v1/network/supply in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:05:01.050Z WARN 47a146cd ::ffff:10.244.0.10 GET /api/v1/network/stake in 2 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:05:01.954Z WARN ba0e1098 ::ffff:10.244.0.10 GET /api/v1/network/fees in 2 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:05:01.956Z WARN 7584de8d ::ffff:10.244.0.10 GET /api/v1/network/supply in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:05:02.053Z WARN 6dd6c845 ::ffff:10.244.0.10 GET /api/v1/network/stake in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:05:02.958Z WARN d202a346 ::ffff:10.244.0.10 GET /api/v1/network/fees in 2 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:05:02.960Z WARN 55012942 ::ffff:10.244.0.10 GET /api/v1/network/supply in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:05:03.057Z WARN fd71ca02 ::ffff:10.244.0.10 GET /api/v1/network/stake in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:05:03.964Z WARN fee10676 ::ffff:10.244.0.10 GET /api/v1/network/fees in 2 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:05:03.965Z WARN 376e8f25 ::ffff:10.244.0.10 GET /api/v1/network/supply in 2 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:05:04.061Z WARN 5a55336a ::ffff:10.244.0.10 GET /api/v1/network/stake in 2 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:05:59.705Z INFO aa27bb2a ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 18 ms: 200
+2024-07-30T22:05:59.743Z INFO b2849db3 ::ffff:10.244.0.10 GET /api/v1/blocks?limit=10 in 50 ms: 200
+2024-07-30T22:05:59.744Z INFO 3b6a29de ::ffff:10.244.0.10 GET /api/v1/blocks?limit=1&order=desc in 51 ms: 200
+2024-07-30T22:05:59.747Z INFO 3304f41e ::ffff:10.244.0.10 GET /api/v1/contracts?limit=2 in 54 ms: 200
+2024-07-30T22:05:59.759Z INFO 8972f721 ::ffff:10.244.0.10 GET /api/v1/contracts?limit=2 in 59 ms: 200
+2024-07-30T22:05:59.764Z INFO a600805e ::ffff:10.244.0.10 GET /api/v1/network/exchangerate in 64 ms: 200
+2024-07-30T22:05:59.788Z INFO 1521468b ::ffff:10.244.0.10 GET /api/v1/network/fees in 88 ms: 200
+2024-07-30T22:05:59.792Z INFO 952085d9 ::ffff:10.244.0.10 GET /api/v1/tokens?limit=1&order=asc in 103 ms: 200
+2024-07-30T22:05:59.794Z WARN 2c44b46b ::ffff:10.244.0.10 GET /api/v1/network/supply in 92 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:05:59.795Z WARN 242358e4 ::ffff:10.244.0.10 GET /api/v1/network/stake in 93 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:05:59.841Z INFO bfea74b9 ::ffff:10.244.0.10 GET /api/v1/schedules?limit=2 in 139 ms: 200
+2024-07-30T22:05:59.847Z INFO 4a0de8bf ::ffff:10.244.0.10 GET /api/v1/network/nodes?limit=2 in 146 ms: 200
+2024-07-30T22:05:59.850Z INFO b85b8800 ::ffff:10.244.0.10 GET /api/v1/transactions?order=asc&limit=10 in 148 ms: 200
+2024-07-30T22:05:59.941Z INFO 131b8f89 ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 253 ms: 200
+2024-07-30T22:05:59.944Z INFO 5d937899 ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 255 ms: 200
+2024-07-30T22:05:59.949Z INFO 1de89778 ::ffff:10.244.0.10 GET /api/v1/contracts/results?limit=2 in 250 ms: 200
+2024-07-30T22:05:59.950Z INFO 73d3430b ::ffff:10.244.0.10 GET /api/v1/contracts/results?limit=2 in 251 ms: 200
+2024-07-30T22:05:59.950Z INFO 07977645 ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 263 ms: 200
+2024-07-30T22:05:59.956Z INFO 06e658e0 ::ffff:10.244.0.10 GET /api/v1/blocks/499 in 198 ms: 200
+2024-07-30T22:05:59.957Z INFO c4702b40 ::ffff:10.244.0.10 GET /api/v1/contracts/results?limit=2 in 257 ms: 200
+2024-07-30T22:05:59.964Z INFO 28dc7e76 ::ffff:10.244.0.10 GET /api/v1/transactions?limit=10 in 261 ms: 200
+2024-07-30T22:05:59.968Z INFO ebd379ce ::ffff:10.244.0.10 GET /api/v1/transactions?limit=10&type=credit in 266 ms: 200
+2024-07-30T22:05:59.969Z INFO 4282c8c1 ::ffff:10.244.0.10 GET /api/v1/transactions?limit=1&result=success in 266 ms: 200
+2024-07-30T22:05:59.974Z INFO 57257d7e ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.111759/state in 185 ms: 200
+2024-07-30T22:05:59.975Z INFO 0df65470 ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 285 ms: 200
+2024-07-30T22:05:59.975Z INFO 6a10ef08 ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159 in 226 ms: 200
+2024-07-30T22:05:59.977Z INFO 4c9d62c7 ::ffff:10.244.0.10 GET /api/v1/transactions?limit=1&order=desc in 273 ms: 200
+2024-07-30T22:05:59.979Z INFO 8c4518f4 ::ffff:10.244.0.10 GET /api/v1/balances?limit=10 in 287 ms: 200
+2024-07-30T22:05:59.980Z INFO 0312cd61 ::ffff:10.244.0.10 GET /api/v1/balances?limit=10 in 288 ms: 200
+2024-07-30T22:05:59.982Z INFO d8e6e967 ::ffff:10.244.0.10 GET /api/v1/transactions?limit=1 in 278 ms: 200
+2024-07-30T22:05:59.983Z INFO c8adeeeb ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.111759 in 222 ms: 200
+2024-07-30T22:05:59.990Z INFO 66068735 ::ffff:10.244.0.10 GET /api/v1/balances?timestamp=1722377159.67&limit=1&order=desc in 298 ms: 200
+2024-07-30T22:05:59.991Z INFO 520c0dab ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 301 ms: 200
+2024-07-30T22:05:59.995Z INFO 1426ac2a ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159/allowances/crypto?limit=10 in 10 ms: 200
+2024-07-30T22:05:59.995Z INFO cf750979 ::ffff:10.244.0.10 GET /api/v1/accounts?account.id=0.0.111159&limit=1 in 9 ms: 200
+2024-07-30T22:05:59.996Z INFO a0d534ba ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.61457/results in 11 ms: 200
+2024-07-30T22:05:59.997Z INFO 5e1abf2d ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159/rewards?limit=10 in 13 ms: 200
+2024-07-30T22:05:59.998Z INFO 9f2d6fdc ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.61457/results/logs in 12 ms: 200
+2024-07-30T22:06:00.001Z INFO f04221b4 ::ffff:10.244.0.10 GET /api/v1/contracts/results/0x08f2efcc6795bf8b7fd83f95445ab696250e21b58ebe1126a7302cf46e3d7695 in 10 ms: 200
+2024-07-30T22:06:00.044Z INFO 4626ea28 ::ffff:10.244.0.10 GET /api/v1/balances?account.id=0.0.111762 in 2 ms: 200
+2024-07-30T22:06:00.052Z INFO 164e15ea ::ffff:10.244.0.10 GET /api/v1/contracts/results/logs?limit=2 in 4 ms: 200
+2024-07-30T22:06:00.054Z INFO 4cc4ae14 ::ffff:10.244.0.10 GET /api/v1/transactions/0.0.2-1570807047-899581000?scheduled=false in 3 ms: 200
+2024-07-30T22:06:00.056Z INFO 0d97765d ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159/nfts?limit=10 in 2 ms: 200
+2024-07-30T22:06:00.059Z INFO 9085dfb3 ::ffff:10.244.0.10 GET /api/v1/transactions?account.id=0.0.98&type=credit&limit=1 in 9 ms: 200
+2024-07-30T22:06:00.061Z INFO d5c09adc ::ffff:10.244.0.10 GET /api/v1/transactions?timestamp=gt%3A1570807056.948334001&timestamp=lt%3A1570807058.948334001&limit=1 in 6 ms: 200
+2024-07-30T22:06:00.062Z INFO 6fc026b1 ::ffff:10.244.0.10 GET /api/v1/contracts/results/0x08f2efcc6795bf8b7fd83f95445ab696250e21b58ebe1126a7302cf46e3d7695/actions in 5 ms: 200
+2024-07-30T22:06:00.062Z INFO 515e2abf ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159/allowances/tokens?limit=10 in 5 ms: 200
+2024-07-30T22:06:00.063Z INFO 9db4fdde ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.61457/results/1570806712.186813001 in 7 ms: 200
+2024-07-30T22:06:00.799Z WARN 4734a6ab ::ffff:10.244.0.10 GET /api/v1/network/supply in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:06:00.799Z WARN d493e2dc ::ffff:10.244.0.10 GET /api/v1/network/stake in 2 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:06:01.803Z WARN 05c011dc ::ffff:10.244.0.10 GET /api/v1/network/stake in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:06:01.804Z WARN 30076a3f ::ffff:10.244.0.10 GET /api/v1/network/supply in 2 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:06:02.842Z WARN 5d009acc ::ffff:10.244.0.10 GET /api/v1/network/stake in 15 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:06:02.843Z WARN 1befec99 ::ffff:10.244.0.10 GET /api/v1/network/supply in 15 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:06:03.845Z WARN df782a53 ::ffff:10.244.0.10 GET /api/v1/network/stake in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:06:03.855Z WARN 26f441d5 ::ffff:10.244.0.10 GET /api/v1/network/supply in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:06:59.691Z INFO 366a6133 ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 11 ms: 200
+2024-07-30T22:06:59.697Z INFO 8ba03d2d ::ffff:10.244.0.10 GET /api/v1/blocks?limit=10 in 14 ms: 200
+2024-07-30T22:06:59.698Z INFO 098bef38 ::ffff:10.244.0.10 GET /api/v1/blocks?limit=1&order=desc in 14 ms: 200
+2024-07-30T22:06:59.745Z INFO 5f591f7a ::ffff:10.244.0.10 GET /api/v1/contracts?limit=2 in 60 ms: 200
+2024-07-30T22:06:59.752Z INFO b7a47a1a ::ffff:10.244.0.10 GET /api/v1/contracts?limit=2 in 66 ms: 200
+2024-07-30T22:06:59.754Z INFO dc75542b ::ffff:10.244.0.10 GET /api/v1/network/exchangerate in 68 ms: 200
+2024-07-30T22:06:59.756Z INFO 4431df2a ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 74 ms: 200
+2024-07-30T22:06:59.761Z INFO 80470348 ::ffff:10.244.0.10 GET /api/v1/network/fees in 75 ms: 200
+2024-07-30T22:06:59.762Z INFO 4be9dc3e ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 80 ms: 200
+2024-07-30T22:06:59.764Z WARN 8dc8ef5e ::ffff:10.244.0.10 GET /api/v1/network/stake in 77 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:06:59.764Z WARN 5e5f03a6 ::ffff:10.244.0.10 GET /api/v1/network/supply in 78 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:06:59.764Z INFO 982ca0b4 ::ffff:10.244.0.10 GET /api/v1/network/nodes?limit=2 in 78 ms: 200
+2024-07-30T22:06:59.765Z INFO 9f1cc730 ::ffff:10.244.0.10 GET /api/v1/schedules?limit=2 in 78 ms: 200
+2024-07-30T22:06:59.768Z INFO 0acf75fd ::ffff:10.244.0.10 GET /api/v1/transactions?order=asc&limit=10 in 80 ms: 200
+2024-07-30T22:06:59.841Z INFO 3dad378a ::ffff:10.244.0.10 GET /api/v1/contracts/results?limit=2 in 155 ms: 200
+2024-07-30T22:06:59.842Z INFO 808b7f5f ::ffff:10.244.0.10 GET /api/v1/contracts/results?limit=2 in 156 ms: 200
+2024-07-30T22:06:59.846Z INFO d85b93ab ::ffff:10.244.0.10 GET /api/v1/transactions?limit=10&type=credit in 158 ms: 200
+2024-07-30T22:06:59.848Z INFO 3274f7aa ::ffff:10.244.0.10 GET /api/v1/transactions?limit=10 in 160 ms: 200
+2024-07-30T22:06:59.850Z INFO 2b9547e5 ::ffff:10.244.0.10 GET /api/v1/contracts/results?limit=2 in 165 ms: 200
+2024-07-30T22:06:59.856Z INFO 4d501546 ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 175 ms: 200
+2024-07-30T22:06:59.857Z INFO acacbdc9 ::ffff:10.244.0.10 GET /api/v1/transactions?limit=1 in 169 ms: 200
+2024-07-30T22:06:59.859Z INFO 55db630d ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 177 ms: 200
+2024-07-30T22:06:59.861Z INFO 44ab984d ::ffff:10.244.0.10 GET /api/v1/balances?limit=10 in 179 ms: 200
+2024-07-30T22:06:59.861Z INFO daf811d5 ::ffff:10.244.0.10 GET /api/v1/balances?limit=10 in 178 ms: 200
+2024-07-30T22:06:59.941Z INFO daacc856 ::ffff:10.244.0.10 GET /api/v1/transactions?limit=1&order=desc in 252 ms: 200
+2024-07-30T22:06:59.942Z INFO 7d885bb5 ::ffff:10.244.0.10 GET /api/v1/transactions?limit=1&result=success in 254 ms: 200
+2024-07-30T22:06:59.943Z INFO 3433acc7 ::ffff:10.244.0.10 GET /api/v1/tokens?limit=1&order=asc in 262 ms: 200
+2024-07-30T22:06:59.944Z INFO 4b920ecb ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159 in 84 ms: 200
+2024-07-30T22:06:59.947Z INFO 2bf5920a ::ffff:10.244.0.10 GET /api/v1/balances?timestamp=1722377219.671&limit=1&order=desc in 264 ms: 200
+2024-07-30T22:06:59.948Z INFO 1c1fe2ef ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 267 ms: 200
+2024-07-30T22:06:59.950Z INFO f6d303ca ::ffff:10.244.0.10 GET /api/v1/blocks/976 in 2 ms: 200
+2024-07-30T22:06:59.951Z INFO c817fe8d ::ffff:10.244.0.10 GET /api/v1/balances?account.id=0.0.111764 in 2 ms: 200
+2024-07-30T22:06:59.952Z INFO e2d47166 ::ffff:10.244.0.10 GET /api/v1/transactions?timestamp=gt%3A1570811457.442544001&timestamp=lt%3A1570811459.442544001&limit=1 in 3 ms: 200
+2024-07-30T22:06:59.956Z INFO 2c157065 ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.111759 in 6 ms: 200
+2024-07-30T22:06:59.956Z INFO f7cb0fe4 ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.111759/state in 3 ms: 200
+2024-07-30T22:06:59.958Z INFO 9cbf787f ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159/nfts?limit=10 in 4 ms: 200
+2024-07-30T22:06:59.959Z INFO cddb12ab ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159/allowances/tokens?limit=10 in 5 ms: 200
+2024-07-30T22:06:59.962Z INFO 45b59f5f ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.61457/results/logs in 8 ms: 200
+2024-07-30T22:06:59.963Z INFO 7a7038b4 ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.61457/results in 6 ms: 200
+2024-07-30T22:06:59.963Z INFO 9dfa9f67 ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159/allowances/crypto?limit=10 in 6 ms: 200
+2024-07-30T22:06:59.963Z INFO bc9cef52 ::ffff:10.244.0.10 GET /api/v1/accounts?account.id=0.0.111159&limit=1 in 6 ms: 200
+2024-07-30T22:06:59.965Z INFO 757b802f ::ffff:10.244.0.10 GET /api/v1/transactions/0.0.2-1570811440-903246000?scheduled=false in 4 ms: 200
+2024-07-30T22:06:59.967Z INFO 1c1b5b5f ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159/rewards?limit=10 in 6 ms: 200
+2024-07-30T22:06:59.967Z INFO 246a7eff ::ffff:10.244.0.10 GET /api/v1/contracts/results/0x8039f2e8ebc02ff166b6af9112a343afab0465c37a536ae84e01d846b8f45ff5 in 10 ms: 200
+2024-07-30T22:06:59.968Z INFO eb53a148 ::ffff:10.244.0.10 GET /api/v1/transactions?account.id=0.0.98&type=credit&limit=1 in 11 ms: 200
+2024-07-30T22:06:59.968Z INFO 33a2db3d ::ffff:10.244.0.10 GET /api/v1/contracts/results/logs?limit=2 in 2 ms: 200
+2024-07-30T22:07:00.049Z INFO 08919226 ::ffff:10.244.0.10 GET /api/v1/contracts/results/0x8039f2e8ebc02ff166b6af9112a343afab0465c37a536ae84e01d846b8f45ff5/actions in 3 ms: 200
+2024-07-30T22:07:00.050Z INFO 03a0dfd2 ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.61457/results/1570808888.940096000 in 4 ms: 200
+2024-07-30T22:07:00.945Z WARN 2c1f8de4 ::ffff:10.244.0.10 GET /api/v1/network/stake in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:07:00.946Z WARN 94ea0369 ::ffff:10.244.0.10 GET /api/v1/network/supply in 2 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:07:01.036Z INFO f7994daa ::ffff:10.244.0.19 GET /api/v1/network/nodes?limit=25 in 2 ms: 200
+2024-07-30T22:07:01.949Z WARN 047eb3b1 ::ffff:10.244.0.10 GET /api/v1/network/stake in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:07:01.950Z WARN 5ff9f41d ::ffff:10.244.0.10 GET /api/v1/network/supply in 2 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:07:02.954Z WARN c1529003 ::ffff:10.244.0.10 GET /api/v1/network/stake in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:07:02.955Z WARN cc32aba3 ::ffff:10.244.0.10 GET /api/v1/network/supply in 2 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:07:03.958Z WARN adb82cbd ::ffff:10.244.0.10 GET /api/v1/network/stake in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:07:03.959Z WARN d190d61d ::ffff:10.244.0.10 GET /api/v1/network/supply in 2 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:07:09.024Z INFO 33ca27d0 ::ffff:10.244.0.31 GET /api/v1/network/exchangerate in 3 ms: 200
+2024-07-30T22:07:09.726Z INFO 393dfde6 ::ffff:10.244.0.31 GET /api/v1/network/exchangerate in 2 ms: 200
+2024-07-30T22:07:09.900Z INFO dfc78eac ::ffff:10.244.0.31 GET /api/v1/network/exchangerate in 1 ms: 200
+2024-07-30T22:07:11.696Z INFO cc2a4204 ::ffff:10.244.0.31 GET /api/v1/network/fees in 4 ms: 200
+2024-07-30T22:07:59.689Z INFO cb132217 ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 9 ms: 200
+2024-07-30T22:07:59.695Z INFO c04bea2b ::ffff:10.244.0.10 GET /api/v1/blocks?limit=10 in 13 ms: 200
+2024-07-30T22:07:59.696Z INFO caa4fef2 ::ffff:10.244.0.10 GET /api/v1/blocks?limit=1&order=desc in 13 ms: 200
+2024-07-30T22:07:59.699Z INFO ba495d77 ::ffff:10.244.0.10 GET /api/v1/contracts?limit=2 in 16 ms: 200
+2024-07-30T22:07:59.746Z INFO 62e793aa ::ffff:10.244.0.10 GET /api/v1/contracts?limit=2 in 61 ms: 200
+2024-07-30T22:07:59.748Z INFO 88bd4aa8 ::ffff:10.244.0.10 GET /api/v1/network/exchangerate in 62 ms: 200
+2024-07-30T22:07:59.753Z INFO 4f6f2823 ::ffff:10.244.0.10 GET /api/v1/network/fees in 66 ms: 200
+2024-07-30T22:07:59.754Z INFO caa0e4de ::ffff:10.244.0.10 GET /api/v1/network/nodes?limit=2 in 67 ms: 200
+2024-07-30T22:07:59.755Z WARN 5ebf728b ::ffff:10.244.0.10 GET /api/v1/network/stake in 68 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:07:59.756Z WARN 8eca5139 ::ffff:10.244.0.10 GET /api/v1/network/supply in 69 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:07:59.757Z INFO 7bf6004c ::ffff:10.244.0.10 GET /api/v1/schedules?limit=2 in 70 ms: 200
+2024-07-30T22:07:59.761Z INFO 50a2a623 ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 80 ms: 200
+2024-07-30T22:07:59.763Z INFO 46f1efe4 ::ffff:10.244.0.10 GET /api/v1/transactions?order=asc&limit=10 in 76 ms: 200
+2024-07-30T22:07:59.843Z INFO 148dc7f3 ::ffff:10.244.0.10 GET /api/v1/balances?timestamp=1722377279.672&limit=1&order=desc in 161 ms: 200
+2024-07-30T22:07:59.845Z INFO 03efd7f3 ::ffff:10.244.0.10 GET /api/v1/blocks/1029 in 138 ms: 200
+2024-07-30T22:07:59.847Z INFO 4a75912c ::ffff:10.244.0.10 GET /api/v1/contracts/results?limit=2 in 164 ms: 200
+2024-07-30T22:07:59.847Z INFO d500f8f6 ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159 in 141 ms: 200
+2024-07-30T22:07:59.849Z INFO 7868eacd ::ffff:10.244.0.10 GET /api/v1/contracts/results?limit=2 in 166 ms: 200
+2024-07-30T22:07:59.850Z INFO 4c78025e ::ffff:10.244.0.10 GET /api/v1/contracts/results?limit=2 in 164 ms: 200
+2024-07-30T22:07:59.850Z INFO de8ecdbe ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.111759/state in 98 ms: 200
+2024-07-30T22:07:59.852Z INFO c6880c2b ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 172 ms: 200
+2024-07-30T22:07:59.855Z INFO ede015a0 ::ffff:10.244.0.10 GET /api/v1/transactions?limit=10 in 168 ms: 200
+2024-07-30T22:07:59.858Z INFO 326eea6b ::ffff:10.244.0.10 GET /api/v1/transactions?limit=10&type=credit in 171 ms: 200
+2024-07-30T22:07:59.859Z INFO d09dc373 ::ffff:10.244.0.10 GET /api/v1/transactions?limit=1 in 172 ms: 200
+2024-07-30T22:07:59.861Z INFO b8368e96 ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 180 ms: 200
+2024-07-30T22:07:59.862Z INFO 64a324bb ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 181 ms: 200
+2024-07-30T22:07:59.862Z INFO a4ad1a17 ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 181 ms: 200
+2024-07-30T22:07:59.864Z INFO c13e432d ::ffff:10.244.0.10 GET /api/v1/transactions?limit=1&result=success in 177 ms: 200
+2024-07-30T22:07:59.865Z INFO f620dc0f ::ffff:10.244.0.10 GET /api/v1/transactions?limit=1&order=desc in 177 ms: 200
+2024-07-30T22:07:59.866Z INFO 03ae7c68 ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159/allowances/tokens?limit=10 in 81 ms: 200
+2024-07-30T22:07:59.866Z INFO 2054db6c ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.111759 in 159 ms: 200
+2024-07-30T22:07:59.868Z INFO 498e8591 ::ffff:10.244.0.10 GET /api/v1/balances?limit=10 in 187 ms: 200
+2024-07-30T22:07:59.870Z INFO 90602560 ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.61457/results in 6 ms: 200
+2024-07-30T22:07:59.871Z INFO 050e3c9f ::ffff:10.244.0.10 GET /api/v1/tokens?limit=1&order=asc in 190 ms: 200
+2024-07-30T22:07:59.871Z INFO c8888415 ::ffff:10.244.0.10 GET /api/v1/balances?limit=10 in 189 ms: 200
+2024-07-30T22:07:59.876Z INFO 4176e142 ::ffff:10.244.0.10 GET /api/v1/accounts?account.id=0.0.111159&limit=1 in 6 ms: 200
+2024-07-30T22:07:59.879Z INFO 069524ba ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.61457/results/logs in 12 ms: 200
+2024-07-30T22:07:59.879Z INFO 28416808 ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159/allowances/crypto?limit=10 in 6 ms: 200
+2024-07-30T22:07:59.879Z INFO d484dc50 ::ffff:10.244.0.10 GET /api/v1/contracts/results/0x8039f2e8ebc02ff166b6af9112a343afab0465c37a536ae84e01d846b8f45ff5 in 12 ms: 200
+2024-07-30T22:07:59.880Z INFO 561eca70 ::ffff:10.244.0.10 GET /api/v1/transactions/0.0.2-1570811961-258847000?scheduled=false in 3 ms: 200
+2024-07-30T22:07:59.881Z INFO bdd0978d ::ffff:10.244.0.10 GET /api/v1/transactions?account.id=0.0.98&type=credit&limit=1 in 8 ms: 200
+2024-07-30T22:07:59.882Z INFO 17c2a930 ::ffff:10.244.0.10 GET /api/v1/transactions?timestamp=gt%3A1570811970.290027001&timestamp=lt%3A1570811972.290027001&limit=1 in 9 ms: 200
+2024-07-30T22:07:59.882Z INFO f86b92bc ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159/nfts?limit=10 in 6 ms: 200
+2024-07-30T22:07:59.883Z INFO 798da2fc ::ffff:10.244.0.10 GET /api/v1/balances?account.id=0.0.111764 in 3 ms: 200
+2024-07-30T22:07:59.884Z INFO ddaccfb1 ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159/rewards?limit=10 in 7 ms: 200
+2024-07-30T22:07:59.942Z INFO 3acd4ddc ::ffff:10.244.0.10 GET /api/v1/contracts/results/logs?limit=2 in 59 ms: 200
+2024-07-30T22:07:59.942Z INFO 9a0271c9 ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.61457/results/1570808888.940096000 in 60 ms: 200
+2024-07-30T22:07:59.948Z INFO 56d281f3 ::ffff:10.244.0.10 GET /api/v1/contracts/results/0x8039f2e8ebc02ff166b6af9112a343afab0465c37a536ae84e01d846b8f45ff5/actions in 2 ms: 200
+2024-07-30T22:08:00.759Z WARN 1398a948 ::ffff:10.244.0.10 GET /api/v1/network/stake in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:08:00.761Z WARN 979fcd2d ::ffff:10.244.0.10 GET /api/v1/network/supply in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:08:01.764Z WARN 314c8aae ::ffff:10.244.0.10 GET /api/v1/network/stake in 2 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:08:01.764Z WARN 9f0bf092 ::ffff:10.244.0.10 GET /api/v1/network/supply in 2 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:08:02.768Z WARN 8a81ac9f ::ffff:10.244.0.10 GET /api/v1/network/stake in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:08:02.768Z WARN 85d2a48e ::ffff:10.244.0.10 GET /api/v1/network/supply in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:08:03.772Z WARN 8379b107 ::ffff:10.244.0.10 GET /api/v1/network/stake in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:08:03.772Z WARN b67050e1 ::ffff:10.244.0.10 GET /api/v1/network/supply in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:08:59.692Z INFO 5a041245 ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 11 ms: 200
+2024-07-30T22:08:59.697Z INFO b6db7a60 ::ffff:10.244.0.10 GET /api/v1/blocks?limit=10 in 10 ms: 200
+2024-07-30T22:08:59.698Z INFO 993d9daa ::ffff:10.244.0.10 GET /api/v1/blocks?limit=1&order=desc in 11 ms: 200
+2024-07-30T22:08:59.744Z INFO a52bad4d ::ffff:10.244.0.10 GET /api/v1/contracts?limit=2 in 57 ms: 200
+2024-07-30T22:08:59.749Z INFO 8b1f4f93 ::ffff:10.244.0.10 GET /api/v1/contracts?limit=2 in 61 ms: 200
+2024-07-30T22:08:59.753Z INFO e6fc4b7b ::ffff:10.244.0.10 GET /api/v1/network/exchangerate in 65 ms: 200
+2024-07-30T22:08:59.755Z INFO 07193d3a ::ffff:10.244.0.10 GET /api/v1/tokens?limit=1&order=asc in 73 ms: 200
+2024-07-30T22:08:59.762Z INFO 5d334e3a ::ffff:10.244.0.10 GET /api/v1/network/fees in 74 ms: 200
+2024-07-30T22:08:59.764Z INFO e13b058f ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 82 ms: 200
+2024-07-30T22:08:59.765Z WARN 1162fca1 ::ffff:10.244.0.10 GET /api/v1/network/supply in 76 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:08:59.843Z INFO 8d8afdd7 ::ffff:10.244.0.10 GET /api/v1/network/nodes?limit=2 in 154 ms: 200
+2024-07-30T22:08:59.844Z WARN d172ee6a ::ffff:10.244.0.10 GET /api/v1/network/stake in 155 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:08:59.848Z INFO e3396afb ::ffff:10.244.0.10 GET /api/v1/schedules?limit=2 in 159 ms: 200
+2024-07-30T22:08:59.849Z INFO a36b0b1b ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 168 ms: 200
+2024-07-30T22:08:59.853Z INFO bff43809 ::ffff:10.244.0.10 GET /api/v1/transactions?order=asc&limit=10 in 164 ms: 200
+2024-07-30T22:08:59.853Z INFO 1800699d ::ffff:10.244.0.10 GET /api/v1/transactions?limit=10&type=credit in 164 ms: 200
+2024-07-30T22:08:59.855Z INFO 834da127 ::ffff:10.244.0.10 GET /api/v1/blocks/1029 in 153 ms: 200
+2024-07-30T22:08:59.856Z INFO 819297cd ::ffff:10.244.0.10 GET /api/v1/accounts?account.id=0.0.111159&limit=1 in 154 ms: 200
+2024-07-30T22:08:59.857Z INFO ed42d37d ::ffff:10.244.0.10 GET /api/v1/transactions?limit=10 in 167 ms: 200
+2024-07-30T22:08:59.857Z INFO 75a2c14d ::ffff:10.244.0.10 GET /api/v1/transactions?limit=1 in 167 ms: 200
+2024-07-30T22:08:59.857Z INFO 3e09f116 ::ffff:10.244.0.10 GET /api/v1/transactions?limit=1&result=success in 167 ms: 200
+2024-07-30T22:08:59.858Z INFO 7c8cb510 ::ffff:10.244.0.10 GET /api/v1/transactions?limit=1&order=desc in 167 ms: 200
+2024-07-30T22:08:59.859Z INFO 786e331a ::ffff:10.244.0.10 GET /api/v1/balances?limit=10 in 177 ms: 200
+2024-07-30T22:08:59.861Z INFO db678d64 ::ffff:10.244.0.10 GET /api/v1/contracts/results?limit=2 in 173 ms: 200
+2024-07-30T22:08:59.861Z INFO 3e9af05f ::ffff:10.244.0.10 GET /api/v1/contracts/results?limit=2 in 174 ms: 200
+2024-07-30T22:08:59.862Z INFO bfc88f57 ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 180 ms: 200
+2024-07-30T22:08:59.864Z INFO 5861a17a ::ffff:10.244.0.10 GET /api/v1/contracts/results?limit=2 in 176 ms: 200
+2024-07-30T22:08:59.868Z INFO 774620cf ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.111759/state in 110 ms: 200
+2024-07-30T22:08:59.869Z INFO 9f4bc5dd ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159/allowances/crypto?limit=10 in 102 ms: 200
+2024-07-30T22:08:59.871Z INFO 132bb8fb ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 190 ms: 200
+2024-07-30T22:08:59.878Z INFO bc051071 ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159/nfts?limit=10 in 1 ms: 200
+2024-07-30T22:08:59.880Z INFO 1953b815 ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.61457/results/logs in 4 ms: 200
+2024-07-30T22:08:59.943Z INFO 568d00f5 ::ffff:10.244.0.10 GET /api/v1/balances?timestamp=1722377339.673&limit=1&order=desc in 260 ms: 200
+2024-07-30T22:08:59.944Z INFO 76e55d59 ::ffff:10.244.0.10 GET /api/v1/transactions/0.0.2-1570811961-258847000?scheduled=false in 69 ms: 200
+2024-07-30T22:08:59.946Z INFO e4602eb9 ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 264 ms: 200
+2024-07-30T22:08:59.946Z INFO db58fc58 ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.61457/results in 70 ms: 200
+2024-07-30T22:08:59.946Z INFO be0001b5 ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159 in 86 ms: 200
+2024-07-30T22:08:59.947Z INFO 1a09091e ::ffff:10.244.0.10 GET /api/v1/balances?limit=10 in 264 ms: 200
+2024-07-30T22:08:59.949Z INFO 6a48eb50 ::ffff:10.244.0.10 GET /api/v1/contracts/results/0x8039f2e8ebc02ff166b6af9112a343afab0465c37a536ae84e01d846b8f45ff5 in 72 ms: 200
+2024-07-30T22:08:59.949Z INFO ce350274 ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.111759 in 200 ms: 200
+2024-07-30T22:08:59.951Z INFO 64c9b46f ::ffff:10.244.0.10 GET /api/v1/transactions?timestamp=gt%3A1570811970.290027001&timestamp=lt%3A1570811972.290027001&limit=1 in 75 ms: 200
+2024-07-30T22:08:59.951Z INFO eb8adcfe ::ffff:10.244.0.10 GET /api/v1/transactions?account.id=0.0.98&type=credit&limit=1 in 77 ms: 200
+2024-07-30T22:08:59.954Z INFO 59aa02b3 ::ffff:10.244.0.10 GET /api/v1/balances?account.id=0.0.111764 in 3 ms: 200
+2024-07-30T22:08:59.955Z INFO acf8ec20 ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159/rewards?limit=10 in 7 ms: 200
+2024-07-30T22:08:59.955Z INFO 886dbe8a ::ffff:10.244.0.10 GET /api/v1/contracts/results/logs?limit=2 in 6 ms: 200
+2024-07-30T22:08:59.956Z INFO ad47518b ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159/allowances/tokens?limit=10 in 3 ms: 200
+2024-07-30T22:08:59.958Z INFO b4e39609 ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.61457/results/1570808888.940096000 in 3 ms: 200
+2024-07-30T22:08:59.959Z INFO f5196eb2 ::ffff:10.244.0.10 GET /api/v1/contracts/results/0x8039f2e8ebc02ff166b6af9112a343afab0465c37a536ae84e01d846b8f45ff5/actions in 4 ms: 200
+2024-07-30T22:09:00.768Z WARN 63f5f05a ::ffff:10.244.0.10 GET /api/v1/network/supply in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:09:00.848Z WARN b60a58f6 ::ffff:10.244.0.10 GET /api/v1/network/stake in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:09:01.052Z INFO e4dd2991 ::ffff:10.244.0.19 GET /api/v1/network/nodes?limit=25 in 4 ms: 200
+2024-07-30T22:09:01.772Z WARN dd69d36e ::ffff:10.244.0.10 GET /api/v1/network/supply in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:09:01.852Z WARN 5fa00723 ::ffff:10.244.0.10 GET /api/v1/network/stake in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:09:02.775Z WARN 7ff37886 ::ffff:10.244.0.10 GET /api/v1/network/supply in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:09:02.856Z WARN 3758bd8a ::ffff:10.244.0.10 GET /api/v1/network/stake in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:09:03.779Z WARN d7eadce7 ::ffff:10.244.0.10 GET /api/v1/network/supply in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:09:03.859Z WARN 5208785d ::ffff:10.244.0.10 GET /api/v1/network/stake in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:09:22.953Z INFO e292e7d6 ::ffff:10.244.0.31 GET /api/v1/network/fees in 30 ms: 200
+2024-07-30T22:09:26.238Z INFO fc9bd4f7 ::ffff:10.244.0.31 GET /api/v1/network/fees in 4 ms: 200
+2024-07-30T22:09:59.691Z INFO 5199a64d ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 8 ms: 200
+2024-07-30T22:09:59.693Z INFO de818a37 ::ffff:10.244.0.10 GET /api/v1/blocks?limit=10 in 7 ms: 200
+2024-07-30T22:09:59.700Z INFO 1b2a065e ::ffff:10.244.0.10 GET /api/v1/blocks?limit=1&order=desc in 14 ms: 200
+2024-07-30T22:09:59.701Z INFO c4722450 ::ffff:10.244.0.10 GET /api/v1/contracts?limit=2 in 15 ms: 200
+2024-07-30T22:09:59.747Z INFO dcbec307 ::ffff:10.244.0.10 GET /api/v1/contracts?limit=2 in 61 ms: 200
+2024-07-30T22:09:59.750Z INFO 961d65c3 ::ffff:10.244.0.10 GET /api/v1/network/exchangerate in 63 ms: 200
+2024-07-30T22:09:59.756Z INFO 38d1f8a2 ::ffff:10.244.0.10 GET /api/v1/network/fees in 69 ms: 200
+2024-07-30T22:09:59.756Z INFO 33ae372f ::ffff:10.244.0.10 GET /api/v1/network/nodes?limit=2 in 69 ms: 200
+2024-07-30T22:09:59.757Z WARN 51f0c4b6 ::ffff:10.244.0.10 GET /api/v1/network/stake in 70 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:09:59.843Z WARN 104596ca ::ffff:10.244.0.10 GET /api/v1/network/supply in 155 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:09:59.844Z INFO 5ca0ed52 ::ffff:10.244.0.10 GET /api/v1/schedules?limit=2 in 157 ms: 200
+2024-07-30T22:09:59.848Z INFO b6c3a6ce ::ffff:10.244.0.10 GET /api/v1/transactions?limit=10&type=credit in 161 ms: 200
+2024-07-30T22:09:59.852Z INFO c8fbbc0a ::ffff:10.244.0.10 GET /api/v1/transactions?order=asc&limit=10 in 163 ms: 200
+2024-07-30T22:09:59.853Z INFO f00e911d ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 169 ms: 200
+2024-07-30T22:09:59.854Z INFO 8637769c ::ffff:10.244.0.10 GET /api/v1/transactions?limit=10 in 164 ms: 200
+2024-07-30T22:09:59.854Z INFO 71a80af8 ::ffff:10.244.0.10 GET /api/v1/transactions?limit=1 in 164 ms: 200
+2024-07-30T22:09:59.856Z INFO 18312df3 ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 173 ms: 200
+2024-07-30T22:09:59.857Z INFO e9616c0e ::ffff:10.244.0.10 GET /api/v1/transactions?limit=1&result=success in 167 ms: 200
+2024-07-30T22:09:59.858Z INFO 7cbd6cfa ::ffff:10.244.0.10 GET /api/v1/accounts?account.id=0.0.111159&limit=1 in 155 ms: 200
+2024-07-30T22:09:59.859Z INFO b81d9a3a ::ffff:10.244.0.10 GET /api/v1/transactions?limit=1&order=desc in 169 ms: 200
+2024-07-30T22:09:59.941Z INFO 6d604d0d ::ffff:10.244.0.10 GET /api/v1/balances?limit=10 in 256 ms: 200
+2024-07-30T22:09:59.942Z INFO 0c820590 ::ffff:10.244.0.10 GET /api/v1/tokens?limit=1&order=asc in 258 ms: 200
+2024-07-30T22:09:59.944Z INFO bce13499 ::ffff:10.244.0.10 GET /api/v1/contracts/results?limit=2 in 258 ms: 200
+2024-07-30T22:09:59.944Z INFO f2023774 ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 260 ms: 200
+2024-07-30T22:09:59.945Z INFO 55d98dc4 ::ffff:10.244.0.10 GET /api/v1/blocks/1029 in 241 ms: 200
+2024-07-30T22:09:59.947Z INFO 00571a09 ::ffff:10.244.0.10 GET /api/v1/contracts/results?limit=2 in 260 ms: 200
+2024-07-30T22:09:59.947Z INFO 01b472f5 ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.111759/state in 195 ms: 200
+2024-07-30T22:09:59.947Z INFO 551acff3 ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159/allowances/tokens?limit=10 in 86 ms: 200
+2024-07-30T22:09:59.948Z INFO 86867c48 ::ffff:10.244.0.10 GET /api/v1/contracts/results?limit=2 in 262 ms: 200
+2024-07-30T22:09:59.948Z INFO 66ff4301 ::ffff:10.244.0.10 GET /api/v1/transactions/0.0.2-1570811961-258847000?scheduled=false in 86 ms: 200
+2024-07-30T22:09:59.950Z INFO b0a70e15 ::ffff:10.244.0.10 GET /api/v1/transactions?account.id=0.0.98&type=credit&limit=1 in 94 ms: 200
+2024-07-30T22:09:59.950Z INFO f646990f ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.111759 in 245 ms: 200
+2024-07-30T22:09:59.951Z INFO a9645182 ::ffff:10.244.0.10 GET /api/v1/transactions?timestamp=gt%3A1570811970.290027001&timestamp=lt%3A1570811972.290027001&limit=1 in 90 ms: 200
+2024-07-30T22:09:59.951Z INFO 631bfd9f ::ffff:10.244.0.10 GET /api/v1/balances?limit=10 in 266 ms: 200
+2024-07-30T22:09:59.952Z INFO 197e6c4e ::ffff:10.244.0.10 GET /api/v1/balances?timestamp=1722377399.673&limit=1&order=desc in 266 ms: 200
+2024-07-30T22:09:59.953Z INFO aac38eff ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159 in 91 ms: 200
+2024-07-30T22:09:59.953Z INFO fc0d37ce ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 269 ms: 200
+2024-07-30T22:09:59.954Z INFO e78acb34 ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 270 ms: 200
+2024-07-30T22:09:59.959Z INFO e1a309f5 ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.61457/results in 5 ms: 200
+2024-07-30T22:09:59.959Z INFO 7a04cb1d ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159/nfts?limit=10 in 3 ms: 200
+2024-07-30T22:09:59.961Z INFO 2950760c ::ffff:10.244.0.10 GET /api/v1/balances?account.id=0.0.111764 in 4 ms: 200
+2024-07-30T22:09:59.963Z INFO 7cbb5c51 ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.61457/results/logs in 5 ms: 200
+2024-07-30T22:09:59.963Z INFO fbb9c174 ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159/allowances/crypto?limit=10 in 4 ms: 200
+2024-07-30T22:09:59.965Z INFO 7df036f1 ::ffff:10.244.0.10 GET /api/v1/contracts/results/0x8039f2e8ebc02ff166b6af9112a343afab0465c37a536ae84e01d846b8f45ff5 in 9 ms: 200
+2024-07-30T22:09:59.966Z INFO 5350ae44 ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159/rewards?limit=10 in 5 ms: 200
+2024-07-30T22:09:59.967Z INFO fc12f76f ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.61457/results/1570808888.940096000 in 3 ms: 200
+2024-07-30T22:09:59.969Z INFO 26d5b58f ::ffff:10.244.0.10 GET /api/v1/contracts/results/logs?limit=2 in 5 ms: 200
+2024-07-30T22:09:59.971Z INFO acbb3b86 ::ffff:10.244.0.10 GET /api/v1/contracts/results/0x8039f2e8ebc02ff166b6af9112a343afab0465c37a536ae84e01d846b8f45ff5/actions in 3 ms: 200
+2024-07-30T22:10:00.760Z WARN 017acd8b ::ffff:10.244.0.10 GET /api/v1/network/stake in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:10:00.847Z WARN bea145d4 ::ffff:10.244.0.10 GET /api/v1/network/supply in 2 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:10:01.764Z WARN 4d349296 ::ffff:10.244.0.10 GET /api/v1/network/stake in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:10:01.850Z WARN b47901bf ::ffff:10.244.0.10 GET /api/v1/network/supply in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:10:02.768Z WARN cd7b0418 ::ffff:10.244.0.10 GET /api/v1/network/stake in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:10:02.854Z WARN fc337d10 ::ffff:10.244.0.10 GET /api/v1/network/supply in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:10:03.771Z WARN ea51a590 ::ffff:10.244.0.10 GET /api/v1/network/stake in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:10:03.858Z WARN 89636e8b ::ffff:10.244.0.10 GET /api/v1/network/supply in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:10:59.692Z INFO fe22e68f ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 9 ms: 200
+2024-07-30T22:10:59.697Z INFO b0c098ba ::ffff:10.244.0.10 GET /api/v1/blocks?limit=10 in 10 ms: 200
+2024-07-30T22:10:59.698Z INFO 83814c1f ::ffff:10.244.0.10 GET /api/v1/blocks?limit=1&order=desc in 11 ms: 200
+2024-07-30T22:10:59.742Z INFO 0a45c77e ::ffff:10.244.0.10 GET /api/v1/contracts?limit=2 in 55 ms: 200
+2024-07-30T22:10:59.745Z INFO ed5dbb2f ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 59 ms: 200
+2024-07-30T22:10:59.747Z INFO 5c93640c ::ffff:10.244.0.10 GET /api/v1/contracts?limit=2 in 59 ms: 200
+2024-07-30T22:10:59.749Z INFO acedf29a ::ffff:10.244.0.10 GET /api/v1/network/exchangerate in 61 ms: 200
+2024-07-30T22:10:59.753Z INFO 55862ef6 ::ffff:10.244.0.10 GET /api/v1/network/fees in 65 ms: 200
+2024-07-30T22:10:59.755Z INFO ade8427d ::ffff:10.244.0.10 GET /api/v1/network/nodes?limit=2 in 67 ms: 200
+2024-07-30T22:10:59.756Z WARN 97b7cb04 ::ffff:10.244.0.10 GET /api/v1/network/stake in 67 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:10:59.758Z INFO cf9b64c7 ::ffff:10.244.0.10 GET /api/v1/schedules?limit=2 in 69 ms: 200
+2024-07-30T22:10:59.758Z WARN b1b3f9d7 ::ffff:10.244.0.10 GET /api/v1/network/supply in 69 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:10:59.765Z INFO 2e190ea4 ::ffff:10.244.0.10 GET /api/v1/transactions?limit=10&type=credit in 76 ms: 200
+2024-07-30T22:10:59.765Z INFO 5772cf6c ::ffff:10.244.0.10 GET /api/v1/transactions?order=asc&limit=10 in 76 ms: 200
+2024-07-30T22:10:59.768Z INFO d6c0f751 ::ffff:10.244.0.10 GET /api/v1/transactions?limit=10 in 79 ms: 200
+2024-07-30T22:10:59.770Z INFO f138e7c8 ::ffff:10.244.0.10 GET /api/v1/accounts?account.id=0.0.111159&limit=1 in 69 ms: 200
+2024-07-30T22:10:59.771Z INFO 3467edc0 ::ffff:10.244.0.10 GET /api/v1/transactions?limit=1 in 82 ms: 200
+2024-07-30T22:10:59.771Z INFO a727a7ab ::ffff:10.244.0.10 GET /api/v1/transactions?limit=1&result=success in 82 ms: 200
+2024-07-30T22:10:59.771Z INFO 05d66ccd ::ffff:10.244.0.10 GET /api/v1/transactions?limit=1&order=desc in 82 ms: 200
+2024-07-30T22:10:59.841Z INFO 990bef1e ::ffff:10.244.0.10 GET /api/v1/balances?timestamp=1722377459.674&limit=1&order=desc in 155 ms: 200
+2024-07-30T22:10:59.845Z INFO 6717e901 ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 160 ms: 200
+2024-07-30T22:10:59.846Z INFO 2a2736db ::ffff:10.244.0.10 GET /api/v1/blocks/1029 in 143 ms: 200
+2024-07-30T22:10:59.847Z INFO 26a3a5fe ::ffff:10.244.0.10 GET /api/v1/contracts/results?limit=2 in 160 ms: 200
+2024-07-30T22:10:59.849Z INFO 5a3b2dff ::ffff:10.244.0.10 GET /api/v1/contracts/results?limit=2 in 162 ms: 200
+2024-07-30T22:10:59.849Z INFO c9f1a2d5 ::ffff:10.244.0.10 GET /api/v1/contracts/results?limit=2 in 161 ms: 200
+2024-07-30T22:10:59.849Z INFO 23117027 ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159/nfts?limit=10 in 96 ms: 200
+2024-07-30T22:10:59.850Z INFO d159f0ce ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.111759/state in 93 ms: 200
+2024-07-30T22:10:59.851Z INFO 2d3a1953 ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.111759 in 101 ms: 200
+2024-07-30T22:10:59.852Z INFO cc6c3557 ::ffff:10.244.0.10 GET /api/v1/transactions/0.0.2-1570811961-258847000?scheduled=false in 76 ms: 200
+2024-07-30T22:10:59.853Z INFO e190375d ::ffff:10.244.0.10 GET /api/v1/transactions?timestamp=gt%3A1570811970.290027001&timestamp=lt%3A1570811972.290027001&limit=1 in 77 ms: 200
+2024-07-30T22:10:59.853Z INFO 6d85c66d ::ffff:10.244.0.10 GET /api/v1/transactions?account.id=0.0.98&type=credit&limit=1 in 81 ms: 200
+2024-07-30T22:10:59.854Z INFO 62905725 ::ffff:10.244.0.10 GET /api/v1/balances?limit=10 in 168 ms: 200
+2024-07-30T22:10:59.856Z INFO 2276f655 ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 171 ms: 200
+2024-07-30T22:10:59.856Z INFO ea2110cb ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 171 ms: 200
+2024-07-30T22:10:59.858Z INFO 559d67fd ::ffff:10.244.0.10 GET /api/v1/tokens?limit=1&order=asc in 173 ms: 200
+2024-07-30T22:10:59.859Z INFO ba6b07e8 ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159/allowances/crypto?limit=10 in 2 ms: 200
+2024-07-30T22:10:59.860Z INFO cdab706d ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.61457/results in 2 ms: 200
+2024-07-30T22:10:59.941Z INFO b73ec2dc ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.61457/results/logs in 80 ms: 200
+2024-07-30T22:10:59.942Z INFO da5b02cb ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159/rewards?limit=10 in 81 ms: 200
+2024-07-30T22:10:59.944Z INFO b5edc59d ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159 in 82 ms: 200
+2024-07-30T22:10:59.944Z INFO ac0f9e59 ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.61457/results/1570808888.940096000 in 80 ms: 200
+2024-07-30T22:10:59.946Z INFO f91a9a13 ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 260 ms: 200
+2024-07-30T22:10:59.946Z INFO 5f7cad6d ::ffff:10.244.0.10 GET /api/v1/contracts/results/0x8039f2e8ebc02ff166b6af9112a343afab0465c37a536ae84e01d846b8f45ff5 in 86 ms: 200
+2024-07-30T22:10:59.947Z INFO fe841f35 ::ffff:10.244.0.10 GET /api/v1/balances?limit=10 in 261 ms: 200
+2024-07-30T22:10:59.947Z INFO 85bcda92 ::ffff:10.244.0.10 GET /api/v1/contracts/results/logs?limit=2 in 2 ms: 200
+2024-07-30T22:10:59.950Z INFO 603aeb07 ::ffff:10.244.0.10 GET /api/v1/balances?account.id=0.0.111764 in 2 ms: 200
+2024-07-30T22:10:59.951Z INFO 641eeafc ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159/allowances/tokens?limit=10 in 2 ms: 200
+2024-07-30T22:10:59.951Z INFO 6b328af5 ::ffff:10.244.0.10 GET /api/v1/contracts/results/0x8039f2e8ebc02ff166b6af9112a343afab0465c37a536ae84e01d846b8f45ff5/actions in 2 ms: 200
+2024-07-30T22:11:00.759Z WARN cb974b32 ::ffff:10.244.0.10 GET /api/v1/network/stake in 2 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:11:00.761Z WARN 1555a6d6 ::ffff:10.244.0.10 GET /api/v1/network/supply in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:11:01.068Z INFO 67214758 ::ffff:10.244.0.19 GET /api/v1/network/nodes?limit=25 in 3 ms: 200
+2024-07-30T22:11:01.763Z WARN 446b8e7b ::ffff:10.244.0.10 GET /api/v1/network/stake in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:11:01.763Z WARN 1529d0cb ::ffff:10.244.0.10 GET /api/v1/network/supply in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:11:02.766Z WARN f3c00bd6 ::ffff:10.244.0.10 GET /api/v1/network/stake in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:11:02.767Z WARN 39d07e28 ::ffff:10.244.0.10 GET /api/v1/network/supply in 2 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:11:03.769Z WARN d5dc1b3f ::ffff:10.244.0.10 GET /api/v1/network/stake in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:11:03.770Z WARN 5b8d5ed8 ::ffff:10.244.0.10 GET /api/v1/network/supply in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:11:59.690Z INFO 5a1825bb ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 7 ms: 200
+2024-07-30T22:11:59.696Z INFO 461ca8e8 ::ffff:10.244.0.10 GET /api/v1/blocks?limit=10 in 11 ms: 200
+2024-07-30T22:11:59.697Z INFO e8bb4ed0 ::ffff:10.244.0.10 GET /api/v1/blocks?limit=1&order=desc in 11 ms: 200
+2024-07-30T22:11:59.741Z INFO 21a2a00b ::ffff:10.244.0.10 GET /api/v1/contracts?limit=2 in 55 ms: 200
+2024-07-30T22:11:59.747Z INFO ff62813f ::ffff:10.244.0.10 GET /api/v1/contracts?limit=2 in 61 ms: 200
+2024-07-30T22:11:59.750Z INFO 542dfb95 ::ffff:10.244.0.10 GET /api/v1/network/exchangerate in 64 ms: 200
+2024-07-30T22:11:59.754Z INFO 9b157385 ::ffff:10.244.0.10 GET /api/v1/balances?limit=10 in 69 ms: 200
+2024-07-30T22:11:59.756Z INFO c5be89c4 ::ffff:10.244.0.10 GET /api/v1/network/fees in 70 ms: 200
+2024-07-30T22:11:59.757Z WARN e1f51ad3 ::ffff:10.244.0.10 GET /api/v1/network/stake in 71 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:11:59.757Z INFO cf8b26bb ::ffff:10.244.0.10 GET /api/v1/network/nodes?limit=2 in 71 ms: 200
+2024-07-30T22:11:59.759Z WARN 476fc455 ::ffff:10.244.0.10 GET /api/v1/network/supply in 72 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:11:59.842Z INFO b7e80d9e ::ffff:10.244.0.10 GET /api/v1/transactions?limit=10&type=credit in 154 ms: 200
+2024-07-30T22:11:59.844Z INFO 90de1e07 ::ffff:10.244.0.10 GET /api/v1/schedules?limit=2 in 157 ms: 200
+2024-07-30T22:11:59.848Z INFO aaaf4aa0 ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 163 ms: 200
+2024-07-30T22:11:59.850Z INFO 91fe907e ::ffff:10.244.0.10 GET /api/v1/balances?timestamp=1722377519.675&limit=1&order=desc in 165 ms: 200
+2024-07-30T22:11:59.850Z INFO aa227f6e ::ffff:10.244.0.10 GET /api/v1/tokens?limit=1&order=asc in 166 ms: 200
+2024-07-30T22:11:59.852Z INFO dc9a1c68 ::ffff:10.244.0.10 GET /api/v1/transactions?limit=10 in 164 ms: 200
+2024-07-30T22:11:59.852Z INFO ebe384a2 ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 168 ms: 200
+2024-07-30T22:11:59.856Z INFO 3fc1e21f ::ffff:10.244.0.10 GET /api/v1/transactions?order=asc&limit=10 in 168 ms: 200
+2024-07-30T22:11:59.856Z INFO 0c330092 ::ffff:10.244.0.10 GET /api/v1/transactions?limit=1 in 168 ms: 200
+2024-07-30T22:11:59.857Z INFO 89f86e6f ::ffff:10.244.0.10 GET /api/v1/transactions?limit=1&result=success in 169 ms: 200
+2024-07-30T22:11:59.857Z INFO c1305c39 ::ffff:10.244.0.10 GET /api/v1/accounts?account.id=0.0.111159&limit=1 in 158 ms: 200
+2024-07-30T22:11:59.857Z INFO eb958017 ::ffff:10.244.0.10 GET /api/v1/blocks/1029 in 158 ms: 200
+2024-07-30T22:11:59.858Z INFO 148aff18 ::ffff:10.244.0.10 GET /api/v1/contracts/results?limit=2 in 172 ms: 200
+2024-07-30T22:11:59.859Z INFO 476a15a7 ::ffff:10.244.0.10 GET /api/v1/transactions?limit=1&order=desc in 171 ms: 200
+2024-07-30T22:11:59.862Z INFO dad34e79 ::ffff:10.244.0.10 GET /api/v1/balances?limit=10 in 177 ms: 200
+2024-07-30T22:11:59.863Z INFO 763871d8 ::ffff:10.244.0.10 GET /api/v1/contracts/results?limit=2 in 177 ms: 200
+2024-07-30T22:11:59.863Z INFO e96c62a4 ::ffff:10.244.0.10 GET /api/v1/contracts/results?limit=2 in 177 ms: 200
+2024-07-30T22:11:59.863Z INFO 5ba779de ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.111759/state in 111 ms: 200
+2024-07-30T22:11:59.863Z INFO b57c2a39 ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.111759 in 119 ms: 200
+2024-07-30T22:11:59.863Z INFO ec515af4 ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 179 ms: 200
+2024-07-30T22:11:59.867Z INFO 2082a990 ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 183 ms: 200
+2024-07-30T22:11:59.870Z INFO de2428d7 ::ffff:10.244.0.10 GET /api/v1/transactions?account.id=0.0.98&type=credit&limit=1 in 11 ms: 200
+2024-07-30T22:11:59.870Z INFO 03d464d5 ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159/nfts?limit=10 in 6 ms: 200
+2024-07-30T22:11:59.870Z INFO f2829f0d ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 185 ms: 200
+2024-07-30T22:11:59.871Z INFO 4f5549ff ::ffff:10.244.0.10 GET /api/v1/balances?account.id=0.0.111764 in 3 ms: 200
+2024-07-30T22:11:59.876Z INFO 68b564ba ::ffff:10.244.0.10 GET /api/v1/transactions/0.0.2-1570811961-258847000?scheduled=false in 5 ms: 200
+2024-07-30T22:11:59.876Z INFO e1c3b75e ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.61457/results in 4 ms: 200
+2024-07-30T22:11:59.878Z INFO 5d5a86aa ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159 in 10 ms: 200
+2024-07-30T22:11:59.879Z INFO accaf91e ::ffff:10.244.0.10 GET /api/v1/transactions?timestamp=gt%3A1570811970.290027001&timestamp=lt%3A1570811972.290027001&limit=1 in 8 ms: 200
+2024-07-30T22:11:59.879Z INFO ba0ded0e ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.61457/results/logs in 5 ms: 200
+2024-07-30T22:11:59.879Z INFO d7159119 ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159/rewards?limit=10 in 5 ms: 200
+2024-07-30T22:11:59.879Z INFO 824aff9e ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159/allowances/crypto?limit=10 in 3 ms: 200
+2024-07-30T22:11:59.880Z INFO 16243744 ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159/allowances/tokens?limit=10 in 2 ms: 200
+2024-07-30T22:11:59.881Z INFO e9e4ab1e ::ffff:10.244.0.10 GET /api/v1/contracts/results/0x8039f2e8ebc02ff166b6af9112a343afab0465c37a536ae84e01d846b8f45ff5 in 7 ms: 200
+2024-07-30T22:11:59.947Z INFO 1187f1c8 ::ffff:10.244.0.10 GET /api/v1/contracts/results/logs?limit=2 in 3 ms: 200
+2024-07-30T22:12:00.047Z INFO 18875d86 ::ffff:10.244.0.10 GET /api/v1/contracts/results/0x8039f2e8ebc02ff166b6af9112a343afab0465c37a536ae84e01d846b8f45ff5/actions in 2 ms: 200
+2024-07-30T22:12:00.051Z INFO 2105fe4c ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.61457/results/1570808888.940096000 in 6 ms: 200
+2024-07-30T22:12:00.761Z WARN bd83c42b ::ffff:10.244.0.10 GET /api/v1/network/stake in 2 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:12:00.761Z WARN 93752cc9 ::ffff:10.244.0.10 GET /api/v1/network/supply in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:12:01.763Z WARN f4197f16 ::ffff:10.244.0.10 GET /api/v1/network/stake in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:12:01.764Z WARN 1c97cdec ::ffff:10.244.0.10 GET /api/v1/network/supply in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:12:02.767Z WARN 4e8a11aa ::ffff:10.244.0.10 GET /api/v1/network/stake in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:12:02.767Z WARN d41656f0 ::ffff:10.244.0.10 GET /api/v1/network/supply in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:12:03.771Z WARN 8dfc99bf ::ffff:10.244.0.10 GET /api/v1/network/stake in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:12:03.772Z WARN 4049c12d ::ffff:10.244.0.10 GET /api/v1/network/supply in 2 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:12:59.694Z INFO 96bed921 ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 11 ms: 200
+2024-07-30T22:12:59.699Z INFO 70a5b9aa ::ffff:10.244.0.10 GET /api/v1/balances?timestamp=1722377579.675&limit=1&order=desc in 13 ms: 200
+2024-07-30T22:12:59.703Z INFO dffd7a18 ::ffff:10.244.0.10 GET /api/v1/blocks?limit=1&order=desc in 17 ms: 200
+2024-07-30T22:12:59.744Z INFO 14070724 ::ffff:10.244.0.10 GET /api/v1/contracts?limit=2 in 58 ms: 200
+2024-07-30T22:12:59.748Z INFO f278a73d ::ffff:10.244.0.10 GET /api/v1/contracts?limit=2 in 62 ms: 200
+2024-07-30T22:12:59.751Z INFO 59d9f314 ::ffff:10.244.0.10 GET /api/v1/network/exchangerate in 61 ms: 200
+2024-07-30T22:12:59.766Z INFO c8d26472 ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 83 ms: 200
+2024-07-30T22:12:59.841Z INFO acdf8ab5 ::ffff:10.244.0.10 GET /api/v1/network/nodes?limit=2 in 151 ms: 200
+2024-07-30T22:12:59.841Z INFO 541447f8 ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 157 ms: 200
+2024-07-30T22:12:59.844Z WARN 86c6725e ::ffff:10.244.0.10 GET /api/v1/network/stake in 153 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:12:59.844Z WARN 27faa9e6 ::ffff:10.244.0.10 GET /api/v1/network/supply in 153 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:12:59.845Z INFO bbae3eb0 ::ffff:10.244.0.10 GET /api/v1/network/fees in 155 ms: 200
+2024-07-30T22:12:59.845Z INFO 212e8e31 ::ffff:10.244.0.10 GET /api/v1/schedules?limit=2 in 154 ms: 200
+2024-07-30T22:12:59.849Z INFO 24330515 ::ffff:10.244.0.10 GET /api/v1/transactions?limit=10&type=credit in 158 ms: 200
+2024-07-30T22:12:59.851Z INFO b8f7b80a ::ffff:10.244.0.10 GET /api/v1/accounts?account.id=0.0.111159&limit=1 in 148 ms: 200
+2024-07-30T22:12:59.854Z INFO 50c43453 ::ffff:10.244.0.10 GET /api/v1/transactions?limit=10 in 163 ms: 200
+2024-07-30T22:12:59.854Z INFO 10c16961 ::ffff:10.244.0.10 GET /api/v1/transactions?limit=1 in 163 ms: 200
+2024-07-30T22:12:59.855Z INFO 4fcd9bbb ::ffff:10.244.0.10 GET /api/v1/transactions?order=asc&limit=10 in 164 ms: 200
+2024-07-30T22:12:59.857Z INFO a698e15d ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 173 ms: 200
+2024-07-30T22:12:59.866Z INFO 31ca7cb4 ::ffff:10.244.0.10 GET /api/v1/transactions?limit=1&result=success in 175 ms: 200
+2024-07-30T22:12:59.866Z INFO 8669d3f4 ::ffff:10.244.0.10 GET /api/v1/transactions?limit=1&order=desc in 172 ms: 200
+2024-07-30T22:12:59.868Z INFO c8705c60 ::ffff:10.244.0.10 GET /api/v1/contracts/results?limit=2 in 182 ms: 200
+2024-07-30T22:12:59.869Z INFO 3dfdee88 ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 185 ms: 200
+2024-07-30T22:12:59.872Z INFO b188ca44 ::ffff:10.244.0.10 GET /api/v1/contracts/results?limit=2 in 183 ms: 200
+2024-07-30T22:12:59.872Z INFO c6d94ba8 ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.111759/state in 113 ms: 200
+2024-07-30T22:12:59.874Z INFO 0de4d65f ::ffff:10.244.0.10 GET /api/v1/contracts/results?limit=2 in 188 ms: 200
+2024-07-30T22:12:59.874Z INFO da0670e9 ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 190 ms: 200
+2024-07-30T22:12:59.877Z INFO 24aa2b59 ::ffff:10.244.0.10 GET /api/v1/tokens?limit=1&order=asc in 193 ms: 200
+2024-07-30T22:12:59.878Z INFO 9f8b870f ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.111759 in 127 ms: 200
+2024-07-30T22:12:59.879Z INFO c15941fc ::ffff:10.244.0.10 GET /api/v1/transactions?account.id=0.0.98&type=credit&limit=1 in 9 ms: 200
+2024-07-30T22:12:59.941Z INFO 622e1706 ::ffff:10.244.0.10 GET /api/v1/transactions/0.0.2-1570811961-258847000?scheduled=false in 60 ms: 200
+2024-07-30T22:12:59.942Z INFO 52928dbf ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159/rewards?limit=10 in 92 ms: 200
+2024-07-30T22:12:59.943Z INFO b06d8a2a ::ffff:10.244.0.10 GET /api/v1/balances?limit=10 in 258 ms: 200
+2024-07-30T22:12:59.944Z INFO 93e42050 ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159/nfts?limit=10 in 64 ms: 200
+2024-07-30T22:12:59.944Z INFO 18937068 ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.61457/results in 63 ms: 200
+2024-07-30T22:12:59.945Z INFO 7de4b244 ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159/allowances/tokens?limit=10 in 62 ms: 200
+2024-07-30T22:12:59.947Z INFO 677ecf77 ::ffff:10.244.0.10 GET /api/v1/transactions?timestamp=gt%3A1570811970.290027001&timestamp=lt%3A1570811972.290027001&limit=1 in 69 ms: 200
+2024-07-30T22:12:59.947Z INFO fe685fae ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159/allowances/crypto?limit=10 in 51 ms: 200
+2024-07-30T22:12:59.948Z INFO 570248d8 ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159 in 179 ms: 200
+2024-07-30T22:12:59.949Z INFO d6015492 ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.61457/results/logs in 65 ms: 200
+2024-07-30T22:12:59.949Z INFO 3dabfc86 ::ffff:10.244.0.10 GET /api/v1/contracts/results/0x8039f2e8ebc02ff166b6af9112a343afab0465c37a536ae84e01d846b8f45ff5 in 65 ms: 200
+2024-07-30T22:12:59.957Z INFO 2f94c093 ::ffff:10.244.0.10 GET /api/v1/balances?limit=10 in 272 ms: 200
+2024-07-30T22:12:59.957Z INFO 3202ee35 ::ffff:10.244.0.10 GET /api/v1/contracts/results/logs?limit=2 in 5 ms: 200
+2024-07-30T22:12:59.958Z INFO ffcd8213 ::ffff:10.244.0.10 GET /api/v1/blocks?limit=10 in 273 ms: 200
+2024-07-30T22:12:59.958Z INFO a813b65a ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.61457/results/1570808888.940096000 in 8 ms: 200
+2024-07-30T22:12:59.960Z INFO 8466121e ::ffff:10.244.0.10 GET /api/v1/contracts/results/0x8039f2e8ebc02ff166b6af9112a343afab0465c37a536ae84e01d846b8f45ff5/actions in 5 ms: 200
+2024-07-30T22:12:59.960Z INFO 01839ff3 ::ffff:10.244.0.10 GET /api/v1/balances?account.id=0.0.111764 in 1 ms: 200
+2024-07-30T22:12:59.962Z INFO 43831d90 ::ffff:10.244.0.10 GET /api/v1/blocks/1029 in 1 ms: 200
+2024-07-30T22:13:00.848Z WARN 81798b6f ::ffff:10.244.0.10 GET /api/v1/network/stake in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:13:00.849Z WARN f1ea0331 ::ffff:10.244.0.10 GET /api/v1/network/supply in 2 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:13:01.084Z INFO 60096a1f ::ffff:10.244.0.19 GET /api/v1/network/nodes?limit=25 in 3 ms: 200
+2024-07-30T22:13:01.853Z WARN 4c8b9712 ::ffff:10.244.0.10 GET /api/v1/network/supply in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:13:01.854Z WARN f5744198 ::ffff:10.244.0.10 GET /api/v1/network/stake in 3 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:13:02.857Z WARN 9135b8e1 ::ffff:10.244.0.10 GET /api/v1/network/stake in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:13:02.857Z WARN 5abccfef ::ffff:10.244.0.10 GET /api/v1/network/supply in 2 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:13:03.860Z WARN b6a5dbfd ::ffff:10.244.0.10 GET /api/v1/network/stake in 0 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:13:03.861Z WARN 635b37c2 ::ffff:10.244.0.10 GET /api/v1/network/supply in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:13:59.693Z INFO e28a9076 ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 7 ms: 200
+2024-07-30T22:13:59.698Z INFO 367fee9b ::ffff:10.244.0.10 GET /api/v1/blocks?limit=10 in 10 ms: 200
+2024-07-30T22:13:59.700Z INFO 5ed93458 ::ffff:10.244.0.10 GET /api/v1/blocks?limit=1&order=desc in 11 ms: 200
+2024-07-30T22:13:59.703Z INFO 0670000b ::ffff:10.244.0.10 GET /api/v1/contracts?limit=2 in 14 ms: 200
+2024-07-30T22:13:59.708Z INFO 1b4759cb ::ffff:10.244.0.10 GET /api/v1/contracts?limit=2 in 19 ms: 200
+2024-07-30T22:13:59.744Z INFO 19e118c5 ::ffff:10.244.0.10 GET /api/v1/network/exchangerate in 55 ms: 200
+2024-07-30T22:13:59.747Z INFO 03c0b02a ::ffff:10.244.0.10 GET /api/v1/network/fees in 58 ms: 200
+2024-07-30T22:13:59.749Z INFO f346f781 ::ffff:10.244.0.10 GET /api/v1/network/nodes?limit=2 in 59 ms: 200
+2024-07-30T22:13:59.750Z WARN aa6e3156 ::ffff:10.244.0.10 GET /api/v1/network/stake in 60 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:13:59.752Z WARN b0936fad ::ffff:10.244.0.10 GET /api/v1/network/supply in 62 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:13:59.753Z INFO 0198e3db ::ffff:10.244.0.10 GET /api/v1/schedules?limit=2 in 63 ms: 200
+2024-07-30T22:13:59.757Z INFO cbba997c ::ffff:10.244.0.10 GET /api/v1/transactions?limit=1&order=desc&result=success in 66 ms: 200
+2024-07-30T22:13:59.759Z INFO dc538142 ::ffff:10.244.0.10 GET /api/v1/transactions?limit=10&type=credit in 69 ms: 200
+2024-07-30T22:13:59.759Z INFO a8cf8e6a ::ffff:10.244.0.10 GET /api/v1/transactions?order=asc&limit=10 in 68 ms: 200
+2024-07-30T22:13:59.762Z INFO 8a5ac6e6 ::ffff:10.244.0.10 GET /api/v1/transactions?limit=10 in 70 ms: 200
+2024-07-30T22:13:59.762Z INFO 475a7dff ::ffff:10.244.0.10 GET /api/v1/tokens?limit=1&order=asc in 76 ms: 200
+2024-07-30T22:13:59.763Z INFO 566b4769 ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 77 ms: 200
+2024-07-30T22:13:59.766Z WARN 1061f52a ::ffff:10.244.0.10 GET /api/v1/transactions/0.0.2-1570811961-258847000/stateproof?nonce=0&scheduled=false in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:13:59.767Z INFO a2348f29 ::ffff:10.244.0.10 GET /api/v1/transactions?limit=1&result=success in 75 ms: 200
+2024-07-30T22:13:59.770Z INFO eb51a8d6 ::ffff:10.244.0.10 GET /api/v1/accounts?account.id=0.0.111159&limit=1 in 69 ms: 200
+2024-07-30T22:13:59.841Z INFO 63328f56 ::ffff:10.244.0.10 GET /api/v1/transactions?limit=1 in 149 ms: 200
+2024-07-30T22:13:59.842Z INFO 5f9abecd ::ffff:10.244.0.10 GET /api/v1/blocks/1029 in 136 ms: 200
+2024-07-30T22:13:59.843Z INFO 91b7e2e0 ::ffff:10.244.0.10 GET /api/v1/transactions?limit=1&order=desc in 151 ms: 200
+2024-07-30T22:13:59.844Z INFO e68afa61 ::ffff:10.244.0.10 GET /api/v1/contracts/results?limit=2 in 155 ms: 200
+2024-07-30T22:13:59.845Z INFO 81e97e98 ::ffff:10.244.0.10 GET /api/v1/contracts/results?limit=2 in 156 ms: 200
+2024-07-30T22:13:59.850Z INFO d567af0d ::ffff:10.244.0.10 GET /api/v1/contracts/results?limit=2 in 161 ms: 200
+2024-07-30T22:13:59.853Z INFO 3dd20b7c ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.111759/state in 142 ms: 200
+2024-07-30T22:13:59.854Z INFO 6b608bbe ::ffff:10.244.0.10 GET /api/v1/transactions?account.id=0.0.98&type=credit&limit=1 in 85 ms: 200
+2024-07-30T22:13:59.854Z INFO ee94f3f2 ::ffff:10.244.0.10 GET /api/v1/transactions/0.0.2-1570811961-258847000?scheduled=false in 83 ms: 200
+2024-07-30T22:13:59.855Z INFO f368f40b ::ffff:10.244.0.10 GET /api/v1/transactions?timestamp=gt%3A1570811970.290027001&timestamp=lt%3A1570811972.290027001&limit=1 in 11 ms: 200
+2024-07-30T22:13:59.857Z INFO b0da6182 ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.61457/results in 5 ms: 200
+2024-07-30T22:13:59.941Z INFO cab6c242 ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.111759 in 234 ms: 200
+2024-07-30T22:13:59.942Z INFO 9591ca80 ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159/rewards?limit=10 in 172 ms: 200
+2024-07-30T22:13:59.942Z INFO 16abdaf7 ::ffff:10.244.0.10 GET /api/v1/balances?limit=10 in 255 ms: 200
+2024-07-30T22:13:59.943Z INFO 5e961f54 ::ffff:10.244.0.10 GET /api/v1/balances?limit=10 in 255 ms: 200
+2024-07-30T22:13:59.946Z INFO c9e9ca13 ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.61457/results/logs in 91 ms: 200
+2024-07-30T22:13:59.947Z INFO bab47736 ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 261 ms: 200
+2024-07-30T22:13:59.950Z INFO f662d03b ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.61457/results/1570808888.940096000 in 89 ms: 200
+2024-07-30T22:13:59.950Z INFO f87e3fe3 ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 263 ms: 200
+2024-07-30T22:13:59.950Z INFO 0ef191e9 ::ffff:10.244.0.10 GET /api/v1/balances?account.id=0.0.111764 in 3 ms: 200
+2024-07-30T22:13:59.952Z INFO d533d066 ::ffff:10.244.0.10 GET /api/v1/contracts/results/0x8039f2e8ebc02ff166b6af9112a343afab0465c37a536ae84e01d846b8f45ff5 in 94 ms: 200
+2024-07-30T22:13:59.953Z INFO 47a80dfd ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 266 ms: 200
+2024-07-30T22:13:59.955Z INFO ee4c39e2 ::ffff:10.244.0.10 GET /api/v1/balances?timestamp=1722377639.676&limit=1&order=desc in 267 ms: 200
+2024-07-30T22:13:59.957Z INFO eb315b71 ::ffff:10.244.0.10 GET /api/v1/contracts/results/logs?limit=2 in 4 ms: 200
+2024-07-30T22:13:59.958Z INFO 03fa8405 ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 271 ms: 200
+2024-07-30T22:13:59.961Z INFO 39c02cf3 ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159 in 5 ms: 200
+2024-07-30T22:13:59.961Z INFO a2e5cd1e ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159/allowances/tokens?limit=10 in 2 ms: 200
+2024-07-30T22:13:59.962Z INFO bbaa4c4d ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159/nfts?limit=10 in 3 ms: 200
+2024-07-30T22:13:59.964Z INFO 29c348e8 ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159/allowances/crypto?limit=10 in 1 ms: 200
+2024-07-30T22:13:59.965Z INFO 06c20a16 ::ffff:10.244.0.10 GET /api/v1/contracts/results/0x8039f2e8ebc02ff166b6af9112a343afab0465c37a536ae84e01d846b8f45ff5/actions in 4 ms: 200
+2024-07-30T22:14:00.754Z WARN 4491cf6c ::ffff:10.244.0.10 GET /api/v1/network/stake in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:14:00.756Z WARN b5f9b890 ::ffff:10.244.0.10 GET /api/v1/network/supply in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:14:00.769Z WARN e3f7353c ::ffff:10.244.0.10 GET /api/v1/transactions/0.0.2-1570811961-258847000/stateproof?nonce=0&scheduled=false in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:14:01.757Z WARN 5940c23c ::ffff:10.244.0.10 GET /api/v1/network/stake in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:14:01.758Z WARN c5baeaee ::ffff:10.244.0.10 GET /api/v1/network/supply in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:14:01.771Z WARN 1d9e64df ::ffff:10.244.0.10 GET /api/v1/transactions/0.0.2-1570811961-258847000/stateproof?nonce=0&scheduled=false in 0 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:14:02.762Z WARN ca0d1073 ::ffff:10.244.0.10 GET /api/v1/network/supply in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:14:02.762Z WARN 4d249cac ::ffff:10.244.0.10 GET /api/v1/network/stake in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:14:02.773Z WARN 1d38274e ::ffff:10.244.0.10 GET /api/v1/transactions/0.0.2-1570811961-258847000/stateproof?nonce=0&scheduled=false in 0 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:14:03.766Z WARN 6492d69d ::ffff:10.244.0.10 GET /api/v1/network/stake in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:14:03.767Z WARN e3a6d348 ::ffff:10.244.0.10 GET /api/v1/network/supply in 2 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:14:03.775Z WARN c4dce0f4 ::ffff:10.244.0.10 GET /api/v1/transactions/0.0.2-1570811961-258847000/stateproof?nonce=0&scheduled=false in 0 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:14:59.693Z INFO f88823ea ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 7 ms: 200
+2024-07-30T22:14:59.696Z INFO 151cfe8a ::ffff:10.244.0.10 GET /api/v1/blocks?limit=10 in 7 ms: 200
+2024-07-30T22:14:59.700Z INFO ecc08e4f ::ffff:10.244.0.10 GET /api/v1/blocks?limit=1&order=desc in 11 ms: 200
+2024-07-30T22:14:59.702Z INFO a91eaeb8 ::ffff:10.244.0.10 GET /api/v1/contracts?limit=2 in 13 ms: 200
+2024-07-30T22:14:59.707Z INFO c55dd549 ::ffff:10.244.0.10 GET /api/v1/contracts?limit=2 in 17 ms: 200
+2024-07-30T22:14:59.709Z INFO 4d62ffa8 ::ffff:10.244.0.10 GET /api/v1/network/exchangerate in 19 ms: 200
+2024-07-30T22:14:59.744Z INFO c1324d50 ::ffff:10.244.0.10 GET /api/v1/network/fees in 54 ms: 200
+2024-07-30T22:14:59.746Z INFO ce0c29b3 ::ffff:10.244.0.10 GET /api/v1/network/nodes?limit=2 in 56 ms: 200
+2024-07-30T22:14:59.747Z WARN d6440368 ::ffff:10.244.0.10 GET /api/v1/network/stake in 57 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:14:59.753Z INFO f05d37f6 ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 66 ms: 200
+2024-07-30T22:14:59.841Z WARN 77f8280e ::ffff:10.244.0.10 GET /api/v1/network/supply in 151 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:14:59.845Z INFO be570828 ::ffff:10.244.0.10 GET /api/v1/transactions?limit=10&type=credit in 155 ms: 200
+2024-07-30T22:14:59.847Z INFO 27517c40 ::ffff:10.244.0.10 GET /api/v1/transactions?order=asc&limit=10 in 157 ms: 200
+2024-07-30T22:14:59.847Z INFO 6d219ca1 ::ffff:10.244.0.10 GET /api/v1/tokens?limit=1&order=asc in 160 ms: 200
+2024-07-30T22:14:59.848Z INFO bb4cc854 ::ffff:10.244.0.10 GET /api/v1/schedules?limit=2 in 158 ms: 200
+2024-07-30T22:14:59.849Z INFO cfe4d543 ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 162 ms: 200
+2024-07-30T22:14:59.850Z INFO d5324f7f ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 164 ms: 200
+2024-07-30T22:14:59.852Z INFO 2c24becf ::ffff:10.244.0.10 GET /api/v1/transactions?limit=10 in 161 ms: 200
+2024-07-30T22:14:59.855Z INFO 3707757d ::ffff:10.244.0.10 GET /api/v1/transactions?limit=1 in 164 ms: 200
+2024-07-30T22:14:59.856Z INFO 87aeb996 ::ffff:10.244.0.10 GET /api/v1/blocks/1029 in 154 ms: 200
+2024-07-30T22:14:59.858Z INFO 35c8b9ce ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 170 ms: 200
+2024-07-30T22:14:59.860Z INFO 0cd61a33 ::ffff:10.244.0.10 GET /api/v1/transactions?limit=1&result=success in 169 ms: 200
+2024-07-30T22:14:59.860Z INFO 88a573e9 ::ffff:10.244.0.10 GET /api/v1/transactions?limit=1&order=desc in 168 ms: 200
+2024-07-30T22:14:59.862Z INFO c892f353 ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159 in 164 ms: 200
+2024-07-30T22:14:59.862Z INFO 93337ed9 ::ffff:10.244.0.10 GET /api/v1/contracts/results?limit=2 in 172 ms: 200
+2024-07-30T22:14:59.862Z INFO b529641d ::ffff:10.244.0.10 GET /api/v1/contracts/results?limit=2 in 172 ms: 200
+2024-07-30T22:14:59.864Z INFO 9cb67e9c ::ffff:10.244.0.10 GET /api/v1/contracts/results?limit=2 in 174 ms: 200
+2024-07-30T22:14:59.865Z INFO d47c909e ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.111759/state in 155 ms: 200
+2024-07-30T22:14:59.865Z INFO 77afb433 ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.111759 in 160 ms: 200
+2024-07-30T22:14:59.867Z INFO 0dde27dc ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159/rewards?limit=10 in 112 ms: 200
+2024-07-30T22:14:59.868Z INFO 5087a450 ::ffff:10.244.0.10 GET /api/v1/transactions?account.id=0.0.98&type=credit&limit=1 in 5 ms: 200
+2024-07-30T22:14:59.870Z INFO d8d2ab8d ::ffff:10.244.0.10 GET /api/v1/balances?limit=10 in 182 ms: 200
+2024-07-30T22:14:59.879Z INFO 082ca747 ::ffff:10.244.0.10 GET /api/v1/balances?limit=10 in 191 ms: 200
+2024-07-30T22:14:59.945Z INFO ecc147e4 ::ffff:10.244.0.10 GET /api/v1/balances?timestamp=1722377699.677&limit=1&order=desc in 257 ms: 200
+2024-07-30T22:14:59.947Z INFO c073d976 ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 260 ms: 200
+2024-07-30T22:15:00.051Z INFO e2426c9e ::ffff:10.244.0.10 GET /api/v1/balances?account.id=0.0.111764 in 1 ms: 200
+2024-07-30T22:15:00.052Z INFO 8223e865 ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159/allowances/crypto?limit=10 in 2 ms: 200
+2024-07-30T22:15:00.056Z INFO 09f21eef ::ffff:10.244.0.10 GET /api/v1/accounts?account.id=0.0.111159&limit=1 in 4 ms: 200
+2024-07-30T22:15:00.058Z INFO bd799de0 ::ffff:10.244.0.10 GET /api/v1/transactions?timestamp=gt%3A1570811970.290027001&timestamp=lt%3A1570811972.290027001&limit=1 in 3 ms: 200
+2024-07-30T22:15:00.059Z INFO a69cff4b ::ffff:10.244.0.10 GET /api/v1/transactions/0.0.2-1570811961-258847000?scheduled=false in 4 ms: 200
+2024-07-30T22:15:00.060Z INFO e6661adc ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159/nfts?limit=10 in 3 ms: 200
+2024-07-30T22:15:00.061Z INFO a5192960 ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.61457/results in 4 ms: 200
+2024-07-30T22:15:00.061Z INFO 017e274a ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.61457/results/logs in 4 ms: 200
+2024-07-30T22:15:00.146Z INFO 00e29ae3 ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159/allowances/tokens?limit=10 in 2 ms: 200
+2024-07-30T22:15:00.148Z INFO 34d55df8 ::ffff:10.244.0.10 GET /api/v1/contracts/results/logs?limit=2 in 3 ms: 200
+2024-07-30T22:15:00.149Z INFO 348063bb ::ffff:10.244.0.10 GET /api/v1/contracts/results/0x8039f2e8ebc02ff166b6af9112a343afab0465c37a536ae84e01d846b8f45ff5 in 6 ms: 200
+2024-07-30T22:15:00.151Z INFO 094d8204 ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.61457/results/1570808888.940096000 in 4 ms: 200
+2024-07-30T22:15:00.153Z INFO 197bc732 ::ffff:10.244.0.10 GET /api/v1/contracts/results/0x8039f2e8ebc02ff166b6af9112a343afab0465c37a536ae84e01d846b8f45ff5/actions in 1 ms: 200
+2024-07-30T22:15:00.751Z WARN 2caf7133 ::ffff:10.244.0.10 GET /api/v1/network/stake in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:15:00.845Z WARN 9e90e9dd ::ffff:10.244.0.10 GET /api/v1/network/supply in 2 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:15:01.101Z INFO bcb597c9 ::ffff:10.244.0.19 GET /api/v1/network/nodes?limit=25 in 3 ms: 200
+2024-07-30T22:15:01.754Z WARN 943f7bd1 ::ffff:10.244.0.10 GET /api/v1/network/stake in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:15:01.849Z WARN f03c451b ::ffff:10.244.0.10 GET /api/v1/network/supply in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:15:02.757Z WARN 1797c74b ::ffff:10.244.0.10 GET /api/v1/network/stake in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:15:02.853Z WARN 2f41f53d ::ffff:10.244.0.10 GET /api/v1/network/supply in 2 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:15:03.760Z WARN 02e4829f ::ffff:10.244.0.10 GET /api/v1/network/stake in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:15:03.856Z WARN 1cdd0e8d ::ffff:10.244.0.10 GET /api/v1/network/supply in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:15:59.695Z INFO 2176a1e4 ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 8 ms: 200
+2024-07-30T22:15:59.699Z INFO e9fa2320 ::ffff:10.244.0.10 GET /api/v1/blocks?limit=10 in 10 ms: 200
+2024-07-30T22:15:59.699Z INFO ad6a799a ::ffff:10.244.0.10 GET /api/v1/blocks?limit=1&order=desc in 9 ms: 200
+2024-07-30T22:15:59.702Z INFO c788848c ::ffff:10.244.0.10 GET /api/v1/contracts?limit=2 in 12 ms: 200
+2024-07-30T22:15:59.748Z INFO 4fdf3210 ::ffff:10.244.0.10 GET /api/v1/contracts?limit=2 in 57 ms: 200
+2024-07-30T22:15:59.752Z INFO a4c4b9a6 ::ffff:10.244.0.10 GET /api/v1/network/exchangerate in 61 ms: 200
+2024-07-30T22:15:59.756Z INFO dfffc7e5 ::ffff:10.244.0.10 GET /api/v1/network/fees in 65 ms: 200
+2024-07-30T22:15:59.758Z INFO 9aa31e14 ::ffff:10.244.0.10 GET /api/v1/network/nodes?limit=2 in 67 ms: 200
+2024-07-30T22:15:59.759Z INFO 89a49395 ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 71 ms: 200
+2024-07-30T22:15:59.759Z INFO 47c9327c ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 70 ms: 200
+2024-07-30T22:15:59.760Z INFO 269540e0 ::ffff:10.244.0.10 GET /api/v1/schedules?limit=2 in 69 ms: 200
+2024-07-30T22:15:59.760Z WARN e874a5fe ::ffff:10.244.0.10 GET /api/v1/network/stake in 69 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:15:59.760Z WARN f853c042 ::ffff:10.244.0.10 GET /api/v1/network/supply in 69 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:15:59.763Z INFO f6874765 ::ffff:10.244.0.10 GET /api/v1/transactions?limit=10 in 70 ms: 200
+2024-07-30T22:15:59.765Z INFO 1aa22d34 ::ffff:10.244.0.10 GET /api/v1/transactions?limit=1 in 72 ms: 200
+2024-07-30T22:15:59.766Z INFO 03f13209 ::ffff:10.244.0.10 GET /api/v1/transactions?limit=1&result=success in 73 ms: 200
+2024-07-30T22:15:59.767Z INFO cb9b4920 ::ffff:10.244.0.10 GET /api/v1/transactions?limit=1&order=desc in 74 ms: 200
+2024-07-30T22:15:59.767Z INFO 00e3fe5e ::ffff:10.244.0.10 GET /api/v1/blocks/1029 in 63 ms: 200
+2024-07-30T22:15:59.842Z INFO 6bf23281 ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159 in 138 ms: 200
+2024-07-30T22:15:59.845Z INFO 5f7a4fb4 ::ffff:10.244.0.10 GET /api/v1/transactions?limit=10&type=credit in 152 ms: 200
+2024-07-30T22:15:59.846Z INFO b21a620c ::ffff:10.244.0.10 GET /api/v1/contracts/results?limit=2 in 155 ms: 200
+2024-07-30T22:15:59.848Z INFO 6e4018db ::ffff:10.244.0.10 GET /api/v1/transactions?order=asc&limit=10 in 155 ms: 200
+2024-07-30T22:15:59.849Z INFO 45dcf2bb ::ffff:10.244.0.10 GET /api/v1/balances?timestamp=1722377759.679&limit=1&order=desc in 160 ms: 200
+2024-07-30T22:15:59.850Z INFO 7d3f930e ::ffff:10.244.0.10 GET /api/v1/contracts/results?limit=2 in 159 ms: 200
+2024-07-30T22:15:59.852Z INFO 97719608 ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159/allowances/crypto?limit=10 in 88 ms: 200
+2024-07-30T22:15:59.853Z INFO eab665a7 ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159/allowances/tokens?limit=10 in 88 ms: 200
+2024-07-30T22:15:59.853Z INFO 7ae4fa65 ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.111759/state in 100 ms: 200
+2024-07-30T22:15:59.854Z INFO 572cb5d0 ::ffff:10.244.0.10 GET /api/v1/transactions/0.0.2-1570811961-258847000?scheduled=false in 85 ms: 200
+2024-07-30T22:15:59.856Z INFO f7af9ddb ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 168 ms: 200
+2024-07-30T22:15:59.856Z INFO 85e6a3f2 ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.111759 in 151 ms: 200
+2024-07-30T22:15:59.856Z INFO 9e482c7c ::ffff:10.244.0.10 GET /api/v1/contracts/results?limit=2 in 165 ms: 200
+2024-07-30T22:15:59.858Z INFO 68c507e6 ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.61457/results in 4 ms: 200
+2024-07-30T22:15:59.859Z INFO ecb100de ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 172 ms: 200
+2024-07-30T22:15:59.941Z INFO af3fd2a3 ::ffff:10.244.0.10 GET /api/v1/tokens?limit=1&order=asc in 254 ms: 200
+2024-07-30T22:15:59.943Z INFO 0cd38052 ::ffff:10.244.0.10 GET /api/v1/balances?limit=10 in 254 ms: 200
+2024-07-30T22:15:59.944Z INFO cccf6b85 ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159/rewards?limit=10 in 84 ms: 200
+2024-07-30T22:15:59.945Z INFO 10f47a39 ::ffff:10.244.0.10 GET /api/v1/accounts?account.id=0.0.111159&limit=1 in 83 ms: 200
+2024-07-30T22:15:59.946Z INFO ac32e426 ::ffff:10.244.0.10 GET /api/v1/transactions?timestamp=gt%3A1570811970.290027001&timestamp=lt%3A1570811972.290027001&limit=1 in 178 ms: 200
+2024-07-30T22:15:59.947Z INFO 5644d577 ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.61457/results/logs in 86 ms: 200
+2024-07-30T22:15:59.948Z INFO 80524c6d ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.61457/results/1570808888.940096000 in 87 ms: 200
+2024-07-30T22:15:59.948Z INFO 5784b8bb ::ffff:10.244.0.10 GET /api/v1/transactions?account.id=0.0.98&type=credit&limit=1 in 98 ms: 200
+2024-07-30T22:15:59.950Z INFO 8ebe89c2 ::ffff:10.244.0.10 GET /api/v1/balances?limit=10 in 260 ms: 200
+2024-07-30T22:15:59.950Z INFO 5770d613 ::ffff:10.244.0.10 GET /api/v1/contracts/results/0x8039f2e8ebc02ff166b6af9112a343afab0465c37a536ae84e01d846b8f45ff5 in 90 ms: 200
+2024-07-30T22:15:59.951Z INFO d988bbbf ::ffff:10.244.0.10 GET /api/v1/balances?account.id=0.0.111764 in 3 ms: 200
+2024-07-30T22:15:59.951Z INFO d6203e59 ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 262 ms: 200
+2024-07-30T22:15:59.954Z INFO bf5da98a ::ffff:10.244.0.10 GET /api/v1/contracts/results/logs?limit=2 in 2 ms: 200
+2024-07-30T22:15:59.954Z INFO 40caa998 ::ffff:10.244.0.10 GET /api/v1/contracts/results/0x8039f2e8ebc02ff166b6af9112a343afab0465c37a536ae84e01d846b8f45ff5/actions in 2 ms: 200
+2024-07-30T22:15:59.956Z INFO 6c3f21fc ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159/nfts?limit=10 in 1 ms: 200
+2024-07-30T22:16:00.764Z WARN 1e8bec23 ::ffff:10.244.0.10 GET /api/v1/network/stake in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:16:00.765Z WARN 16266cc1 ::ffff:10.244.0.10 GET /api/v1/network/supply in 2 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:16:01.768Z WARN c4b89f3d ::ffff:10.244.0.10 GET /api/v1/network/stake in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:16:01.769Z WARN 9ab1a03f ::ffff:10.244.0.10 GET /api/v1/network/supply in 2 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:16:02.773Z WARN b764b59e ::ffff:10.244.0.10 GET /api/v1/network/stake in 2 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:16:02.773Z WARN a613c06f ::ffff:10.244.0.10 GET /api/v1/network/supply in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:16:03.777Z WARN 6e643830 ::ffff:10.244.0.10 GET /api/v1/network/stake in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:16:03.777Z WARN dae27039 ::ffff:10.244.0.10 GET /api/v1/network/supply in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:16:38.740Z INFO 8911655d ::ffff:10.244.0.31 GET /api/v1/accounts?limit=10 in 2 ms: 200
+2024-07-30T22:16:59.697Z INFO 59284f02 ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 8 ms: 200
+2024-07-30T22:16:59.703Z INFO c98ca931 ::ffff:10.244.0.10 GET /api/v1/blocks?limit=10 in 12 ms: 200
+2024-07-30T22:16:59.710Z INFO fdd3a792 ::ffff:10.244.0.10 GET /api/v1/blocks?limit=1&order=desc in 19 ms: 200
+2024-07-30T22:16:59.714Z INFO ce296cd1 ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 25 ms: 200
+2024-07-30T22:16:59.741Z INFO 03986e76 ::ffff:10.244.0.10 GET /api/v1/contracts?limit=2 in 50 ms: 200
+2024-07-30T22:16:59.742Z INFO 0dd6afcb ::ffff:10.244.0.10 GET /api/v1/contracts?limit=2 in 51 ms: 200
+2024-07-30T22:16:59.744Z INFO 516f435d ::ffff:10.244.0.10 GET /api/v1/network/exchangerate in 53 ms: 200
+2024-07-30T22:16:59.747Z INFO 6d763afa ::ffff:10.244.0.10 GET /api/v1/network/fees in 55 ms: 200
+2024-07-30T22:16:59.748Z WARN deba337c ::ffff:10.244.0.10 GET /api/v1/network/stake in 54 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:16:59.748Z INFO 55fee8e1 ::ffff:10.244.0.10 GET /api/v1/network/nodes?limit=2 in 55 ms: 200
+2024-07-30T22:16:59.749Z INFO a3f25b7c ::ffff:10.244.0.10 GET /api/v1/schedules?limit=2 in 55 ms: 200
+2024-07-30T22:16:59.750Z WARN 902712ac ::ffff:10.244.0.10 GET /api/v1/network/supply in 56 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:16:59.754Z INFO ab5c5b5e ::ffff:10.244.0.10 GET /api/v1/transactions?limit=10&type=credit in 59 ms: 200
+2024-07-30T22:16:59.754Z INFO 3ca0a72e ::ffff:10.244.0.10 GET /api/v1/transactions?order=asc&limit=10 in 59 ms: 200
+2024-07-30T22:16:59.756Z INFO a2ada15f ::ffff:10.244.0.10 GET /api/v1/transactions?limit=10 in 61 ms: 200
+2024-07-30T22:16:59.756Z INFO e8b6d50a ::ffff:10.244.0.10 GET /api/v1/transactions?limit=1 in 61 ms: 200
+2024-07-30T22:16:59.756Z INFO e45dd8c6 ::ffff:10.244.0.10 GET /api/v1/transactions?limit=1&result=success in 61 ms: 200
+2024-07-30T22:16:59.757Z INFO 17ad97d2 ::ffff:10.244.0.10 GET /api/v1/tokens?limit=1&order=asc in 68 ms: 200
+2024-07-30T22:16:59.758Z INFO 546bf48f ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 68 ms: 200
+2024-07-30T22:16:59.760Z INFO ac7c5b4e ::ffff:10.244.0.10 GET /api/v1/transactions?limit=1&order=desc in 63 ms: 200
+2024-07-30T22:16:59.762Z INFO a46ca124 ::ffff:10.244.0.10 GET /api/v1/blocks/1029 in 54 ms: 200
+2024-07-30T22:16:59.762Z INFO 04e393fe ::ffff:10.244.0.10 GET /api/v1/contracts/results?limit=2 in 71 ms: 200
+2024-07-30T22:16:59.767Z INFO 3d739970 ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159 in 60 ms: 200
+2024-07-30T22:16:59.767Z INFO b28c4b7d ::ffff:10.244.0.10 GET /api/v1/contracts/results?limit=2 in 76 ms: 200
+2024-07-30T22:16:59.786Z INFO b84bddfe ::ffff:10.244.0.10 GET /api/v1/accounts?account.id=0.0.111159&limit=1 in 70 ms: 200
+2024-07-30T22:16:59.788Z INFO 49389954 ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.111759/state in 39 ms: 200
+2024-07-30T22:16:59.789Z INFO ed012c3d ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.111759 in 42 ms: 200
+2024-07-30T22:16:59.794Z INFO 2671ee87 ::ffff:10.244.0.10 GET /api/v1/transactions/0.0.2-1570811961-258847000?scheduled=false in 7 ms: 200
+2024-07-30T22:16:59.834Z INFO c41216cb ::ffff:10.244.0.10 GET /api/v1/transactions?account.id=0.0.98&type=credit&limit=1 in 66 ms: 200
+2024-07-30T22:16:59.835Z INFO 25f27099 ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 145 ms: 200
+2024-07-30T22:16:59.837Z INFO 5b7b4b40 ::ffff:10.244.0.10 GET /api/v1/transactions?timestamp=gt%3A1570811970.290027001&timestamp=lt%3A1570811972.290027001&limit=1 in 50 ms: 200
+2024-07-30T22:16:59.837Z INFO e7418ca0 ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.61457/results in 48 ms: 200
+2024-07-30T22:16:59.840Z INFO ad89d70a ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159/allowances/crypto?limit=10 in 2 ms: 200
+2024-07-30T22:16:59.841Z INFO c60527b8 ::ffff:10.244.0.10 GET /api/v1/balances?timestamp=1722377819.681&limit=1&order=desc in 150 ms: 200
+2024-07-30T22:16:59.842Z INFO 95f3973d ::ffff:10.244.0.10 GET /api/v1/contracts/results?limit=2 in 151 ms: 200
+2024-07-30T22:16:59.842Z INFO a5c68628 ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159/rewards?limit=10 in 55 ms: 200
+2024-07-30T22:16:59.843Z INFO 1e83eed6 ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.61457/results/logs in 7 ms: 200
+2024-07-30T22:16:59.845Z INFO 7da8a48f ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.61457/results/1570808888.940096000 in 3 ms: 200
+2024-07-30T22:16:59.846Z INFO 85019968 ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 156 ms: 200
+2024-07-30T22:16:59.848Z INFO b0407f5d ::ffff:10.244.0.10 GET /api/v1/contracts/results/logs?limit=2 in 4 ms: 200
+2024-07-30T22:16:59.849Z INFO 365128ac ::ffff:10.244.0.10 GET /api/v1/contracts/results/0x8039f2e8ebc02ff166b6af9112a343afab0465c37a536ae84e01d846b8f45ff5 in 5 ms: 200
+2024-07-30T22:16:59.849Z INFO fe029ed3 ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159/allowances/tokens?limit=10 in 0 ms: 200
+2024-07-30T22:16:59.853Z INFO b3d30460 ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 163 ms: 200
+2024-07-30T22:16:59.853Z INFO 903b6c09 ::ffff:10.244.0.10 GET /api/v1/balances?limit=10 in 163 ms: 200
+2024-07-30T22:16:59.854Z INFO 9de1f3f0 ::ffff:10.244.0.10 GET /api/v1/contracts/results/0x8039f2e8ebc02ff166b6af9112a343afab0465c37a536ae84e01d846b8f45ff5/actions in 3 ms: 200
+2024-07-30T22:16:59.854Z INFO 67fda043 ::ffff:10.244.0.10 GET /api/v1/balances?limit=10 in 164 ms: 200
+2024-07-30T22:16:59.857Z INFO 9796284e ::ffff:10.244.0.10 GET /api/v1/balances?account.id=0.0.111764 in 1 ms: 200
+2024-07-30T22:16:59.858Z INFO 50718d6b ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159/nfts?limit=10 in 1 ms: 200
+2024-07-30T22:17:00.751Z WARN 9fdd38e9 ::ffff:10.244.0.10 GET /api/v1/network/stake in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:17:00.753Z WARN 2c6c6a1f ::ffff:10.244.0.10 GET /api/v1/network/supply in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:17:01.116Z INFO 20c2bc14 ::ffff:10.244.0.19 GET /api/v1/network/nodes?limit=25 in 3 ms: 200
+2024-07-30T22:17:01.754Z WARN 9fe12c4b ::ffff:10.244.0.10 GET /api/v1/network/stake in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:17:01.756Z WARN 9e09dff3 ::ffff:10.244.0.10 GET /api/v1/network/supply in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:17:02.758Z WARN 13281854 ::ffff:10.244.0.10 GET /api/v1/network/stake in 0 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:17:02.759Z WARN f86f4b5e ::ffff:10.244.0.10 GET /api/v1/network/supply in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:17:03.760Z WARN 5325868b ::ffff:10.244.0.10 GET /api/v1/network/stake in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:17:03.762Z WARN a0e145bd ::ffff:10.244.0.10 GET /api/v1/network/supply in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:17:23.335Z WARN 4f54b43e ::ffff:10.244.0.31 GET /api/v1/network/supply in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:17:43.948Z WARN c5a43087 ::ffff:10.244.0.31 GET /api/v1/contracts/call in 1 ms: 400 Bad request InvalidArgumentError Invalid parameter: contractid
+2024-07-30T22:17:59.699Z INFO aaa2fb94 ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 8 ms: 200
+2024-07-30T22:17:59.710Z INFO 27490890 ::ffff:10.244.0.10 GET /api/v1/blocks?limit=10 in 17 ms: 200
+2024-07-30T22:17:59.711Z INFO 5cecdcf3 ::ffff:10.244.0.10 GET /api/v1/blocks?limit=1&order=desc in 17 ms: 200
+2024-07-30T22:17:59.713Z INFO a4fbddcd ::ffff:10.244.0.10 GET /api/v1/contracts?limit=2 in 17 ms: 200
+2024-07-30T22:17:59.742Z INFO 750302b8 ::ffff:10.244.0.10 GET /api/v1/contracts?limit=2 in 46 ms: 200
+2024-07-30T22:17:59.746Z INFO 8c84ce37 ::ffff:10.244.0.10 GET /api/v1/network/exchangerate in 47 ms: 200
+2024-07-30T22:17:59.749Z INFO 0c8adfee ::ffff:10.244.0.10 GET /api/v1/network/fees in 49 ms: 200
+2024-07-30T22:17:59.750Z INFO f582e73a ::ffff:10.244.0.10 GET /api/v1/network/nodes?limit=2 in 50 ms: 200
+2024-07-30T22:17:59.751Z INFO b5543898 ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 58 ms: 200
+2024-07-30T22:17:59.752Z WARN 0e367b8e ::ffff:10.244.0.10 GET /api/v1/network/stake in 52 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:17:59.752Z WARN ae7ac5dd ::ffff:10.244.0.10 GET /api/v1/network/supply in 52 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:17:59.753Z INFO 683986e3 ::ffff:10.244.0.10 GET /api/v1/schedules?limit=2 in 53 ms: 200
+2024-07-30T22:17:59.755Z INFO 2c72e074 ::ffff:10.244.0.10 GET /api/v1/tokens?limit=1&order=asc in 63 ms: 200
+2024-07-30T22:17:59.756Z INFO 6177a461 ::ffff:10.244.0.10 GET /api/v1/transactions?limit=10&type=credit in 56 ms: 200
+2024-07-30T22:17:59.758Z INFO 9e903666 ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 65 ms: 200
+2024-07-30T22:17:59.760Z INFO 90a771d0 ::ffff:10.244.0.10 GET /api/v1/transactions?limit=10 in 60 ms: 200
+2024-07-30T22:17:59.760Z INFO 2c490557 ::ffff:10.244.0.10 GET /api/v1/transactions?order=asc&limit=10 in 60 ms: 200
+2024-07-30T22:17:59.842Z INFO 18bdce08 ::ffff:10.244.0.10 GET /api/v1/transactions?limit=1&order=desc in 142 ms: 200
+2024-07-30T22:17:59.842Z INFO 07bc6f68 ::ffff:10.244.0.10 GET /api/v1/transactions?limit=1 in 142 ms: 200
+2024-07-30T22:17:59.842Z INFO 7cb523a2 ::ffff:10.244.0.10 GET /api/v1/transactions?limit=1&result=success in 142 ms: 200
+2024-07-30T22:17:59.844Z INFO 245ec46b ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 152 ms: 200
+2024-07-30T22:17:59.847Z INFO 49f2791a ::ffff:10.244.0.10 GET /api/v1/contracts/results?limit=2 in 151 ms: 200
+2024-07-30T22:17:59.847Z INFO 5867d3e0 ::ffff:10.244.0.10 GET /api/v1/blocks/1029 in 132 ms: 200
+2024-07-30T22:17:59.848Z INFO 4721d759 ::ffff:10.244.0.10 GET /api/v1/accounts?account.id=0.0.111159&limit=1 in 135 ms: 200
+2024-07-30T22:17:59.848Z INFO 45b092b9 ::ffff:10.244.0.10 GET /api/v1/contracts/results?limit=2 in 152 ms: 200
+2024-07-30T22:17:59.849Z INFO d87019d4 ::ffff:10.244.0.10 GET /api/v1/balances?timestamp=1722377879.685&limit=1&order=desc in 156 ms: 200
+2024-07-30T22:17:59.850Z INFO 75145402 ::ffff:10.244.0.10 GET /api/v1/contracts/results?limit=2 in 154 ms: 200
+2024-07-30T22:17:59.850Z INFO af47b771 ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.111759/state in 105 ms: 200
+2024-07-30T22:17:59.850Z INFO cfef34ac ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159/allowances/crypto?limit=10 in 93 ms: 200
+2024-07-30T22:17:59.852Z INFO cffdb3c8 ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159/nfts?limit=10 in 89 ms: 200
+2024-07-30T22:17:59.853Z INFO 1961ec72 ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.111759 in 136 ms: 200
+2024-07-30T22:17:59.855Z INFO d4abc055 ::ffff:10.244.0.10 GET /api/v1/transactions?account.id=0.0.98&type=credit&limit=1 in 93 ms: 200
+2024-07-30T22:17:59.857Z INFO b8110290 ::ffff:10.244.0.10 GET /api/v1/transactions?timestamp=gt%3A1570811970.290027001&timestamp=lt%3A1570811972.290027001&limit=1 in 5 ms: 200
+2024-07-30T22:17:59.857Z INFO e8b6c614 ::ffff:10.244.0.10 GET /api/v1/transactions/0.0.2-1570811961-258847000?scheduled=false in 6 ms: 200
+2024-07-30T22:17:59.859Z INFO 84317195 ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159/rewards?limit=10 in 5 ms: 200
+2024-07-30T22:17:59.860Z INFO 9a2694d5 ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 168 ms: 200
+2024-07-30T22:17:59.860Z INFO 38ad8270 ::ffff:10.244.0.10 GET /api/v1/balances?limit=10 in 167 ms: 200
+2024-07-30T22:17:59.862Z INFO 47c647d9 ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 170 ms: 200
+2024-07-30T22:17:59.862Z INFO fc21cd11 ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.61457/results/logs in 6 ms: 200
+2024-07-30T22:17:59.864Z INFO 46310fdf ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.61457/results in 6 ms: 200
+2024-07-30T22:17:59.866Z INFO 894deb17 ::ffff:10.244.0.10 GET /api/v1/contracts/results/0x8039f2e8ebc02ff166b6af9112a343afab0465c37a536ae84e01d846b8f45ff5 in 6 ms: 200
+2024-07-30T22:17:59.869Z INFO 7bd4f89a ::ffff:10.244.0.10 GET /api/v1/contracts/results/logs?limit=2 in 3 ms: 200
+2024-07-30T22:17:59.870Z INFO 0f931d2a ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159/allowances/tokens?limit=10 in 1 ms: 200
+2024-07-30T22:17:59.872Z INFO efb5fac5 ::ffff:10.244.0.10 GET /api/v1/balances?limit=10 in 179 ms: 200
+2024-07-30T22:17:59.947Z INFO 4ff39f1e ::ffff:10.244.0.10 GET /api/v1/balances?account.id=0.0.111764 in 2 ms: 200
+2024-07-30T22:17:59.948Z INFO fd1885f5 ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159 in 4 ms: 200
+2024-07-30T22:17:59.949Z INFO 81524dff ::ffff:10.244.0.10 GET /api/v1/contracts/results/0x8039f2e8ebc02ff166b6af9112a343afab0465c37a536ae84e01d846b8f45ff5/actions in 3 ms: 200
+2024-07-30T22:17:59.949Z INFO 52c44836 ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.61457/results/1570808888.940096000 in 4 ms: 200
+2024-07-30T22:18:00.756Z WARN 0b1f321d ::ffff:10.244.0.10 GET /api/v1/network/stake in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:18:00.756Z WARN 73001717 ::ffff:10.244.0.10 GET /api/v1/network/supply in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:18:01.760Z WARN 7c6d7b12 ::ffff:10.244.0.10 GET /api/v1/network/supply in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:18:01.760Z WARN 94397369 ::ffff:10.244.0.10 GET /api/v1/network/stake in 2 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:18:02.764Z WARN 9971c7f2 ::ffff:10.244.0.10 GET /api/v1/network/stake in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:18:02.765Z WARN 648bd79e ::ffff:10.244.0.10 GET /api/v1/network/supply in 2 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:18:03.768Z WARN a34b3e09 ::ffff:10.244.0.10 GET /api/v1/network/stake in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:18:03.769Z WARN 7aa4fba6 ::ffff:10.244.0.10 GET /api/v1/network/supply in 2 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:18:59.704Z INFO f5321e63 ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 10 ms: 200
+2024-07-30T22:18:59.709Z INFO 0fcabef7 ::ffff:10.244.0.10 GET /api/v1/blocks?limit=10 in 9 ms: 200
+2024-07-30T22:18:59.710Z INFO 2f40ce7e ::ffff:10.244.0.10 GET /api/v1/blocks?limit=1&order=desc in 10 ms: 200
+2024-07-30T22:18:59.745Z INFO 84f211ac ::ffff:10.244.0.10 GET /api/v1/contracts?limit=2 in 44 ms: 200
+2024-07-30T22:18:59.749Z INFO 43999b7d ::ffff:10.244.0.10 GET /api/v1/network/exchangerate in 48 ms: 200
+2024-07-30T22:18:59.753Z INFO e1da4d76 ::ffff:10.244.0.10 GET /api/v1/network/fees in 52 ms: 200
+2024-07-30T22:18:59.755Z INFO 0e8fce09 ::ffff:10.244.0.10 GET /api/v1/network/nodes?limit=2 in 54 ms: 200
+2024-07-30T22:18:59.843Z WARN 6d598e30 ::ffff:10.244.0.10 GET /api/v1/network/stake in 142 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:18:59.844Z WARN b8633374 ::ffff:10.244.0.10 GET /api/v1/network/supply in 143 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:18:59.846Z INFO 79d58ef6 ::ffff:10.244.0.10 GET /api/v1/schedules?limit=2 in 145 ms: 200
+2024-07-30T22:18:59.848Z INFO 1c5ee059 ::ffff:10.244.0.10 GET /api/v1/balances?limit=10 in 152 ms: 200
+2024-07-30T22:18:59.851Z INFO 0c717cd2 ::ffff:10.244.0.10 GET /api/v1/tokens?limit=1&order=asc in 157 ms: 200
+2024-07-30T22:18:59.851Z INFO a92a5662 ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 157 ms: 200
+2024-07-30T22:18:59.851Z INFO 08e9ba01 ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 156 ms: 200
+2024-07-30T22:18:59.853Z INFO 7016021f ::ffff:10.244.0.10 GET /api/v1/transactions?limit=10&type=credit in 152 ms: 200
+2024-07-30T22:18:59.854Z INFO c450acd2 ::ffff:10.244.0.10 GET /api/v1/contracts?limit=2 in 153 ms: 200
+2024-07-30T22:18:59.856Z INFO 84f420a2 ::ffff:10.244.0.10 GET /api/v1/transactions?limit=10 in 155 ms: 200
+2024-07-30T22:18:59.857Z INFO 6db94f16 ::ffff:10.244.0.10 GET /api/v1/transactions?limit=1 in 156 ms: 200
+2024-07-30T22:18:59.857Z INFO e793f9b7 ::ffff:10.244.0.10 GET /api/v1/transactions?limit=1&result=success in 155 ms: 200
+2024-07-30T22:18:59.857Z INFO 2caa3b70 ::ffff:10.244.0.10 GET /api/v1/transactions?order=asc&limit=10 in 156 ms: 200
+2024-07-30T22:18:59.861Z INFO 96582660 ::ffff:10.244.0.10 GET /api/v1/transactions?limit=1&order=desc in 159 ms: 200
+2024-07-30T22:18:59.940Z INFO 297ad58e ::ffff:10.244.0.10 GET /api/v1/contracts/results?limit=2 in 240 ms: 200
+2024-07-30T22:18:59.941Z INFO 58be3b76 ::ffff:10.244.0.10 GET /api/v1/blocks/1029 in 225 ms: 200
+2024-07-30T22:18:59.941Z INFO 748b8deb ::ffff:10.244.0.10 GET /api/v1/accounts?account.id=0.0.111159&limit=1 in 225 ms: 200
+2024-07-30T22:18:59.944Z INFO 403d7e15 ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.111759/state in 194 ms: 200
+2024-07-30T22:18:59.944Z INFO 4904c576 ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 249 ms: 200
+2024-07-30T22:18:59.944Z INFO 70071601 ::ffff:10.244.0.10 GET /api/v1/contracts/results?limit=2 in 243 ms: 200
+2024-07-30T22:18:59.947Z INFO 26a01c2e ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159/allowances/crypto?limit=10 in 84 ms: 200
+2024-07-30T22:18:59.948Z INFO 05a32997 ::ffff:10.244.0.10 GET /api/v1/contracts/results?limit=2 in 248 ms: 200
+2024-07-30T22:18:59.949Z INFO f0a3a05b ::ffff:10.244.0.10 GET /api/v1/transactions/0.0.2-1570811961-258847000?scheduled=false in 84 ms: 200
+2024-07-30T22:18:59.950Z INFO 0377f02c ::ffff:10.244.0.10 GET /api/v1/transactions?account.id=0.0.98&type=credit&limit=1 in 87 ms: 200
+2024-07-30T22:18:59.951Z INFO 4776d960 ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.111759 in 87 ms: 200
+2024-07-30T22:18:59.951Z INFO c2d450a8 ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159 in 89 ms: 200
+2024-07-30T22:18:59.954Z INFO f9d8f63c ::ffff:10.244.0.10 GET /api/v1/transactions?timestamp=gt%3A1570811970.290027001&timestamp=lt%3A1570811972.290027001&limit=1 in 89 ms: 200
+2024-07-30T22:18:59.954Z INFO ccb34e3a ::ffff:10.244.0.10 GET /api/v1/balances?timestamp=1722377939.687&limit=1&order=desc in 254 ms: 200
+2024-07-30T22:18:59.956Z INFO fafd3c47 ::ffff:10.244.0.10 GET /api/v1/balances?limit=10 in 260 ms: 200
+2024-07-30T22:18:59.957Z INFO a39821e3 ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.61457/results in 8 ms: 200
+2024-07-30T22:18:59.957Z INFO da4c1ef3 ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 261 ms: 200
+2024-07-30T22:18:59.960Z INFO af74172b ::ffff:10.244.0.10 GET /api/v1/accounts?limit=10 in 265 ms: 200
+2024-07-30T22:18:59.966Z INFO 61cc64c6 ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159/rewards?limit=10 in 8 ms: 200
+2024-07-30T22:18:59.972Z INFO a8f2fcb1 ::ffff:10.244.0.10 GET /api/v1/balances?account.id=0.0.111764 in 7 ms: 200
+2024-07-30T22:18:59.973Z INFO ec8fac1c ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.61457/results/logs in 11 ms: 200
+2024-07-30T22:18:59.981Z INFO 939d74dd ::ffff:10.244.0.10 GET /api/v1/contracts/results/0x8039f2e8ebc02ff166b6af9112a343afab0465c37a536ae84e01d846b8f45ff5 in 23 ms: 200
+2024-07-30T22:18:59.981Z INFO 0edf70f0 ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159/nfts?limit=10 in 13 ms: 200
+2024-07-30T22:18:59.982Z INFO d89ba83b ::ffff:10.244.0.10 GET /api/v1/accounts/0.0.111159/allowances/tokens?limit=10 in 14 ms: 200
+2024-07-30T22:18:59.983Z INFO b6c998e6 ::ffff:10.244.0.10 GET /api/v1/contracts/0.0.61457/results/1570808888.940096000 in 16 ms: 200
+2024-07-30T22:19:00.035Z INFO 61de90c8 ::ffff:10.244.0.10 GET /api/v1/contracts/results/logs?limit=2 in 52 ms: 200
+2024-07-30T22:19:00.036Z INFO 8377cdd6 ::ffff:10.244.0.10 GET /api/v1/contracts/results/0x8039f2e8ebc02ff166b6af9112a343afab0465c37a536ae84e01d846b8f45ff5/actions in 2 ms: 200
+2024-07-30T22:19:00.848Z WARN da8151e6 ::ffff:10.244.0.10 GET /api/v1/network/stake in 2 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:19:00.848Z WARN 1047190c ::ffff:10.244.0.10 GET /api/v1/network/supply in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:19:01.127Z INFO 29c5543f ::ffff:10.244.0.19 GET /api/v1/network/nodes?limit=25 in 2 ms: 200
+2024-07-30T22:19:01.852Z WARN 3d15f9b4 ::ffff:10.244.0.10 GET /api/v1/network/supply in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:19:01.852Z WARN 6bd4bf43 ::ffff:10.244.0.10 GET /api/v1/network/stake in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:19:02.855Z WARN 033008e5 ::ffff:10.244.0.10 GET /api/v1/network/stake in 0 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:19:02.856Z WARN 87373907 ::ffff:10.244.0.10 GET /api/v1/network/supply in 2 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:19:03.859Z WARN 892ae830 ::ffff:10.244.0.10 GET /api/v1/network/stake in 1 ms: 404 Not found NotFoundError Not found
+2024-07-30T22:19:03.859Z WARN ee8ef013 ::ffff:10.244.0.10 GET /api/v1/network/supply in 1 ms: 404 Not found NotFoundError Not found
