@@ -8,7 +8,6 @@
 #####  Project Files  ######
 ############################
 
-/build-logic/**                                 @hashgraph/release-engineering @hashgraph/release-engineering-managers @hashgraph/devops-ci
 /charts/**                                      @hashgraph/release-engineering @hashgraph/release-engineering-managers @hashgraph/devops-ci
 /docker/**                                      @hashgraph/release-engineering @hashgraph/release-engineering-managers @hashgraph/devops-ci
 
