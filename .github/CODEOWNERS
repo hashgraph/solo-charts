@@ -8,9 +8,9 @@
 #####  Project Files  ######
 ############################
 
-/build-logic/**                                 @hashgraph/release-engineering @hashgraph/release-engineering-managers @hashgraph/devops-ci
-/charts/**                                      @hashgraph/release-engineering @hashgraph/release-engineering-managers @hashgraph/devops-ci
-/docker/**                                      @hashgraph/release-engineering @hashgraph/release-engineering-managers @hashgraph/devops-ci
+/build-logic/**                                 @hashgraph/release-engineering @hashgraph/release-engineering-managers
+/charts/**                                      @hashgraph/release-engineering @hashgraph/release-engineering-managers
+/docker/**                                      @hashgraph/release-engineering @hashgraph/release-engineering-managers
 
 #########################
 #####  Core Files  ######
@@ -19,8 +19,8 @@
 # NOTE: Must be placed last to ensure enforcement over all other rules
 
 # Protection Rules for Github Configuration Files and Actions Workflows
-/.github/                                       @hashgraph/release-engineering-managers @hashgraph/devops-ci
-/.github/workflows/                             @hashgraph/release-engineering-managers @hashgraph/devops-ci
+/.github/                                       @hashgraph/release-engineering-managers
+/.github/workflows/                             @hashgraph/release-engineering-managers
 
 # Codacy Tool Configurations
 /config/                                        @hashgraph/release-engineering-managers
@@ -33,12 +33,12 @@
 /CODEOWNERS                                     @hashgraph/release-engineering-managers
 
 # Protect the repository root files
-/README.md                                      @hashgraph/release-engineering @hashgraph/release-engineering-managers @hashgraph/devops-ci
+/README.md                                      @hashgraph/release-engineering @hashgraph/release-engineering-managers
 **/LICENSE                                      @hashgraph/release-engineering @hashgraph/release-engineering-managers
 
 # CodeCov configuration
 **/codecov.yml                                  @hashgraph/release-engineering @hashgraph/release-engineering-managers
 
 # Git Ignore definitions
-**/.gitignore                                   @hashgraph/release-engineering @hashgraph/release-engineering-managers @hashgraph/devops-ci
-**/.gitignore.*                                 @hashgraph/release-engineering @hashgraph/release-engineering-managers @hashgraph/devops-ci
+**/.gitignore                                   @hashgraph/release-engineering @hashgraph/release-engineering-managers
+**/.gitignore.*                                 @hashgraph/release-engineering @hashgraph/release-engineering-managers
