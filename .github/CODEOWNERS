@@ -9,7 +9,6 @@
 ############################
 
 /charts/**                                      @hashgraph/release-engineering @hashgraph/release-engineering-managers @hashgraph/devops-ci
-/docker/**                                      @hashgraph/release-engineering @hashgraph/release-engineering-managers @hashgraph/devops-ci
 
 #########################
 #####  Core Files  ######
