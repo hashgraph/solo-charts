@@ -11,9 +11,9 @@ setup() {
   log_debug "----------------------------------------------------------------------------"
 
   log_debug "Waiting for network node pods to be phase=running..."
-  kubectl wait --for=jsonpath='{.status.phase}'=Running pod -l fullstack.hedera.com/type=network-node --timeout=300s -n "${NAMESPACE}" || return "${EX_ERR}"
+  kubectl wait --for=jsonpath='{.status.phase}'=Running pod -l solo.hedera.com/type=network-node --timeout=300s -n "${NAMESPACE}" || return "${EX_ERR}"
   log_debug "Waiting for network node pods to be condition=ready..."
-  kubectl wait --for=condition=ready pod -l fullstack.hedera.com/type=network-node --timeout=300s -n "${NAMESPACE}" || return "${EX_ERR}"
+  kubectl wait --for=condition=ready pod -l solo.hedera.com/type=network-node --timeout=300s -n "${NAMESPACE}" || return "${EX_ERR}"
 
   local resp="$(get_pod_list network-node)"
   local nodes=(${resp}) # convert into an array

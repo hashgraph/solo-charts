@@ -19,14 +19,14 @@ setup() {
     test_status="${PASS}"
     for pod in "${pods[@]}"; do
       log_debug ""
-      local node_name=$(get_pod_label "${pod}" "fullstack.hedera.com/node-name")
+      local node_name=$(get_pod_label "${pod}" "solo.hedera.com/node-name")
       [[ -z "${node_name}" ]] && test_status="${FAIL}" && break
 
       local is_enabled=$(is_enabled_for_node "${node_name}" ".haproxy.enabled")
       if [ "${is_enabled}" = "TRUE" ]; then
         log_debug "HAProxy is enabled for node '${node_name}'"
         log_debug "Checking HAProxy for network-node '${node_name}'"
-        local haproxy_pod=$(get_pod_by_label "app=haproxy-${node_name},fullstack.hedera.com/type=haproxy")
+        local haproxy_pod=$(get_pod_by_label "app=haproxy-${node_name},solo.hedera.com/type=haproxy")
         log_debug "Checking HAProxy pod ${haproxy_pod}"
         is_pod_phrase_running "${haproxy_pod}" || test_status="${FAIL}"
       else
@@ -60,14 +60,14 @@ setup() {
     test_status="${PASS}"
     for pod in "${pods[@]}"; do
       log_debug ""
-      local node_name=$(get_pod_label "${pod}" "fullstack.hedera.com/node-name")
+      local node_name=$(get_pod_label "${pod}" "solo.hedera.com/node-name")
       [[ -z "${node_name}" ]] && test_status="${FAIL}" && break
 
       local is_enabled=$(is_enabled_for_node "${node_name}" ".envoyProxy.enabled")
       if [ "${is_enabled}" = "TRUE" ]; then
         log_debug "EnvoyProxy is enabled for node '${node_name}'"
         log_debug "Checking Envoy proxy for network-node '${node_name}'"
-        local envoy_proxy_pod=$(get_pod_by_label "app=envoy-proxy-${node_name},fullstack.hedera.com/type=envoy-proxy")
+        local envoy_proxy_pod=$(get_pod_by_label "app=envoy-proxy-${node_name},solo.hedera.com/type=envoy-proxy")
 
         log_debug "Checking Envoy Proxy pod ${envoy_proxy_pod}"
         is_pod_ready "${envoy_proxy_pod}" || test_status="${FAIL}"

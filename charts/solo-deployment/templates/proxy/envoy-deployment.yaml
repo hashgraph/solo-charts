@@ -17,8 +17,8 @@ spec:
     metadata:
       labels:
         app: envoy-proxy-{{ $node.name }}
-        fullstack.hedera.com/type: envoy-proxy
-        {{- include "fullstack.testLabels" $ | nindent 8 }}
+        solo.hedera.com/type: envoy-proxy
+        {{- include "solo.testLabels" $ | nindent 8 }}
     spec:
         {{- if $.Values.deployment.nodeSelector }}
       nodeSelector:
@@ -42,8 +42,8 @@ spec:
             name: envoy-proxy-cm-{{ $node.name }}
       containers:
       - name: {{ default $defaults.nameOverride $envoyProxy.nameOverride }}
-        image: {{ include "fullstack.container.image" (dict "image" $envoyProxy.image "Chart" $.Chart "defaults" $defaults ) }}
-        imagePullPolicy: {{ include "fullstack.images.pullPolicy" (dict "image" $envoyProxy.image "defaults" $defaults) }}
+        image: {{ include "solo.container.image" (dict "image" $envoyProxy.image "Chart" $.Chart "defaults" $defaults ) }}
+        imagePullPolicy: {{ include "solo.images.pullPolicy" (dict "image" $envoyProxy.image "defaults" $defaults) }}
         volumeMounts:
           - name: config-volume
             # https://www.envoyproxy.io/docs/envoy/v1.26.2/start/docker

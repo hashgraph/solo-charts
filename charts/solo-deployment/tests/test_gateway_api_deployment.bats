@@ -19,7 +19,7 @@ setup() {
     test_status="${PASS}"
     for pod in "${pods[@]}"; do
       log_debug ""
-      local node_name=$(get_pod_label "${pod}" "fullstack.hedera.com/node-name")
+      local node_name=$(get_pod_label "${pod}" "solo.hedera.com/node-name")
       [[ -z "${node_name}" ]] && test_status="${FAIL}" && break
 
       local route_name="node-grpc-route-${node_name}"

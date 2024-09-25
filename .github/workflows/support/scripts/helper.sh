@@ -680,7 +680,7 @@ function verify_network_state() {
 
 function verify_haproxy() {
   # iterate over each haprox pod check if READY is 1/1
-  local pods=$("${KCTL}" get pods -l fullstack.hedera.com/type=haproxy -o jsonpath='{.items[*].metadata.name}')
+  local pods=$("${KCTL}" get pods -l solo.hedera.com/type=haproxy -o jsonpath='{.items[*].metadata.name}')
   for pod in ${pods}; do
     local status=$("${KCTL}" get pod "${pod}" -o 'jsonpath={..status.conditions[?(@.type=="Ready")].status}')
     if [[ "${status}" != "True" ]]; then

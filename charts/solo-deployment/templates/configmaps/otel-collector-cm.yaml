@@ -5,7 +5,7 @@ metadata:
   name: otel-cm-{{ $node.name }}
   namespace: {{ default $.Release.Namespace $.Values.global.namespaceOverride }}
   labels:
-    {{- include "fullstack.testLabels" $ | nindent 4 }}
+    {{- include "solo.testLabels" $ | nindent 4 }}
 data:
   config.yaml: |
   {{- $params := dict "" "" -}}

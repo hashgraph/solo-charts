@@ -9,11 +9,11 @@ metadata:
   name: envoy-proxy-{{ $node.name }}-svc
   namespace: {{ default $.Release.Namespace $.Values.global.namespaceOverride }}
   labels:
-    fullstack.hedera.com/type: envoy-proxy-svc
-    fullstack.hedera.com/node-name: {{ $node.name }}
-    fullstack.hedera.com/account-id: {{ $node.accountId }}
-    fullstack.hedera.com/prometheus-endpoint: active
-    {{- include "fullstack.testLabels" $ | nindent 4 }}
+    solo.hedera.com/type: envoy-proxy-svc
+    solo.hedera.com/node-name: {{ $node.name }}
+    solo.hedera.com/account-id: {{ $node.accountId }}
+    solo.hedera.com/prometheus-endpoint: active
+    {{- include "solo.testLabels" $ | nindent 4 }}
 spec:
   {{- if $envoyProxy.loadBalancerEnabled }}
   type: LoadBalancer

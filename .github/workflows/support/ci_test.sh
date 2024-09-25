@@ -76,16 +76,16 @@ kubectl get svc -o wide && \
 kubectl get pods -o wide && \
 
 echo "Waiting for network-node pods to be phase=running (first deployment takes ~10m)...."
-kubectl wait --for=jsonpath='{.status.phase}'=Running pod -l fullstack.hedera.com/type=network-node --timeout=900s
+kubectl wait --for=jsonpath='{.status.phase}'=Running pod -l solo.hedera.com/type=network-node --timeout=900s
 
 echo "Waiting for network-node pods to be condition=ready (first deployment takes ~10m)...."
-kubectl wait --for=condition=ready pod -l fullstack.hedera.com/type=network-node --timeout=900s
+kubectl wait --for=condition=ready pod -l solo.hedera.com/type=network-node --timeout=900s
 
 echo "Service Information...."
 kubectl get svc -o wide
 
 echo "Waiting for pods to be up (timeout 600s)"
-kubectl wait --for=jsonpath='{.status.phase}'=Running pod -l fullstack.hedera.com/type=network-node --timeout=600s
+kubectl wait --for=jsonpath='{.status.phase}'=Running pod -l solo.hedera.com/type=network-node --timeout=600s
 
 
 echo "Running helm chart tests (takes ~5m, timeout 15m)... "

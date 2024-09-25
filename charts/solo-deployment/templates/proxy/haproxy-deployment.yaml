@@ -17,8 +17,8 @@ spec:
     metadata:
       labels:
         app: haproxy-{{ $node.name }}
-        fullstack.hedera.com/type: haproxy
-        {{- include "fullstack.testLabels" $ | nindent 8 }}
+        solo.hedera.com/type: haproxy
+        {{- include "solo.testLabels" $ | nindent 8 }}
     spec:
         {{- if $.Values.deployment.nodeSelector }}
       nodeSelector:
@@ -47,8 +47,8 @@ spec:
             name: haproxy-ofac-cm
       containers:
       - name: {{ default $defaults.nameOverride $haproxy.nameOverride }}
-        image: {{ include "fullstack.container.image" (dict "image" $haproxy.image "Chart" $.Chart "defaults" $defaults ) }}
-        imagePullPolicy: {{ include "fullstack.images.pullPolicy" (dict "image" $haproxy.image "defaults" $defaults )  }}
+        image: {{ include "solo.container.image" (dict "image" $haproxy.image "Chart" $.Chart "defaults" $defaults ) }}
+        imagePullPolicy: {{ include "solo.images.pullPolicy" (dict "image" $haproxy.image "defaults" $defaults )  }}
         envFrom:
           - secretRef:
               name: haproxy-secrets

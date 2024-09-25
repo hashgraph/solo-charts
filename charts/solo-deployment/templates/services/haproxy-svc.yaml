@@ -9,11 +9,11 @@ metadata:
   name: haproxy-{{ $node.name }}-svc
   namespace: {{ default $.Release.Namespace $.Values.global.namespaceOverride }}
   labels:
-    fullstack.hedera.com/type: haproxy-svc
-    fullstack.hedera.com/node-name: {{ $node.name }}
-    fullstack.hedera.com/account-id: {{ $node.accountId }}
-    fullstack.hedera.com/prometheus-endpoint: active
-    {{- include "fullstack.testLabels" $ | nindent 4 }}
+    solo.hedera.com/type: haproxy-svc
+    solo.hedera.com/node-name: {{ $node.name }}
+    solo.hedera.com/account-id: {{ $node.accountId }}
+    solo.hedera.com/prometheus-endpoint: active
+    {{- include "solo.testLabels" $ | nindent 4 }}
 spec:
   type: {{ $defaults.serviceType | default "ClusterIP" }}
   externalTrafficPolicy: Local

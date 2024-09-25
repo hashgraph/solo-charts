@@ -40,10 +40,10 @@ spec:
       app: network-{{ $node.name }}
   {{- if $pvcEnabled }}
   volumeClaimTemplates:
-    {{ include "fullstack.volumeClaimTemplate" (dict "name" "hgcapp-account-balances-pvc" "storage" $nodeStorage.accountBalances) | nindent 4 }}
-    {{ include "fullstack.volumeClaimTemplate" (dict "name" "hgcapp-event-streams-pvc" "storage" $nodeStorage.eventStreams) | nindent 4 }}
-    {{ include "fullstack.volumeClaimTemplate" (dict "name" "hgcapp-record-streams-pvc" "storage" $nodeStorage.recordStreams) | nindent 4 }}
-    {{ include "fullstack.volumeClaimTemplate" (dict "name" "hgcapp-record-streams-sidecar-pvc" "storage" $nodeStorage.recordStreamsSidecar) | nindent 4 }}
+    {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-account-balances-pvc" "storage" $nodeStorage.accountBalances) | nindent 4 }}
+    {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-event-streams-pvc" "storage" $nodeStorage.eventStreams) | nindent 4 }}
+    {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-record-streams-pvc" "storage" $nodeStorage.recordStreams) | nindent 4 }}
+    {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-record-streams-sidecar-pvc" "storage" $nodeStorage.recordStreamsSidecar) | nindent 4 }}
     {{ include "fullstack.volumeClaimTemplate" (dict "name" "hgcapp-data-onboard-pvc" "storage" $nodeStorage.dataOnboard) | nindent 4 }}
     {{ include "fullstack.volumeClaimTemplate" (dict "name" "hgcapp-data-saved-pvc" "storage" $nodeStorage.dataSaved) | nindent 4 }}
     {{ include "fullstack.volumeClaimTemplate" (dict "name" "hgcapp-data-stats-pvc" "storage" $nodeStorage.dataStats) | nindent 4 }}

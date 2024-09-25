@@ -3,7 +3,7 @@ kind: ClusterRole
 metadata:
   name: pod-monitor-role
   labels:
-    fullstack.hedera.com/type: cluster-role
+    solo.hedera.com/type: cluster-role
 rules:
   - apiGroups: [ "" ]
     resources:

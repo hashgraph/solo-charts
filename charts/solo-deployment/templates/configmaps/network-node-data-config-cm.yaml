@@ -5,7 +5,7 @@ metadata:
   name: network-node-data-config-cm
   namespace: {{ default $.Release.Namespace $.Values.global.namespaceOverride }}
   labels:
-    {{- include "fullstack.testLabels" $ | nindent 4 }}
+    {{- include "solo.testLabels" $ | nindent 4 }}
 data:
 {{- if $.Values.hedera.configMaps.apiPermissionsProperties }}
   api-permission.properties: {{ toYaml .Values.hedera.configMaps.apiPermissionsProperties | indent 4 }}
