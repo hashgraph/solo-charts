@@ -22,13 +22,6 @@ kubectl config use-context "kind-${CLUSTER_NAME}"
 kubectl config set-context --current --namespace="${NAMESPACE}"
 kubectl config get-contexts
 
-echo "-----------------------------------------------------------------------------------------------------"
-echo "Building kubectl-bats image"
-KUBECTL_BATS_IMAGE="${LOCAL_DOCKER_REGISTRY}/kubectl-bats:${LOCAL_DOCKER_IMAGE_TAG}"
-cd "${DOCKERFILE_DIR}/kubectl-bats" && docker build -t "${KUBECTL_BATS_IMAGE}" .
-kind load docker-image "${KUBECTL_BATS_IMAGE}" -n "${CLUSTER_NAME}"
-cd -
-
 
 echo "-----------------------------------------------------------------------------------------------------"
 echo "Helm dependency update"
