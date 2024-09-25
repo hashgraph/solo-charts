@@ -1,6 +1,6 @@
 apiVersion: v2
-name: fullstack-deployment
-description: An umbrella Helm chart for a chart deployment of `fullstack-deployment`
+name: solo-deployment
+description: An umbrella Helm chart for a chart deployment of `solo-deployment`
 
 # A chart can be either an 'application' or a 'library' chart.
 #

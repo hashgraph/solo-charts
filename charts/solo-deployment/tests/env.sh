@@ -27,7 +27,7 @@ LOG_FILE="${LOG_FILE:-helm-test.log}"
 OUTPUT_LOG="${OUTPUT_LOG:-false}"
 [ ! -d "${LOG_DIR}" ] && mkdir "${LOG_DIR}"
 
-echo "--------------------------Env Setup: fullstack-testing Helm Test------------------------------------------------"
+echo "--------------------------Env Setup: solo-charts Helm Test------------------------------------------------"
 echo "NAMESPACE: ${NAMESPACE}"
 echo "RELEASE_NAME: ${RELEASE_NAME}"
 echo "ENV_FILE: ${ENV_FILE}"

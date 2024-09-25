@@ -39,13 +39,13 @@ echo "    enabled: true" >> "${CLUSTER_SETUP_VALUES_FILE}";
 echo "  minio:" >> "${CLUSTER_SETUP_VALUES_FILE}"; \
 echo "    enabled: true" >> "${CLUSTER_SETUP_VALUES_FILE}";
 
-helm dependency update ../../../charts/fullstack-deployment
-helm dependency update ../../../charts/fullstack-cluster-setup
+helm dependency update ../../../charts/solo-deployment
+helm dependency update ../../../charts/solo-cluster-setup
 
 echo "-----------------------------------------------------------------------------------------------------"
 echo "Helm cluster setup"
 
-helm install -n "${NAMESPACE}" "fullstack-cluster-setup" "${SETUP_CHART_DIR}" --values "${CLUSTER_SETUP_VALUES_FILE}"
+helm install -n "${NAMESPACE}" "solo-cluster-setup" "${SETUP_CHART_DIR}" --values "${CLUSTER_SETUP_VALUES_FILE}"
 echo "-----------------------Shared Resources------------------------------------------------------------------------------"
 kubectl get clusterrole "${POD_MONITOR_ROLE}" -o wide
 

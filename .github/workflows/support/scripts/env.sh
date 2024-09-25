@@ -39,7 +39,7 @@ function log_time() {
 }
 
 function show_env_vars() {
-    echo "--------------------------Env Setup: fullstack-testing ------------------------------------------------"
+    echo "--------------------------Env Setup: solo-charts ------------------------------------------------"
     echo "CLUSTER_NAME: ${CLUSTER_NAME}"
     echo "RELEASE_NAME: ${RELEASE_NAME}"
     echo "USER: ${USER}"
@@ -97,8 +97,8 @@ NODE_NAMES=(node0 node1 node2)
 POD_MONITOR_ROLE="${POD_MONITOR_ROLE:-pod-monitor-role}"
 GATEWAY_CLASS_NAME="${GATEWAY_CLASS_NAME:-fst-gateway-class}"
 
-readonly SETUP_CHART_DIR="../../../charts/fullstack-cluster-setup"
-readonly CHART_DIR="../../../charts/fullstack-deployment"
+readonly SETUP_CHART_DIR="../../../charts/solo-cluster-setup"
+readonly CHART_DIR="../../../charts/solo-deployment"
 
 # telemetry related env variables
 readonly TELEMETRY_DIR="${SCRIPT_DIR}/../telemetry"
