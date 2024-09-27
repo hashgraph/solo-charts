@@ -18,7 +18,7 @@ readonly HGCAPP_DIR="/opt/hgcapp"
 readonly NMT_DIR="${HGCAPP_DIR}/node-mgmt-tools"
 readonly HAPI_PATH="${HGCAPP_DIR}/services-hedera/HapiApp2.0"
 readonly HEDERA_HOME_DIR="/home/hedera"
-readonly RELEASE_NAME="${RELEASE_NAME:-fst}"
+readonly RELEASE_NAME="${RELEASE_NAME:-solo}"
 
 readonly NMT_VERSION="${NMT_VERSION:-v2.0.0-alpha.0}"
 readonly NMT_RELEASE_URL="https://api.github.com/repos/swirlds/swirlds-docker/releases/tags/${NMT_VERSION}"
@@ -680,7 +680,7 @@ function verify_network_state() {
 
 function verify_haproxy() {
   # iterate over each haprox pod check if READY is 1/1
-  local pods=$("${KCTL}" get pods -l fullstack.hedera.com/type=haproxy -o jsonpath='{.items[*].metadata.name}')
+  local pods=$("${KCTL}" get pods -l solo.hedera.com/type=haproxy -o jsonpath='{.items[*].metadata.name}')
   for pod in ${pods}; do
     local status=$("${KCTL}" get pod "${pod}" -o 'jsonpath={..status.conditions[?(@.type=="Ready")].status}')
     if [[ "${status}" != "True" ]]; then

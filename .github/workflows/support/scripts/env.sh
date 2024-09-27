@@ -39,7 +39,7 @@ function log_time() {
 }
 
 function show_env_vars() {
-    echo "--------------------------Env Setup: fullstack-testing ------------------------------------------------"
+    echo "--------------------------Env Setup: solo-charts ------------------------------------------------"
     echo "CLUSTER_NAME: ${CLUSTER_NAME}"
     echo "RELEASE_NAME: ${RELEASE_NAME}"
     echo "USER: ${USER}"
@@ -82,23 +82,23 @@ readonly CLUSTER_SETUP_VALUES_FILE="${TMP_DIR}/cluster-values.yaml"
 mkdir -p "$TMP_DIR"
 
 USER="${USER:-changeme}"
-CLUSTER_NAME="${CLUSTER_NAME:-fst}"
-NAMESPACE="${NAMESPACE:-fst-${USER}}"
-RELEASE_NAME="${RELEASE_NAME:-fst}"
+CLUSTER_NAME="${CLUSTER_NAME:-solo}"
+NAMESPACE="${NAMESPACE:-solo-${USER}}"
+RELEASE_NAME="${RELEASE_NAME:-solo}"
 NMT_VERSION=v1.2.4
 PLATFORM_VERSION=v0.49.0-alpha.2
 
 POD_MONITOR_ROLE="${POD_MONITOR_ROLE:-pod-monitor-role}"
-GATEWAY_CLASS_NAME="${GATEWAY_CLASS_NAME:-fst-gateway-class}"
+GATEWAY_CLASS_NAME="${GATEWAY_CLASS_NAME:-solo-gateway-class}"
 
 #NODE_NAMES=(node0 node1 node2 node3)
 NODE_NAMES=(node0 node1 node2)
 
 POD_MONITOR_ROLE="${POD_MONITOR_ROLE:-pod-monitor-role}"
-GATEWAY_CLASS_NAME="${GATEWAY_CLASS_NAME:-fst-gateway-class}"
+GATEWAY_CLASS_NAME="${GATEWAY_CLASS_NAME:-solo-gateway-class}"
 
-readonly SETUP_CHART_DIR="../../../charts/fullstack-cluster-setup"
-readonly CHART_DIR="../../../charts/fullstack-deployment"
+readonly SETUP_CHART_DIR="../../../charts/solo-cluster-setup"
+readonly CHART_DIR="../../../charts/solo-deployment"
 
 # telemetry related env variables
 readonly TELEMETRY_DIR="${SCRIPT_DIR}/../telemetry"
