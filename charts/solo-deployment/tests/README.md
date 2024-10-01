@@ -31,7 +31,7 @@ you have the network deployed already.
   - If it looks all good, revert changes in `charts/solo-deployment/template/tests/test-deployment.yaml`
 
 ## How to run the tests
-- Goto folder `full-stack-testing/charts/solo-deployment/tests`
+- Goto folder `solo/charts/solo-deployment/tests`
 - Run `git submodule update --init` in order to install [bats](https://github.com/bats-core) for tests. 
 - Create a .env file in this directory by copying from the `env.template` file
 - From `full-stack-testing/dev` folder run the follow command `make setup setup-cluster deploy-network` to create cluster and deploy network.
