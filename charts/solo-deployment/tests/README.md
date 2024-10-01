@@ -34,7 +34,7 @@ you have the network deployed already.
 - Goto folder `solo/charts/solo-deployment/tests`
 - Run `git submodule update --init` in order to install [bats](https://github.com/bats-core) for tests. 
 - Create a .env file in this directory by copying from the `env.template` file
-- From `full-stack-testing/dev` folder run the follow command `make setup setup-cluster deploy-network` to create cluster and deploy network.
+- From `solo/dev` folder run the follow command `make setup setup-cluster deploy-network` to create cluster and deploy network.
 - Once network is deployed, you can run `./run.sh` from `tests` directory to run the tests. It will create a log file under `logs` directory.
 - When tests are working, then redeploy and run the helm tests: `make destroy-network deploy-network helm-test`
 
