@@ -1,0 +1,8 @@
+# helm test container
+tester:
+  image:
+    registry: "ghcr.io"
+    repository: "hashgraph/full-stack-testing/kubectl-bats"
+    tag: "" # this should be empty since we want the default behavior of $.Chart.appVersion to apply
+    pullPolicy: "IfNotPresent"
+  resources: {}
