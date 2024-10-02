@@ -2,7 +2,12 @@
 tester:
   image:
     registry: "ghcr.io"
+<<<<<<< HEAD
     repository: "hashgraph/solo-containers/kubectl-bats"
     tag: "1.0.0"
+=======
+    repository: "hashgraph/full-stack-testing/kubectl-bats"
+    tag: "" # this should be empty since we want the default behavior of $.Chart.appVersion to apply
+>>>>>>> 6b8b97288f387dafe7f62ef974baf4eb9d844dc3
     pullPolicy: "IfNotPresent"
   resources: {}
