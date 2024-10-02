@@ -24,11 +24,6 @@ on:
         required: false
         default: false
 
-env:
-  REGISTRY: ghcr.io
-  GRADLE_CACHE_USERNAME: ${{ secrets.GRADLE_CACHE_USERNAME }}
-  GRADLE_CACHE_PASSWORD: ${{ secrets.GRADLE_CACHE_PASSWORD }}
-
 defaults:
   run:
     shell: bash
