@@ -50,9 +50,9 @@ echo "Additional values: ${CHART_VALUES_FILES}"
 echo "-----------------------------------------------------------------------------------------------------"
 if [ "${SCRIPT_NAME}" = "nmt-install.sh" ]; then
 if [[ -z "${CHART_VALUES_FILES}" ]]; then
-  helm install "${RELEASE_NAME}" -n "${NAMESPACE}" "${CHART_DIR}" --set defaults.root.image.repository=hashgraph/full-stack-testing/ubi8-init-dind
+  helm install "${RELEASE_NAME}" -n "${NAMESPACE}" "${CHART_DIR}" --set defaults.root.image.repository=hashgraph/solo-containers/ubi8-init-dind
 else
-  helm install "${RELEASE_NAME}" -n "${NAMESPACE}"  "${CHART_DIR}" -f "${CHART_DIR}/values.yaml" --values "${CHART_VALUES_FILES}" --set defaults.root.image.repository=hashgraph/full-stack-testing/ubi8-init-dind
+  helm install "${RELEASE_NAME}" -n "${NAMESPACE}"  "${CHART_DIR}" -f "${CHART_DIR}/values.yaml" --values "${CHART_VALUES_FILES}" --set defaults.root.image.repository=hashgraph/solo-containers/ubi8-init-dind
 fi
 else
 if [[ -z "${CHART_VALUES_FILES}" ]]; then
