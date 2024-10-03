@@ -32,7 +32,7 @@ tester:
   image:
     registry: "ghcr.io"
     repository: "hashgraph/solo-containers/kubectl-bats"
-    tag: "1.0.0"
+    tag: "0.33.0"
     pullPolicy: "IfNotPresent"
   resources: {}
 
@@ -68,7 +68,7 @@ defaults:
     image:
       registry: "ghcr.io"
       repository: "hashgraph/solo-containers/ubi8-init-java21"
-      tag: "1.0.0"
+      tag: "0.33.0"
       pullPolicy: "IfNotPresent"
     resources: {}
     extraEnv: []
