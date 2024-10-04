@@ -23,6 +23,26 @@ on:
         type: boolean
         required: false
         default: false
+      java-distribution:
+        description: "Java JDK Distribution:"
+        type: string
+        required: false
+        default: "temurin"
+      java-version:
+        description: "Java JDK Version:"
+        type: string
+        required: false
+        default: "21.0.1"
+      gradle-version:
+        description: "Gradle Version:"
+        type: string
+        required: false
+        default: "wrapper"
+
+env:
+  REGISTRY: ghcr.io
+  GRADLE_CACHE_USERNAME: ${{ secrets.GRADLE_CACHE_USERNAME }}
+  GRADLE_CACHE_PASSWORD: ${{ secrets.GRADLE_CACHE_PASSWORD }}
 
 defaults:
   run:
@@ -86,6 +106,23 @@ jobs:
         with:
           version: "v3.12.3" # helm version
 
+      - name: Setup Java
+        uses: actions/setup-java@b36c23c0d998641eff861008f374ee103c25ac73 # v4.4.0
+        with:
+          distribution: ${{ github.event.inputs.java-distribution || 'temurin' }}
+          java-version: ${{ github.event.inputs.java-version || '21.0.1' }}
+
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@ac2d340dc04d9e1113182899e983b5400c17cda1 # v3.5.0
+        with:
+          gradle-version: ${{ github.event.inputs.gradle-version || 'wrapper' }}
+
+      - name: Apply Version Number Update (Explicit)
+        uses: gradle/gradle-build-action@ac2d340dc04d9e1113182899e983b5400c17cda1 # v3.5.0
+        with:
+          gradle-version: ${{ github.event.inputs.gradle-version || 'wrapper' }}
+          arguments: versionAsSpecified --scan -PnewVersion=${{ needs.prepare-release.outputs.version }}
+          
       - name: Publish Helm Charts
         uses: step-security/helm-gh-pages@6a390e89293c1ec8bc5120f6692f3b8a313a9a3d #v1.7.0
         if: ${{ github.event.inputs.dry-run-enabled != 'true' && !cancelled() && !failure() }}
