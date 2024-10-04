@@ -2,6 +2,36 @@ apiVersion: v1
 entries:
   solo-cluster-setup:
   - apiVersion: v2
+    appVersion: 0.33.0
+    created: "2024-10-04T15:25:26.775337186Z"
+    dependencies:
+    - alias: minio-operator
+      condition: cloud.minio.enabled
+      name: operator
+      repository: https://operator.min.io/
+      version: 5.0.7
+    - alias: prometheus-stack
+      condition: cloud.prometheusStack.enabled
+      name: kube-prometheus-stack
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 52.0.1
+    - condition: cloud.grafanaAgent.enabled
+      name: grafana-agent
+      repository: https://grafana.github.io/helm-charts
+      version: 0.27.1
+    - condition: cloud.certManager.enabled
+      name: cert-manager
+      repository: https://charts.jetstack.io
+      version: v1.13.3
+    description: An umbrella Helm chart to setup shared resources for 1+ deployments
+      of the `solo-deployment` chart(s)
+    digest: c45d4e3e037650fb0101f665ad73e609481ecd4ab61aa32dcaa1f4a0059001ae
+    name: solo-cluster-setup
+    type: application
+    urls:
+    - https://hashgraph.github.io/solo-charts/charts/solo-cluster-setup-0.33.0.tgz
+    version: 0.33.0
+  - apiVersion: v2
     appVersion: 0.32.0
     created: "2024-10-04T14:54:59.473337047Z"
     dependencies:
@@ -32,6 +62,40 @@ entries:
     - https://hashgraph.github.io/solo-charts/charts/solo-cluster-setup-0.32.0.tgz
     version: 0.32.0
   solo-deployment:
+  - apiVersion: v2
+    appVersion: 0.33.0
+    created: "2024-10-04T15:25:26.811593655Z"
+    dependencies:
+    - condition: hedera-explorer.enabled
+      name: hedera-explorer
+      repository: ""
+      version: 0.2.0
+    - alias: hedera-mirror-node
+      condition: hedera-mirror-node.enabled
+      name: hedera-mirror
+      repository: https://hashgraph.github.io/hedera-mirror-node/charts
+      version: 0.113.0
+    - alias: minio-server
+      condition: cloud.minio.enabled
+      name: tenant
+      repository: https://operator.min.io/
+      version: 5.0.12
+    - condition: cloud.acmeClusterIssuer.enabled
+      name: acme-cluster-issuer
+      repository: https://swirldslabs.github.io/swirldslabs-helm-charts
+      version: 0.3.1
+    - condition: cloud.haproxyIngressController.enabled
+      name: haproxy-ingress
+      repository: https://haproxy-ingress.github.io/charts
+      version: 0.14.5
+    description: An umbrella Helm chart for a chart deployment of `solo-deployment`
+    digest: ff323eaaf7cc1af9d8ea75337a5b2dbdf93a125defd79e374d1d7b5d6174783a
+    kubeVersion: '>=1.25.0-0'
+    name: solo-deployment
+    type: application
+    urls:
+    - https://hashgraph.github.io/solo-charts/charts/solo-deployment-0.33.0.tgz
+    version: 0.33.0
   - apiVersion: v2
     appVersion: 0.32.0
     created: "2024-10-04T14:54:59.502454594Z"
@@ -66,4 +130,4 @@ entries:
     urls:
     - https://hashgraph.github.io/solo-charts/charts/solo-deployment-0.32.0.tgz
     version: 0.32.0
-generated: "2024-10-04T14:54:59.442233947Z"
+generated: "2024-10-04T15:25:26.738294323Z"
