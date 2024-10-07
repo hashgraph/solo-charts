@@ -5,15 +5,6 @@
 
 CUR_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 
-# load .env file if it exists in order to load variables with custom values
-ENV_FILE="${CUR_DIR}/.env"
-if [[ -f "${ENV_FILE}" ]]; then
-  set -a
-  # shellcheck source=./../temp/.env
-  source "${ENV_FILE}"
-  set +a
-fi
-
 # set global env variables if not set
 BATS_HOME="${BATS_HOME:-${CUR_DIR}/../../../dev/bats}"
 TESTS_DIR="${TESTS_DIR:-${CUR_DIR}}"

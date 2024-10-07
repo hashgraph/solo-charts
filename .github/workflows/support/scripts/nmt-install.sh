@@ -35,7 +35,6 @@ function setup_node_all() {
     copy_hedera_keys "${pod}" || return "${EX_ERR}"
     copy_config_files "${node_name}" "${pod}" || return "${EX_ERR}"
     ls_path "${pod}" "${HAPI_PATH}/"
-    copy_node_keys "${node_name}" "${pod}" || return "${EX_ERR}"
     ls_path "${pod}" "${HAPI_PATH}/data/keys/"
     set_permission "${pod}" "${HAPI_PATH}"
     log_time "setup_node"
