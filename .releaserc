@@ -16,6 +16,17 @@
       { "cmd": "echo ${nextRelease.version} > VERSION" }
     ]
   ],
+  "prepare": [
+    [
+      "@semantic-release/git",
+      {
+        "assets": [
+          "charts/solo-deployment/Chart.yaml",
+          "charts/solo-cluster-setup/Chart.yaml"
+        ]
+      }
+    ]
+  ],
   "branches":[
     {
       "name": "main"
