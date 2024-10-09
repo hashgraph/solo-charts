@@ -2,12 +2,6 @@
 CUR_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 source "${CUR_DIR}/env.sh"
 
-# load .env file
-set -a
-# shellcheck source=./../temp/.env
-source "${TMP_DIR}/.env"
-set +a
-
 KCTL="$(command -v kubectl)"
 readonly KCTL
 
@@ -241,39 +235,6 @@ function copy_hedera_keys() {
   local files=(
     "hedera.key"
     "hedera.crt"
-  )
-
-  for file in "${files[@]}"; do
-    copy_files "${pod}" "${srcDir}" "${file}" "${dstDir}" || return "${EX_ERR}"
-  done
-
-  return "${EX_OK}"
-}
-
-# Copy node keys
-function copy_node_keys() {
-  local node="${1}"
-
-  echo ""
-  echo "Copy node gossip keys to ${pod}"
-  echo "-----------------------------------------------------------------------------------------------------"
-
-  if [ -z "${node}" ]; then
-    echo "ERROR: 'copy_node_keys' - node name is required"
-    return "${EX_ERR}"
-  fi
-
-  local pod="$2"
-  if [ -z "${pod}" ]; then
-    echo "ERROR: 'copy_node_keys' - pod name is required"
-    return "${EX_ERR}"
-  fi
-
-  local srcDir="${SCRIPT_DIR}/../local-node/data/keys"
-  local dstDir="${HAPI_PATH}/data/keys"
-  local files=(
-    "private-${node}.pfx"
-    "public.pfx"
   )
 
   for file in "${files[@]}"; do
@@ -725,7 +686,6 @@ function replace_keys_all() {
   for node_name in "${NODE_NAMES[@]}"; do
     local pod="network-${node_name}-0" # pod name
     copy_hedera_keys "${pod}" || return "${EX_ERR}"
-    copy_node_keys "${node_name}" "${pod}" || return "${EX_ERR}"
     log_time "replace_keys"
   done
 

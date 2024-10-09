@@ -140,7 +140,7 @@ spec:
                 path: settings.txt
         {{- if $networkNodeKeySecrets }}
         - name: network-node-keys
-          secret: # TODO pem vs pfx
+          secret:
             secretName: {{ $networkNodeKeySecretName }}
             optional: true
         {{- end }}
