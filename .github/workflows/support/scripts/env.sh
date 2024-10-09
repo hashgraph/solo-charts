@@ -86,16 +86,14 @@ CLUSTER_NAME="${CLUSTER_NAME:-solo}"
 NAMESPACE="${NAMESPACE:-solo-${USER}}"
 RELEASE_NAME="${RELEASE_NAME:-solo}"
 NMT_VERSION=v1.2.4
-PLATFORM_VERSION=v0.49.0-alpha.2
+PLATFORM_VERSION=v0.54.0-alpha.4
 
 POD_MONITOR_ROLE="${POD_MONITOR_ROLE:-pod-monitor-role}"
-GATEWAY_CLASS_NAME="${GATEWAY_CLASS_NAME:-solo-gateway-class}"
 
 #NODE_NAMES=(node0 node1 node2 node3)
 NODE_NAMES=(node0 node1 node2)
 
 POD_MONITOR_ROLE="${POD_MONITOR_ROLE:-pod-monitor-role}"
-GATEWAY_CLASS_NAME="${GATEWAY_CLASS_NAME:-solo-gateway-class}"
 
 readonly SETUP_CHART_DIR="../../../charts/solo-cluster-setup"
 readonly CHART_DIR="../../../charts/solo-deployment"

@@ -1,6 +1,6 @@
 dependencies:
 - name: hedera-explorer
-  repository: ""
+  repository: oci://ghcr.io/hashgraph/hedera-mirror-node-explorer
   version: 0.2.0
 - name: hedera-mirror
   repository: https://hashgraph.github.io/hedera-mirror-node/charts
@@ -14,5 +14,5 @@ dependencies:
 - name: haproxy-ingress
   repository: https://haproxy-ingress.github.io/charts
   version: 0.14.5
-digest: sha256:cb2c36ef5124512badb4dbf8640905d06b6fdcca1d42a0e30f0136b36baaaec2
-generated: "2024-10-02T11:37:42.562202-05:00"
+digest: sha256:ac7e914c2047c45f0c7e03f909a0f279e57322cb68a55372abfa329093ed9243
+generated: "2024-10-08T16:37:11.405543-05:00"
