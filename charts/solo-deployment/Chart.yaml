@@ -29,19 +29,6 @@ appVersion: "0.33.0"
 kubeVersion: ">=1.25.0-0"
 
 dependencies:
-  # hedera-mirror-node-explorer (dependent on hedera-mirror-node)
-  - name: hedera-explorer
-    version: 0.2.0
-    repository: oci://ghcr.io/hashgraph/hedera-mirror-node-explorer
-    condition: hedera-explorer.enabled
-
-  # hedera-mirror-node
-  - name: hedera-mirror
-    alias: hedera-mirror-node
-    version: 0.113.0
-    repository: https://hashgraph.github.io/hedera-mirror-node/charts
-    condition: hedera-mirror-node.enabled
-
   - name: tenant
     alias: minio-server
     version: 5.0.12
