@@ -2,9 +2,6 @@ dependencies:
 - name: hedera-explorer
   repository: oci://ghcr.io/hashgraph/hedera-mirror-node-explorer
   version: 0.2.0
-- name: hedera-mirror
-  repository: https://hashgraph.github.io/hedera-mirror-node/charts
-  version: 0.113.0
 - name: tenant
   repository: https://operator.min.io/
   version: 5.0.12
@@ -14,5 +11,5 @@ dependencies:
 - name: haproxy-ingress
   repository: https://haproxy-ingress.github.io/charts
   version: 0.14.5
-digest: sha256:ac7e914c2047c45f0c7e03f909a0f279e57322cb68a55372abfa329093ed9243
-generated: "2024-10-08T16:37:11.405543-05:00"
+digest: sha256:d53c9d0fd6bb4004aa07df0ebfbbb94e30fc7a4f7533813c82d42b0ee4615527
+generated: "2024-10-22T23:34:43.752909-05:00"
