@@ -9,10 +9,6 @@ cloud:
     backupBucket: "solo-backups"
   minio:
     enabled: true
-  acmeClusterIssuer:
-    enabled: false
-  selfSignedClusterIssuer:
-    enabled: false
   haproxyIngressController:
     enabled: false
 
@@ -35,19 +31,6 @@ tester:
     tag: "0.33.0"
     pullPolicy: "IfNotPresent"
   resources: {}
-
-# lets encrypt acme cluster issuer configuration
-acme-cluster-issuer:
-  issuers:
-    staging:
-      email: ""
-      name: '{{ .Values.global.namespaceOverride | default .Release.Namespace | printf "%s-letsencrypt-staging" }}'
-    production:
-      email: ""
-      name: '{{ .Values.global.namespaceOverride | default .Release.Namespace | printf "%s-letsencrypt-prod" }}'
-  solvers: # TODO change in: https://github.com/hashgraph/full-stack-testing/issues/631
-    http01:
-      solverType: "ingress"
 
 # default settings for a single node
 # This default configurations can be overridden for each node in the hedera.nodes section.
