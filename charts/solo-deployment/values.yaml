@@ -1,6 +1,5 @@
 global:
   namespaceOverride: ""
-  ingressClassName: "hedera-explorer-ingress-class" # override for multiple deployments within the same cluster and make unique per cluster
 
 # cloud configuration
 cloud:
@@ -9,8 +8,6 @@ cloud:
     backupBucket: "solo-backups"
   minio:
     enabled: true
-  haproxyIngressController:
-    enabled: false
 
 # telemetry configurations
 telemetry:
@@ -237,11 +234,6 @@ minio-server:
       requestAutoCert: false
   environment:
     MINIO_BROWSER_LOGIN_ANIMATION: off # https://github.com/minio/console/issues/2539#issuecomment-1619211962
-
-haproxy-ingress:
-  controller:
-    service:
-      loadBalancerIP: "" # the external IP address of the hedera mirror node explorer
 
 # hedera-mirror-node-explorer configuration
 # common deployment configuration
