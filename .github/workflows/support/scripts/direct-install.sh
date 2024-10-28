@@ -92,6 +92,8 @@ function start_node_all() {
 
   sleep 2
 
+  verify_haproxy || return "${EX_ERR}"
+
   return "${EX_OK}"
 }
 
