@@ -9,9 +9,19 @@ metadata:
   labels:
     {{- include "solo.testLabels" $ | nindent 4 }}
 data:
+  {{- if (lookup "v1" "Secret" (default $.Release.Namespace $.Values.global.namespaceOverride) (printf "haproxy-proxy-secret-%s" $node.name)) }}
+  # Include TLS configuration since secret exists
+  haproxy.cfg: |
+    {{- tpl ($.Files.Get "config-files/haproxy-with-tls.cfg") (dict "nodeConfig" $node "namespace" $.Release.Namespace "Template" $.Template) | nindent 4 }}
+
+  {{- else }}
+  # Default non-TLS configuration if the secret does not exist
   haproxy.cfg: |
     {{- tpl ($.Files.Get "config-files/haproxy.cfg") (dict "nodeConfig" $node "namespace" $.Release.Namespace "Template" $.Template) | nindent 4 }}
+  {{- end }}
+
 ---
+
 {{ end }}
 apiVersion: v1
 kind: ConfigMap
