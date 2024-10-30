@@ -3,7 +3,7 @@ entries:
   solo-cluster-setup:
   - apiVersion: v2
     appVersion: 0.33.0
-    created: "2024-10-18T15:49:54.706442759Z"
+    created: "2024-10-30T16:10:42.370176259Z"
     dependencies:
     - alias: minio-operator
       condition: cloud.minio.enabled
@@ -25,7 +25,7 @@ entries:
       version: v1.13.3
     description: An umbrella Helm chart to setup shared resources for 1+ deployments
       of the `solo-deployment` chart(s)
-    digest: ef510a98c5d9d1119e1632573afb4dc83499f8fb2b8855d13fca559f1f4db64c
+    digest: 9c290930820b57aa7fb44d505ab3d5c876a3b00b7df76ce07c49c4d0cea21532
     name: solo-cluster-setup
     type: application
     urls:
@@ -64,7 +64,7 @@ entries:
   solo-deployment:
   - apiVersion: v2
     appVersion: 0.33.0
-    created: "2024-10-18T15:49:54.754850674Z"
+    created: "2024-10-30T16:10:42.398126808Z"
     dependencies:
     - condition: hedera-explorer.enabled
       name: hedera-explorer
@@ -89,7 +89,7 @@ entries:
       repository: https://haproxy-ingress.github.io/charts
       version: 0.14.5
     description: An umbrella Helm chart for a chart deployment of `solo-deployment`
-    digest: 18d8cabac86d0da9a8037b38fa8aa3b072ff1758664d83832b213c16dbdf5661
+    digest: 81c42602332cac61521bffabd5a3f167e7beb07f4908c1b30404061586b877da
     kubeVersion: '>=1.25.0-0'
     name: solo-deployment
     type: application
@@ -130,4 +130,4 @@ entries:
     urls:
     - https://hashgraph.github.io/solo-charts/charts/solo-deployment-0.32.0.tgz
     version: 0.32.0
-generated: "2024-10-18T15:49:54.658238756Z"
+generated: "2024-10-30T16:10:42.338392682Z"
