@@ -44,7 +44,7 @@ static_resources:
                 - name: envoy.filters.http.cors
                 - name: envoy.filters.http.router
 
-        {{- if (lookup "v1" "Secret" (default $.Release.Namespace $.Values.global.namespaceOverride) (printf "envoy-proxy-secret-%s" $node.name)) }}
+        {{- if (lookup "v1" "Secret" .namespace (printf "envoy-proxy-secret-%s" .nodeConfig.name)) }}
         transport_socket:
           name: envoy.transport_sockets.tls
           typed_config:
@@ -89,7 +89,7 @@ static_resources:
       http2_protocol_options: {}
       lb_policy: round_robin
 
-      {{- if (lookup "v1" "Secret" (default $.Release.Namespace $.Values.global.namespaceOverride) (printf "envoy-proxy-secret-%s" $node.name)) }}
+      {{- if (lookup "v1" "Secret" .namespace (printf "envoy-proxy-secret-%s" .nodeConfig.name)) }}
       transport_socket:
         name: envoy.transport_sockets.tls
         typed_config:

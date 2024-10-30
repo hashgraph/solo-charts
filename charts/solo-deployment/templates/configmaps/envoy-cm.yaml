@@ -10,6 +10,6 @@ metadata:
     {{- include "solo.testLabels" $ | nindent 4 }}
 data:
   envoy.yaml: |
-    {{- tpl ($.Files.Get "config-files/envoy.yaml") (dict "nodeConfig" $node "Template" $.Template) | nindent 4 }}
+    {{- tpl ($.Files.Get "config-files/envoy.yaml") (dict "nodeConfig" $node "namespace" (default $.Release.Namespace $.Values.global.namespaceOverride) "Template" $.Template) | nindent 4 }}
 ---
 {{ end }}
