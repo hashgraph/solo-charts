@@ -146,3 +146,28 @@ jobs:
           GIT_COMMITTER_EMAIL: ${{ secrets.GIT_USER_EMAIL }}
         if: ${{ github.event.inputs.dry-run-enabled != 'true' && !cancelled() && !failure() }}
         run: npx semantic-release
+
+  publish-helm-charts-ghcr:
+    name: Publish Helm Charts to GitHub Container Registry
+    runs-on: solo-linux-medium
+    needs:
+      - publish-helm-charts
+    steps:
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567 # v3.3.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Helm package
+        run: |
+          helm repo add stable https://charts.helm.sh/stable
+          helm repo update
+          helm dependency update chart
+          helm package chart
+
+      - name: Build and Push the Helm Charts to GitHub Container Registry
+        uses: JimCronqvist/action-helm-chart-repo@583db84dfb460a9dd462e2d7d803b82872b8978e # v0.1.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
