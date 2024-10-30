@@ -151,7 +151,7 @@ jobs:
     name: Publish Helm Charts to GitHub Container Registry
     runs-on: solo-linux-medium
     needs:
-      - publish-helm-charts
+      - publish-helm-charts-gh-pages
     steps:
       - name: Login to GitHub Container Registry
         uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567 # v3.3.0
