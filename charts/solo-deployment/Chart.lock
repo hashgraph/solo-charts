@@ -1,18 +1,6 @@
 dependencies:
-- name: hedera-explorer
-  repository: oci://ghcr.io/hashgraph/hedera-mirror-node-explorer
-  version: 0.2.0
-- name: hedera-mirror
-  repository: https://hashgraph.github.io/hedera-mirror-node/charts
-  version: 0.113.0
 - name: tenant
   repository: https://operator.min.io/
   version: 5.0.12
-- name: acme-cluster-issuer
-  repository: https://swirldslabs.github.io/swirldslabs-helm-charts
-  version: 0.3.1
-- name: haproxy-ingress
-  repository: https://haproxy-ingress.github.io/charts
-  version: 0.14.5
-digest: sha256:ac7e914c2047c45f0c7e03f909a0f279e57322cb68a55372abfa329093ed9243
-generated: "2024-10-08T16:37:11.405543-05:00"
+digest: sha256:ef43eb2c35e7e2c1d66d2ff4db979226ef57baa26dd7331c8c24e3b173907f76
+generated: "2024-10-28T11:14:22.044603-05:00"
