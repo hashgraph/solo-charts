@@ -9,15 +9,7 @@ metadata:
   labels:
     {{- include "solo.testLabels" $ | nindent 4 }}
 data:
-  {{- if (lookup "v1" "Secret" (default $.Release.Namespace $.Values.global.namespaceOverride) (printf "envoy-proxy-secret-%s" $node.name)) }}
-    # Include TLS configuration since secret exists
-  envoy.yaml: |
-  {{- tpl ($.Files.Get "config-files/envoy-with-tls.yaml") (dict "nodeConfig" $node "Template" $.Template) | nindent 4 }}
-
-  {{- else }}
-    # Default non-TLS configuration if the secret does not exist
   envoy.yaml: |
     {{- tpl ($.Files.Get "config-files/envoy.yaml") (dict "nodeConfig" $node "Template" $.Template) | nindent 4 }}
-  {{- end }}
 ---
 {{ end }}
