@@ -167,8 +167,8 @@ jobs:
 
       - name: Helm package
         run: |
-          helm repo add stable https://charts.helm.sh/stable
-          helm repo update
+          # echo current directory
+          echo "Current directory: $(pwd)"
           helm dependency update charts/solo-cluster-setup
           helm dependency update charts/solo-deployment
           helm package charts/solo-cluster-setup
