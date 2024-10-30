@@ -167,8 +167,11 @@ jobs:
 
       - name: Helm package
         run: |
-          # echo current directory
-          echo "Current directory: $(pwd)"
+          git branch
+          # switch back to previous branch
+          git checkout -
+          git branch
+          echo "current directory: $(ls -ltr)"
           helm dependency update charts/solo-cluster-setup
           helm dependency update charts/solo-deployment
           helm package charts/solo-cluster-setup
