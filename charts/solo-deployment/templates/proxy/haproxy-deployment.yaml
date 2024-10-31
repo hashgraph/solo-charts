@@ -114,7 +114,7 @@ spec:
 
         {{- if (lookup "v1" "Secret" (default $.Release.Namespace $.Values.global.namespaceOverride) (printf "haproxy-proxy-secret-%s" $node.name)) }}
           - name: tls-volume
-            mountPath: /etc/ssl/certс
+            mountPath: /usr/local/etc/haproxy/certs
             readOnly: true
         {{- end }}
 
