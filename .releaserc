@@ -7,6 +7,18 @@
         "preset": "conventionalcommits"
       }
     ],
+    [
+      "semantic-release-helm",
+      {
+        "chartPath": "charts/solo-cluster-setup",
+      }
+    ],
+    [
+      "semantic-release-helm",
+      {
+        "chartPath": "charts/solo-deployment",
+      }
+    ],
     "@semantic-release/git",
     "@semantic-release/github"
   ],
@@ -17,17 +29,12 @@
     ]
   ],
   "prepare": [
-    [
-      "@semantic-release/git",
-      {
-        "assets": [
-          "charts/solo-deployment/Chart.yaml",
-          "charts/solo-cluster-setup/Chart.yaml"
-        ]
-      }
-    ]
   ],
   "publish": [
+    [
+      "@semantic-release/exec",
+      { "cmd": "git --no-pager diff" }
+    ],
     [
       "@semantic-release/exec",
       { "cmd": "helm dependency update charts/solo-cluster-setup" }
