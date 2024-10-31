@@ -33,7 +33,7 @@
     [
       "@semantic-release/exec",
       { "cmd": "helm dependency update charts/solo-deployment" }
-    ]
+    ],
     [
       "@semantic-release/exec",
       { "cmd": "helm package charts/solo-cluster-setup" }

@@ -109,7 +109,7 @@ jobs:
         run: npx semantic-release
 
       # Remove these steps later after switching to OCI registry in solo repo
-      
+
       - name: Publish Helm Charts
         # generate package in temporary directory and push to github pages
         uses: step-security/helm-gh-pages@6a390e89293c1ec8bc5120f6692f3b8a313a9a3d #v1.7.0
