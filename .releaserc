@@ -7,7 +7,18 @@
         "preset": "conventionalcommits"
       }
     ],
-    "semantic-release-helm3",
+    [
+      "semantic-release-helm3",
+      {
+        "chartPath": "./charts/solo-cluster-setup",
+      }
+    ],
+    [
+      "semantic-release-helm3",
+      {
+        "chartPath": "./charts/solo-deployment",
+      }
+    ],
     "@semantic-release/git",
     "@semantic-release/github"
   ],
