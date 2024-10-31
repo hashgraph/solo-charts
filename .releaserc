@@ -7,6 +7,17 @@
         "preset": "conventionalcommits"
       }
     ],
+    "semantic-release-helm3",
+    "@semantic-release/git",
+    "@semantic-release/github"
+  ],
+  "verifyRelease": [
+    [
+      "@semantic-release/exec",
+      { "cmd": "echo ${nextRelease.version} > VERSION" }
+    ]
+  ],
+  "prepare": [
     [
       "semantic-release-helm3",
       {
@@ -19,16 +30,15 @@
         "chartPath": "./charts/solo-deployment",
       }
     ],
-    "@semantic-release/git",
-    "@semantic-release/github"
-  ],
-  "verifyRelease": [
     [
-      "@semantic-release/exec",
-      { "cmd": "echo ${nextRelease.version} > VERSION" }
+      "@semantic-release/git",
+      {
+        "assets": [
+          "charts/solo-deployment/Chart.yaml",
+          "charts/solo-cluster-setup/Chart.yaml"
+        ]
+      }
     ]
-  ],
-  "prepare": [
   ],
   "publish": [
     [
