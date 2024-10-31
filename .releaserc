@@ -54,10 +54,6 @@
   "publish": [
     [
       "@semantic-release/exec",
-      { "cmd": "git --no-pager diff" }
-    ],
-    [
-      "@semantic-release/exec",
       { "cmd": "helm dependency update charts/solo-cluster-setup" }
     ],
     [
@@ -84,9 +80,6 @@
   "branches":[
     {
       "name": "main"
-    },
-    {
-      "name": "00019-D-publish-oci-chart"
     },
     {
       "name": "release/([0-9]+).([0-9]+)",
