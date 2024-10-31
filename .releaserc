@@ -8,15 +8,15 @@
       }
     ],
     [
-      "semantic-release-helm",
+      "semantic-release-helm3",
       {
-        "chartPath": "charts/solo-cluster-setup",
+        "chartPath": "./charts/solo-cluster-setup",
       }
     ],
     [
-      "semantic-release-helm",
+      "semantic-release-helm3",
       {
-        "chartPath": "charts/solo-deployment",
+        "chartPath": "./charts/solo-deployment",
       }
     ],
     "@semantic-release/git",
