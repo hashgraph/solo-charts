@@ -45,16 +45,16 @@ static_resources:
                 - name: envoy.filters.http.router
 
         {{- if (lookup "v1" "Secret" .namespace (printf "envoy-proxy-secret-%s" .nodeConfig.name)) }}
-        transport_socket:
-          name: envoy.transport_sockets.tls
-          typed_config:
-            "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.DownstreamTlsContext
-            common_tls_context:
-              tls_certificates:
-                - certificate_chain:
-                    filename: /etc/envoy/tls/tls.crt
-                  private_key:
-                    filename: /etc/envoy/tls/tls.key
+          transport_socket:
+            name: envoy.transport_sockets.tls
+            typed_config:
+              "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.DownstreamTlsContext
+              common_tls_context:
+                tls_certificates:
+                  - certificate_chain:
+                      filename: /etc/envoy/tls/tls.crt
+                    private_key:
+                      filename: /etc/envoy/tls/tls.key
         {{- end }}
 
     - name: "prometheus-listener"

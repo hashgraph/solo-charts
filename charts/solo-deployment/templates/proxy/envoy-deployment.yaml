@@ -61,7 +61,6 @@ spec:
             mountPath: /etc/envoy/tls
             readOnly: true
           {{- end }}
-
         {{- with default $defaults.resources $envoyProxy.resources }}
         resources:
           {{- toYaml . | nindent 10 }}
