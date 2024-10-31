@@ -25,6 +25,32 @@
           "charts/solo-cluster-setup/Chart.yaml"
         ]
       }
+    ],
+    [
+      "@semantic-release/exec",
+      { "cmd": "helm dependency update charts/solo-cluster-setup" }
+    ],
+    [
+      "@semantic-release/exec",
+      { "cmd": "helm dependency update charts/solo-deployment" }
+    ]
+    [
+      "@semantic-release/exec",
+      { "cmd": "helm package charts/solo-cluster-setup" }
+    ],
+    [
+      "@semantic-release/exec",
+      { "cmd": "helm package charts/solo-deployment" }
+    ]
+  ],
+  "publish": [
+    [
+      "@semantic-release/exec",
+      { "cmd": "helm push solo-cluster-setup-${nextRelease.version}.tgz oci://ghcr.io/hashgraph/solo-charts/solo-cluster-setup" }
+    ],
+    [
+      "@semantic-release/exec",
+      { "cmd": "helm push solo-deployment-${nextRelease.version}.tgz oci://ghcr.io/hashgraph/solo-charts/solo-deployment" }
     ]
   ],
   "branches":[
