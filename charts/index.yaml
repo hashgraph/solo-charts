@@ -33,7 +33,7 @@ entries:
     version: 0.34.1
   - apiVersion: v2
     appVersion: 0.34.0
-    created: "2024-11-01T19:08:57.428203412Z"
+    created: "2024-11-01T19:48:27.163377605Z"
     dependencies:
     - alias: minio-operator
       condition: cloud.minio.enabled
@@ -55,7 +55,7 @@ entries:
       version: v1.13.3
     description: An umbrella Helm chart to setup shared resources for 1+ deployments
       of the `solo-deployment` chart(s)
-    digest: c0b9adba5dafb77579bcaf723e0a41e0119c7fddd1019c7e04f8a66d2ae3e8a9
+    digest: 75aaec4c3955587269c03a703fc46d7742ba0e99a9767b677312d1559de81d3d
     name: solo-cluster-setup
     type: application
     urls:
@@ -141,7 +141,7 @@ entries:
     version: 0.34.1
   - apiVersion: v2
     appVersion: 0.34.0
-    created: "2024-11-01T19:08:57.432244397Z"
+    created: "2024-11-01T19:48:27.168046924Z"
     dependencies:
     - alias: minio-server
       condition: cloud.minio.enabled
@@ -149,7 +149,7 @@ entries:
       repository: https://operator.min.io/
       version: 5.0.12
     description: An umbrella Helm chart for a chart deployment of `solo-deployment`
-    digest: 27a3a9eb4efd91429adeca73395930390fe4edffc7a8c8a7a9f75a77036759d5
+    digest: 9f10096749d521f123ca163e15d46f69109a141a74cbf29ee9fca20a3cc2aee7
     kubeVersion: '>=1.25.0-0'
     name: solo-deployment
     type: application
@@ -224,4 +224,4 @@ entries:
     urls:
     - https://hashgraph.github.io/solo-charts/charts/solo-deployment-0.32.0.tgz
     version: 0.32.0
-generated: "2024-11-01T19:08:57.396535538Z"
+generated: "2024-11-01T19:48:27.128199369Z"
