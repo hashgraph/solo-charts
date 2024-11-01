@@ -97,9 +97,9 @@ static_resources:
           common_tls_context:
             tls_certificates:
               - certificate_chain:
-                  filename: /etc/envoy/certs/tls.crt
+                  filename: /etc/envoy/tls/tls.crt
                 private_key:
-                  filename: /etc/envoy/certs/tls.key
+                  filename: /etc/envoy/tls/tls.key
       {{- end }}
 
       load_assignment:

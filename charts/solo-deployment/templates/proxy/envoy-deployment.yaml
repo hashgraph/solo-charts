@@ -40,13 +40,11 @@ spec:
         - name: config-volume
           configMap:
             name: envoy-proxy-cm-{{ $node.name }}
-
         {{- if (lookup "v1" "Secret" (default $.Release.Namespace $.Values.global.namespaceOverride) (printf "envoy-proxy-secret-%s" $node.name)) }}
         - name: tls-volume
           secret:
             secretName: {{ printf "envoy-proxy-secret-%s" $node.name }}
         {{- end }}
-
       containers:
       - name: {{ default $defaults.nameOverride $envoyProxy.nameOverride }}
         image: {{ include "solo.container.image" (dict "image" $envoyProxy.image "Chart" $.Chart "defaults" $defaults ) }}
@@ -55,7 +53,6 @@ spec:
           - name: config-volume
             # https://www.envoyproxy.io/docs/envoy/v1.26.2/start/docker
             mountPath: /etc/envoy
-
           {{- if (lookup "v1" "Secret" (default $.Release.Namespace $.Values.global.namespaceOverride) (printf "envoy-proxy-secret-%s" $node.name)) }}
           - name: tls-volume
             mountPath: /etc/envoy/tls
