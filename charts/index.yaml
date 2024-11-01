@@ -32,6 +32,36 @@ entries:
     - https://hashgraph.github.io/solo-charts/charts/solo-cluster-setup-0.34.1.tgz
     version: 0.34.1
   - apiVersion: v2
+    appVersion: 0.34.0
+    created: "2024-11-01T19:08:57.428203412Z"
+    dependencies:
+    - alias: minio-operator
+      condition: cloud.minio.enabled
+      name: operator
+      repository: https://operator.min.io/
+      version: 5.0.7
+    - alias: prometheus-stack
+      condition: cloud.prometheusStack.enabled
+      name: kube-prometheus-stack
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 52.0.1
+    - condition: cloud.grafanaAgent.enabled
+      name: grafana-agent
+      repository: https://grafana.github.io/helm-charts
+      version: 0.27.1
+    - condition: cloud.certManager.enabled
+      name: cert-manager
+      repository: https://charts.jetstack.io
+      version: v1.13.3
+    description: An umbrella Helm chart to setup shared resources for 1+ deployments
+      of the `solo-deployment` chart(s)
+    digest: c0b9adba5dafb77579bcaf723e0a41e0119c7fddd1019c7e04f8a66d2ae3e8a9
+    name: solo-cluster-setup
+    type: application
+    urls:
+    - https://hashgraph.github.io/solo-charts/charts/solo-cluster-setup-0.34.0.tgz
+    version: 0.34.0
+  - apiVersion: v2
     appVersion: 0.33.0
     created: "2024-10-31T19:03:35.281767988Z"
     dependencies:
@@ -110,6 +140,23 @@ entries:
     - https://hashgraph.github.io/solo-charts/charts/solo-deployment-0.34.1.tgz
     version: 0.34.1
   - apiVersion: v2
+    appVersion: 0.34.0
+    created: "2024-11-01T19:08:57.432244397Z"
+    dependencies:
+    - alias: minio-server
+      condition: cloud.minio.enabled
+      name: tenant
+      repository: https://operator.min.io/
+      version: 5.0.12
+    description: An umbrella Helm chart for a chart deployment of `solo-deployment`
+    digest: 27a3a9eb4efd91429adeca73395930390fe4edffc7a8c8a7a9f75a77036759d5
+    kubeVersion: '>=1.25.0-0'
+    name: solo-deployment
+    type: application
+    urls:
+    - https://hashgraph.github.io/solo-charts/charts/solo-deployment-0.34.0.tgz
+    version: 0.34.0
+  - apiVersion: v2
     appVersion: 0.33.0
     created: "2024-10-31T19:03:35.310343286Z"
     dependencies:
@@ -177,4 +224,4 @@ entries:
     urls:
     - https://hashgraph.github.io/solo-charts/charts/solo-deployment-0.32.0.tgz
     version: 0.32.0
-generated: "2024-11-01T15:10:14.807839926Z"
+generated: "2024-11-01T19:08:57.396535538Z"
