@@ -1,0 +1,23 @@
+version: 3
+output: prefixed
+
+silent: false
+
+tasks:
+  test-*:
+    vars:
+      script_name: '{{index .MATCH 0}}'
+    cmds:
+      - export SCRIPT_NAME={{.script_name}}; ./ci_test.sh
+
+  test:direct:
+    cmds:
+      - ./ci_test.sh
+    env:
+      SCRIPT_NAME: direct-install.sh
+
+  test:nmt:
+    cmds:
+      - ./ci_test.sh
+    env:
+      SCRIPT_NAME: nmt-install.sh
