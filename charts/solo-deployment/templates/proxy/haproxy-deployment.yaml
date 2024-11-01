@@ -45,6 +45,11 @@ spec:
         - name: haproxy-ofac-volume
           configMap:
             name: haproxy-ofac-cm
+      {{- if (lookup "v1" "Secret" (default $.Release.Namespace $.Values.global.namespaceOverride) (printf "haproxy-proxy-secret-%s" $node.name)) }}
+        - name: tls-volume
+          secret:
+            secretName: {{ printf "haproxy-proxy-secret-%s" $node.name }}
+      {{- end }}
       containers:
       - name: {{ default $defaults.nameOverride $haproxy.nameOverride }}
         image: {{ include "solo.container.image" (dict "image" $haproxy.image "Chart" $.Chart "defaults" $defaults ) }}
@@ -104,6 +109,11 @@ spec:
             subPath: haproxy.cfg
           - name: haproxy-ofac-volume
             mountPath: /var/opt/
+          {{- if (lookup "v1" "Secret" (default $.Release.Namespace $.Values.global.namespaceOverride) (printf "haproxy-proxy-secret-%s" $node.name)) }}
+          - name: tls-volume
+            mountPath: /usr/local/etc/certs/
+            readOnly: true
+          {{- end }}
         {{- with default $defaults.resources $haproxy.resources }}
         resources:
           {{- toYaml . | nindent 10 }}
