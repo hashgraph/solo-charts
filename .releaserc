@@ -70,11 +70,11 @@
     ],
     [
       "@semantic-release/exec",
-      { "cmd": "helm push solo-cluster-setup-${nextRelease.version}.tgz oci://ghcr.io/hashgraph/solo-charts/solo-cluster-setup" }
+      { "cmd": "helm push solo-cluster-setup-${nextRelease.version}.tgz oci://ghcr.io/hashgraph/solo-charts" }
     ],
     [
       "@semantic-release/exec",
-      { "cmd": "helm push solo-deployment-${nextRelease.version}.tgz oci://ghcr.io/hashgraph/solo-charts/solo-deployment" }
+      { "cmd": "helm push solo-deployment-${nextRelease.version}.tgz oci://ghcr.io/hashgraph/solo-charts" }
     ]
   ],
   "branches":[
