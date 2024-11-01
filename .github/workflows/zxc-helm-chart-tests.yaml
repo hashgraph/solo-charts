@@ -36,6 +36,7 @@ defaults:
 permissions:
   id-token: write
   contents: write
+  issues: write
   actions: read
   pull-requests: write
   checks: write
