@@ -57,7 +57,7 @@ jobs:
 
       - name: Install Semantic Release
         run: |
-          npm install -g semantic-release@21.0.7 @semantic-release/git@10.0.1 @semantic-release/exec@6.0.3 semantic-release-helm3@2.9.3
+          npm install -g semantic-release@24.2.0 @semantic-release/git@10.0.1 @semantic-release/github@11.0.0 @semantic-release/exec@6.0.3 semantic-release-helm3@2.9.3
           npm install -g conventional-changelog-conventionalcommits@6.1.0 @commitlint/cli@17.6.6 @commitlint/config-conventional@17.6.6
           npm install -g marked-mangle@1.0.1 marked-gfm-heading-id@3.0.4 semantic-release-conventional-commits@3.0.0
 
@@ -108,12 +108,3 @@ jobs:
           GIT_COMMITTER_EMAIL: ${{ secrets.GIT_USER_EMAIL }}
         if: ${{ github.event.inputs.dry-run-enabled != 'true' && !cancelled() && !failure() }}
         run: npx semantic-release
-
-      # Remove these steps later after switching to OCI registry in solo repo
-      - name: Publish Helm Charts to GitHub Pages
-        # generate package in temporary directory and push to gh-pages branch
-        uses: step-security/helm-gh-pages@6a390e89293c1ec8bc5120f6692f3b8a313a9a3d #v1.7.0
-        if: ${{ github.event.inputs.dry-run-enabled != 'true' && !cancelled() && !failure() }}
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          target_dir: charts
