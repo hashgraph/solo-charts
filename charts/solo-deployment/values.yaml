@@ -275,6 +275,30 @@ deployment:
     testExpirationTimestamp: ""
     testRequester: ""
 
+# haproxy specific deployment configuration
+haproxyDeployment:
+  podAnnotations: { }
+  podLabels: { }
+  nodeSelector: { }
+  tolerations: [ ]
+  # Specify pod affinity
+  # Use complete affinity spec starting with key "nodeAffinity:"
+  # Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#node-affinity
+  affinity: { }
+  priorityClassName: { }
+
+# envoy specific deployment configuration
+envoyDeployment:
+  podAnnotations: { }
+  podLabels: { }
+  nodeSelector: { }
+  tolerations: [ ]
+  # Specify pod affinity
+  # Use complete affinity spec starting with key "nodeAffinity:"
+  # Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#node-affinity
+  affinity: { }
+  priorityClassName: { }
+
 # hedera node configuration
 hedera:
   initContainers: []
