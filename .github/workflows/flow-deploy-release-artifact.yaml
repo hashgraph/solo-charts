@@ -33,7 +33,8 @@ permissions:
   packages: write
   pages: write
   id-token: write
-  pull-requests: read
+  pull-requests: write
+  issues: write
 
 jobs:
   helm-chart-release:
