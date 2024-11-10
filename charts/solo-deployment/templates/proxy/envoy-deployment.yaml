@@ -20,21 +20,21 @@ spec:
         solo.hedera.com/type: envoy-proxy
         {{- include "solo.testLabels" $ | nindent 8 }}
     spec:
-        {{- if $.Values.deployment.nodeSelector }}
+      {{- if or $.Values.envoyDeployment.nodeSelector $.Values.deployment.nodeSelector }}
       nodeSelector:
-        {{- $.Values.deployment.nodeSelector | toYaml | nindent 8 }}
-        {{- end }}
-        {{- if $.Values.deployment.tolerations }}
+        {{- default $.Values.deployment.nodeSelector $.Values.envoyDeployment.nodeSelector | toYaml | nindent 8 }}
+      {{- end }}
+      {{- if or $.Values.envoyDeployment.tolerations $.Values.deployment.tolerations }}
       tolerations:
-        {{- $.Values.deployment.tolerations | toYaml | nindent 8 }}
-        {{- end }}
-        {{- if $.Values.deployment.affinity }}
+        {{- default $.Values.deployment.tolerations $.Values.envoyDeployment.tolerations | toYaml | nindent 8 }}
+      {{- end }}
+      {{- if or $.Values.envoyDeployment.affinity $.Values.deployment.affinity }}
       affinity:
-        {{- $.Values.deployment.affinity | toYaml | nindent 8 }}
-        {{- end }}
-        {{- if $.Values.deployment.priorityClassName }}
-      priorityClassName: {{ $.Values.deployment.priorityClassName }}
-        {{- end }}
+        {{- default $.Values.deployment.affinity $.Values.envoyDeployment.affinity | toYaml | nindent 8 }}
+      {{- end }}
+      {{- if or $.Values.envoyDeployment.priorityClassName $.Values.deployment.priorityClassName }}
+      priorityClassName: {{ default $.Values.deployment.priorityClassName $.Values.envoyDeployment.priorityClassName }}
+      {{- end }}
       terminationGracePeriodSeconds: {{ $.Values.terminationGracePeriodSeconds }}
       volumes:
         - name: config-volume
