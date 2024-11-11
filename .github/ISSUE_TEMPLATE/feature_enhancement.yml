@@ -1,6 +1,6 @@
 name: Feature Enhancement
 description: Enhance an existing feature
-title: "<Please write a brief description of the feature enhancement here>"
+#title: "<Please write a brief description of the feature enhancement here>"
 labels: ["Feature Enhancement", "Pending Triage"]
 body:
   - type: textarea
