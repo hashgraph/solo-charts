@@ -20,7 +20,21 @@
       }
     ],
     "@semantic-release/git",
-    "@semantic-release/github"
+    [
+      "@semantic-release/github",
+      {
+        "assets": [
+          {
+            "path": "solo-deployment-${nextRelease.version}.tgz",
+            "label": "solo-deployment-${nextRelease.version}.tgz"
+          },
+          {
+            "path": "solo-cluster-setup-${nextRelease.version}.tgz",
+            "label": "solo-cluster-setup-${nextRelease.version}.tgz"
+          }
+        ]
+      }
+    ]
   ],
   "verifyRelease": [
     [
