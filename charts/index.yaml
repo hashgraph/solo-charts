@@ -2,66 +2,6 @@ apiVersion: v1
 entries:
   solo-cluster-setup:
   - apiVersion: v2
-    appVersion: 0.34.1
-    created: "2024-11-01T15:10:14.856765506Z"
-    dependencies:
-    - alias: minio-operator
-      condition: cloud.minio.enabled
-      name: operator
-      repository: https://operator.min.io/
-      version: 5.0.7
-    - alias: prometheus-stack
-      condition: cloud.prometheusStack.enabled
-      name: kube-prometheus-stack
-      repository: https://prometheus-community.github.io/helm-charts
-      version: 52.0.1
-    - condition: cloud.grafanaAgent.enabled
-      name: grafana-agent
-      repository: https://grafana.github.io/helm-charts
-      version: 0.27.1
-    - condition: cloud.certManager.enabled
-      name: cert-manager
-      repository: https://charts.jetstack.io
-      version: v1.13.3
-    description: An umbrella Helm chart to setup shared resources for 1+ deployments
-      of the `solo-deployment` chart(s)
-    digest: c3fe0f493c5e496a40377c34bf9d3ed64d6574a48bfe34914efd70eec6a996ab
-    name: solo-cluster-setup
-    type: application
-    urls:
-    - https://hashgraph.github.io/solo-charts/charts/solo-cluster-setup-0.34.1.tgz
-    version: 0.34.1
-  - apiVersion: v2
-    appVersion: 0.34.0
-    created: "2024-11-01T19:48:27.163377605Z"
-    dependencies:
-    - alias: minio-operator
-      condition: cloud.minio.enabled
-      name: operator
-      repository: https://operator.min.io/
-      version: 5.0.7
-    - alias: prometheus-stack
-      condition: cloud.prometheusStack.enabled
-      name: kube-prometheus-stack
-      repository: https://prometheus-community.github.io/helm-charts
-      version: 52.0.1
-    - condition: cloud.grafanaAgent.enabled
-      name: grafana-agent
-      repository: https://grafana.github.io/helm-charts
-      version: 0.27.1
-    - condition: cloud.certManager.enabled
-      name: cert-manager
-      repository: https://charts.jetstack.io
-      version: v1.13.3
-    description: An umbrella Helm chart to setup shared resources for 1+ deployments
-      of the `solo-deployment` chart(s)
-    digest: 75aaec4c3955587269c03a703fc46d7742ba0e99a9767b677312d1559de81d3d
-    name: solo-cluster-setup
-    type: application
-    urls:
-    - https://hashgraph.github.io/solo-charts/charts/solo-cluster-setup-0.34.0.tgz
-    version: 0.34.0
-  - apiVersion: v2
     appVersion: 0.33.0
     created: "2024-10-31T19:03:35.281767988Z"
     dependencies:
@@ -122,40 +62,6 @@ entries:
     - https://hashgraph.github.io/solo-charts/charts/solo-cluster-setup-0.32.0.tgz
     version: 0.32.0
   solo-deployment:
-  - apiVersion: v2
-    appVersion: 0.34.1
-    created: "2024-11-01T15:10:14.862892593Z"
-    dependencies:
-    - alias: minio-server
-      condition: cloud.minio.enabled
-      name: tenant
-      repository: https://operator.min.io/
-      version: 5.0.12
-    description: An umbrella Helm chart for a chart deployment of `solo-deployment`
-    digest: 90d799e5dc40e151be5f8db9ac9038439bd9bc7a0dea348e2896f3ab232843f8
-    kubeVersion: '>=1.25.0-0'
-    name: solo-deployment
-    type: application
-    urls:
-    - https://hashgraph.github.io/solo-charts/charts/solo-deployment-0.34.1.tgz
-    version: 0.34.1
-  - apiVersion: v2
-    appVersion: 0.34.0
-    created: "2024-11-01T19:48:27.168046924Z"
-    dependencies:
-    - alias: minio-server
-      condition: cloud.minio.enabled
-      name: tenant
-      repository: https://operator.min.io/
-      version: 5.0.12
-    description: An umbrella Helm chart for a chart deployment of `solo-deployment`
-    digest: 9f10096749d521f123ca163e15d46f69109a141a74cbf29ee9fca20a3cc2aee7
-    kubeVersion: '>=1.25.0-0'
-    name: solo-deployment
-    type: application
-    urls:
-    - https://hashgraph.github.io/solo-charts/charts/solo-deployment-0.34.0.tgz
-    version: 0.34.0
   - apiVersion: v2
     appVersion: 0.33.0
     created: "2024-10-31T19:03:35.310343286Z"
@@ -224,4 +130,4 @@ entries:
     urls:
     - https://hashgraph.github.io/solo-charts/charts/solo-deployment-0.32.0.tgz
     version: 0.32.0
-generated: "2024-11-01T19:48:27.128199369Z"
+generated: "2024-11-11T19:48:27.128199369Z"
