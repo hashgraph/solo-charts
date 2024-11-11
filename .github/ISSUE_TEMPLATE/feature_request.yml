@@ -1,6 +1,6 @@
 name: New Feature
 description: Request a new feature
-title: "<Please write a brief description of the new feature here>"
+#title: "<Please write a brief description of the new feature here>"
 labels: ["New Feature", "Pending Triage"]
 body:
   - type: textarea
