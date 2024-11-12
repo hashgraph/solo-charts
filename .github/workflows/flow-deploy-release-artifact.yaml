@@ -58,7 +58,7 @@ jobs:
 
       - name: Install Semantic Release
         run: |
-          npm install -g semantic-release@24.2.0 @semantic-release/git@10.0.1 @semantic-release/github@11.0.0 \
+          npm install -g semantic-release@24.2.0 @semantic-release/git@10.0.1 @semantic-release/github@11.0.1 \
             @semantic-release/exec@6.0.3 semantic-release-helm3@2.9.3 \
             conventional-changelog-conventionalcommits@8.0.0 \
             @commitlint/cli@19.5.0 @commitlint/config-conventional@19.5.0 \

@@ -20,19 +20,7 @@
       }
     ],
     "@semantic-release/git",
-    [
-      "@semantic-release/github",
-      {
-        "assets": [
-          {
-            "path": "solo-deployment-*.tgz"
-          },
-          {
-            "path": "solo-cluster-setup-*.tgz"
-          }
-        ]
-      }
-    ]
+    "@semantic-release/github"
   ],
   "verifyRelease": [
     [
@@ -88,7 +76,19 @@
       "@semantic-release/exec",
       { "cmd": "helm push solo-deployment-${nextRelease.version}.tgz oci://ghcr.io/hashgraph/solo-charts" }
     ],
-    "@semantic-release/github"
+    [
+      "@semantic-release/github",
+      {
+        "assets": [
+          {
+            "path": "solo-deployment-*.tgz"
+          },
+          {
+            "path": "solo-cluster-setup-*.tgz"
+          }
+        ]
+      }
+    ]
   ],
   "branches":[
     {
