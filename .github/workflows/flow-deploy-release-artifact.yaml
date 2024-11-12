@@ -29,12 +29,11 @@ defaults:
     shell: bash
 
 permissions:
-  contents: write
-  packages: write
-  pages: write
   id-token: write
-  pull-requests: write
-  issues: write
+  packages: write
+  contents: read
+  pull-requests: read
+  issues: read
 
 jobs:
   helm-chart-release:
@@ -45,6 +44,7 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           fetch-depth: 0
+          token: ${{ secrets.GH_ACCESS_TOKEN }}
 
       - name: Setup Node
         uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
@@ -58,13 +58,15 @@ jobs:
 
       - name: Install Semantic Release
         run: |
-          npm install -g semantic-release@24.2.0 @semantic-release/git@10.0.1 @semantic-release/github@11.0.0 @semantic-release/exec@6.0.3 semantic-release-helm3@2.9.3
-          npm install -g conventional-changelog-conventionalcommits@8.0.0 @commitlint/cli@19.5.0 @commitlint/config-conventional@19.5.0
-          npm install -g marked-mangle@1.1.10 marked-gfm-heading-id@4.1.1 semantic-release-conventional-commits@3.0.0
+          npm install -g semantic-release@24.2.0 @semantic-release/git@10.0.1 @semantic-release/github@11.0.0 \
+            @semantic-release/exec@6.0.3 semantic-release-helm3@2.9.3 \
+            conventional-changelog-conventionalcommits@8.0.0 \
+            @commitlint/cli@19.5.0 @commitlint/config-conventional@19.5.0 \
+            marked-mangle@1.1.10 marked-gfm-heading-id@4.1.1 semantic-release-conventional-commits@3.0.0
 
       - name: Calculate Next Version
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
           GIT_AUTHOR_NAME: ${{ secrets.GIT_USER_NAME }}
           GIT_AUTHOR_EMAIL: ${{ secrets.GIT_USER_EMAIL }}
           GIT_COMMITTER_NAME: ${{ secrets.GIT_USER_NAME }}
@@ -102,7 +104,7 @@ jobs:
 
       - name: Publish Semantic Release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
           GIT_AUTHOR_NAME: ${{ secrets.GIT_USER_NAME }}
           GIT_AUTHOR_EMAIL: ${{ secrets.GIT_USER_EMAIL }}
           GIT_COMMITTER_NAME: ${{ secrets.GIT_USER_NAME }}

@@ -25,12 +25,10 @@
       {
         "assets": [
           {
-            "path": "solo-deployment-${nextRelease.version}.tgz",
-            "label": "solo-deployment-${nextRelease.version}.tgz"
+            "path": "solo-deployment-*.tgz"
           },
           {
-            "path": "solo-cluster-setup-${nextRelease.version}.tgz",
-            "label": "solo-cluster-setup-${nextRelease.version}.tgz"
+            "path": "solo-cluster-setup-*.tgz"
           }
         ]
       }
@@ -89,7 +87,8 @@
     [
       "@semantic-release/exec",
       { "cmd": "helm push solo-deployment-${nextRelease.version}.tgz oci://ghcr.io/hashgraph/solo-charts" }
-    ]
+    ],
+    "@semantic-release/github"
   ],
   "branches":[
     {
