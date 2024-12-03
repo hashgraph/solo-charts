@@ -314,9 +314,9 @@ hedera:
 
   # Only the name of the node is required. The rest of the configuration will be inherited from `defaults` section
   nodes:
-    - name: node0
-      accountId: 0.0.3
     - name: node1
-      accountId: 0.0.4
+      accountId: 0.0.3
     - name: node2
+      accountId: 0.0.4
+    - name: node3
       accountId: 0.0.5

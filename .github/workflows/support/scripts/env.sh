@@ -90,8 +90,8 @@ PLATFORM_VERSION=v0.54.0-alpha.4
 
 POD_MONITOR_ROLE="${POD_MONITOR_ROLE:-pod-monitor-role}"
 
-#NODE_NAMES=(node0 node1 node2 node3)
-NODE_NAMES=(node0 node1 node2)
+#NODE_NAMES=(node1 node2 node3 node4)
+NODE_NAMES=(node1 node2 node3)
 
 POD_MONITOR_ROLE="${POD_MONITOR_ROLE:-pod-monitor-role}"
 

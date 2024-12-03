@@ -138,6 +138,27 @@ spec:
             items:
               - key: settings.txt
                 path: settings.txt
+        - name: network-node-hapi-app-api-permissions-properties
+          configMap:
+            name: network-node-data-config-cm
+            optional: true
+            items:
+              - key: api-permission.properties
+                path: api-permission.properties
+        - name: network-node-hapi-app-application-properties
+          configMap:
+            name: network-node-data-config-cm
+            optional: true
+            items:
+              - key: application.properties
+                path: application.properties
+        - name: network-node-hapi-app-bootstrap-properties
+          configMap:
+            name: network-node-data-config-cm
+            optional: true
+            items:
+              - key: bootstrap.properties
+                path: bootstrap.properties
         {{- if $networkNodeKeySecrets }}
         - name: network-node-keys
           secret:
@@ -192,9 +213,20 @@ spec:
             mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/settings.txt
             subPath: settings.txt
           {{- end }}
-          {{- if or $.Values.hedera.configMaps.apiPermissionsProperties $.Values.hedera.configMaps.applicationProperties $.Values.hedera.configMaps.bootstrapProperties }}
-          - name: network-node-data-config
-            mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/config
+          {{- if $.Values.hedera.configMaps.apiPermissionsProperties }}
+          - name: network-node-hapi-app-api-permissions-properties
+            mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/config/api-permission.properties
+            subPath: api-permission.properties
+          {{- end }}
+          {{- if $.Values.hedera.configMaps.applicationProperties }}
+          - name: network-node-hapi-app-application-properties
+            mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/config/application.properties
+            subPath: application.properties
+          {{- end }}
+          {{- if $.Values.hedera.configMaps.bootstrapProperties }}
+          - name: network-node-hapi-app-bootstrap-properties
+            mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/config/bootstrap.properties
+            subPath: bootstrap.properties
           {{- end }}
           {{- if $networkNodeKeySecrets }}
           - name: network-node-keys
