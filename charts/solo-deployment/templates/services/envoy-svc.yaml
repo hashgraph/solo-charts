@@ -18,6 +18,9 @@ spec:
   {{- if $envoyProxy.loadBalancerEnabled }}
   type: LoadBalancer
   externalTrafficPolicy: Local
+  {{- if $node.envoyProxy.staticIP }}
+  loadBalancerIP: {{ $node.envoyProxy.staticIP }}
+  {{- end }}
   {{- end }}
   selector:
     app: envoy-proxy-{{ $node.name }}

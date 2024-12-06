@@ -316,7 +316,21 @@ hedera:
   nodes:
     - name: node1
       accountId: 0.0.3
+      envoyProxy:
+        staticIP: "" # Static IP for Envoy, leave empty to not use
+      haproxy:
+        staticIP: "" # Static IP for HAProxy can be empty if not used
+
     - name: node2
       accountId: 0.0.4
+      envoyProxy:
+        staticIP: ""
+      haproxy:
+        staticIP: ""
+
     - name: node3
       accountId: 0.0.5
+      envoyProxy:
+        staticIP: ""
+      haproxy:
+        staticIP: ""
