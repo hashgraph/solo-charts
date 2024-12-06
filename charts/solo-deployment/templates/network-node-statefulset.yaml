@@ -396,7 +396,7 @@ spec:
         envFrom:
           - secretRef:
               name: uploader-mirror-secrets
-        {{- with default $defaults.sidecars.recordStreamSidecarUploader.resources $recordStreamSidecar.resources }}
+        {{- with default $defaults.sidecars.recordStreamSidecarUploader.resources ($node.sidecars).record_stream_sidecar_uploader.resources }}
         resources:
           {{- toYaml . | nindent 10 }}
         {{- end }}

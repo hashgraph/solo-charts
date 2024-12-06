@@ -314,9 +314,36 @@ hedera:
 
   # Only the name of the node is required. The rest of the configuration will be inherited from `defaults` section
   nodes:
-    - name: node0
-      accountId: 0.0.3
     - name: node1
-      accountId: 0.0.4
+      accountId: 0.0.3
+      sidecars:
+        record_stream_sidecar_uploader:
+          resources:
+            requests:
+              cpu: 1m
+              memory: 2Mi
+            limits:
+              cpu: 3m
+              memory: 4Mi
     - name: node2
+      accountId: 0.0.4
+      sidecars:
+        record_stream_sidecar_uploader:
+          resources:
+            requests:
+              cpu: 1m
+              memory: 2Mi
+            limits:
+              cpu: 3m
+              memory: 4Mi
+    - name: node3
       accountId: 0.0.5
+      sidecars:
+        record_stream_sidecar_uploader:
+          resources:
+            requests:
+              cpu: 1m
+              memory: 2Mi
+            limits:
+              cpu: 3m
+              memory: 4Mi
