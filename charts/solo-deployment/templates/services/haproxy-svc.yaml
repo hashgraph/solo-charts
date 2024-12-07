@@ -17,8 +17,8 @@ metadata:
 spec:
   type: {{ $defaults.serviceType | default "ClusterIP" }}
   externalTrafficPolicy: Local
-  {{- if $node.haproxy.staticIP }}
-  loadBalancerIP: {{ $node.haproxy.staticIP }}
+  {{- if $node.haproxyStaticIP }}
+  loadBalancerIP: {{ $node.haproxyStaticIP }}
   {{- end }}
   selector:
     app: haproxy-{{ $node.name }}
