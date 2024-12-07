@@ -15,9 +15,10 @@ metadata:
     solo.hedera.com/prometheus-endpoint: active
     {{- include "solo.testLabels" $ | nindent 4 }}
 spec:
-  {{- if $envoyProxy.loadBalancerEnabled }}
-  type: LoadBalancer
+  type: {{ $defaults.serviceType | default "ClusterIP" }}
   externalTrafficPolicy: Local
+  {{- if $node.envoyProxyStaticIP }}
+  loadBalancerIP: {{ $node.envoyProxyStaticIP }}
   {{- end }}
   selector:
     app: envoy-proxy-{{ $node.name }}

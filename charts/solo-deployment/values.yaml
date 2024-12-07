@@ -73,7 +73,7 @@ defaults:
       tag: "v1.21.1"
       pullPolicy: "IfNotPresent"
     resources: {}
-    loadBalancerEnabled: false
+    serviceType: "LoadBalancer"
   sidecars:
     recordStreamUploader:
       enabled: true
@@ -316,7 +316,15 @@ hedera:
   nodes:
     - name: node1
       accountId: 0.0.3
+      envoyProxyStaticIP: "" # Static IP for Envoy, leave empty to not use
+      haproxyStaticIP: "" # Static IP for HAProxy can be empty if not used
+
     - name: node2
       accountId: 0.0.4
+      envoyProxyStaticIP: ""
+      haproxyStaticIP: ""
+
     - name: node3
       accountId: 0.0.5
+      envoyProxyStaticIP: ""
+      haproxyStaticIP: ""
