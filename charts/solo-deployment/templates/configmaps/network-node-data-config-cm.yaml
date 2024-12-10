@@ -1,4 +1,4 @@
-{{- if or $.Values.hedera.configMaps.apiPermissionsProperties $.Values.hedera.configMaps.applicationProperties $.Values.hedera.configMaps.bootstrapProperties }}
+{{- if or $.Values.hedera.configMaps.apiPermissionsProperties $.Values.hedera.configMaps.applicationProperties $.Values.hedera.configMaps.bootstrapProperties $.Values.hedera.configMaps.genesisNetworkJson }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -15,5 +15,9 @@ data:
 {{- end }}
 {{- if $.Values.hedera.configMaps.bootstrapProperties }}
   bootstrap.properties: {{ toYaml .Values.hedera.configMaps.bootstrapProperties  | indent 4 }}
+{{- end }}
+{{- if $.Values.hedera.configMaps.genesisNetworkJson }}
+  genesis-network.json: |
+    {{ .Values.hedera.configMaps.genesisNetworkJson | nindent 4 }}
 {{- end }}
 {{- end }}
