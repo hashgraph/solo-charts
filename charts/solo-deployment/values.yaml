@@ -311,6 +311,7 @@ hedera:
     configTxt: ""
     log4j2Xml: ""
     settingsTxt: ""
+    genesisNetworkJson: ""
 
   # Only the name of the node is required. The rest of the configuration will be inherited from `defaults` section
   nodes:

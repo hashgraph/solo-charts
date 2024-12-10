@@ -124,6 +124,13 @@ spec:
               - key: hedera-{{ $node.name }}.key
                 path: hedera.key
         {{- end }}
+        - name: network-node-genesis-network-json
+          configMap:
+            name: network-node-data-config-cm
+            optional: true
+            items:
+              - key: genesis-network.json
+                path: genesis-network.json
         - name: network-node-hapi-app-log4j2-xml
           configMap:
             name: network-node-hapi-app-cm
@@ -227,6 +234,11 @@ spec:
           - name: network-node-hapi-app-bootstrap-properties
             mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/config/bootstrap.properties
             subPath: bootstrap.properties
+          {{- end }}
+          {{- if $.Values.hedera.configMaps.genesisNetworkJson }}
+          - name: config-volume
+            mountPath: /config/genesis-network.json
+            subPath: genesis-network.json
           {{- end }}
           {{- if $networkNodeKeySecrets }}
           - name: network-node-keys
