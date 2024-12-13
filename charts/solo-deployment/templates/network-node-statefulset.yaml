@@ -236,8 +236,8 @@ spec:
             subPath: bootstrap.properties
           {{- end }}
           {{- if $.Values.hedera.configMaps.genesisNetworkJson }}
-          - name: config-volume
-            mountPath: /config/genesis-network.json
+          - name: network-node-genesis-network-json
+            mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/config/genesis-network.json
             subPath: genesis-network.json
           {{- end }}
           {{- if $networkNodeKeySecrets }}
