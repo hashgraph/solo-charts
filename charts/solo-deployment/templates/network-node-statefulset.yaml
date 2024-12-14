@@ -307,9 +307,9 @@ spec:
           - name: BUCKET_NAME
             value: {{ $cloud.buckets.streamBucket | quote }}
           - name: S3_ENABLE
-            value: "true"
+            value: {{ $.Values.cloud.s3.enabled | quote }}
           - name: GCS_ENABLE
-            value: "false"
+            value: {{ $.Values.cloud.gcs.enabled | quote }}
         envFrom:
           - secretRef:
               name: uploader-mirror-secrets
@@ -372,9 +372,9 @@ spec:
           - name: BUCKET_NAME
             value: {{ $cloud.buckets.streamBucket | quote }}
           - name: S3_ENABLE
-            value: "true"
+            value: {{ $.Values.cloud.s3.enabled | quote }}
           - name: GCS_ENABLE
-            value: "false"
+            value: {{ $.Values.cloud.gcs.enabled | quote }}
         envFrom:
           - secretRef:
               name: uploader-mirror-secrets
@@ -434,9 +434,9 @@ spec:
           - name: BUCKET_NAME
             value: {{ $cloud.buckets.streamBucket | quote }}
           - name: S3_ENABLE
-            value: "true"
+            value: {{ $.Values.cloud.s3.enabled | quote }}
           - name: GCS_ENABLE
-            value: "false"
+            value: {{ $.Values.cloud.gcs.enabled | quote }}
         envFrom:
           - secretRef:
               name: uploader-mirror-secrets
@@ -494,9 +494,9 @@ spec:
           - name: BUCKET_NAME
             value: {{ $cloud.buckets.streamBucket | quote }}
           - name: S3_ENABLE
-            value: "true"
+            value: {{ $.Values.cloud.s3.enabled | quote }}
           - name: GCS_ENABLE
-            value: "false"
+            value: {{ $.Values.cloud.gcs.enabled | quote }}
         envFrom:
           - secretRef:
               name: uploader-mirror-secrets
