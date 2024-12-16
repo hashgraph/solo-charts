@@ -23,21 +23,21 @@
 /.github/workflows/                             @hashgraph/release-engineering-managers @hashgraph/devops-ci
 
 # Codacy Tool Configurations
-/config/                                        @hashgraph/release-engineering-managers
-.remarkrc                                       @hashgraph/release-engineering-managers
+/config/                                        @hashgraph/release-engineering-managers @hashgraph/devops-ci
+.remarkrc                                       @hashgraph/release-engineering-managers @hashgraph/devops-ci
 
 # Semantic Release Configuration
-.releaserc                                      @hashgraph/release-engineering-managers
+.releaserc                                      @hashgraph/release-engineering-managers @hashgraph/devops-ci
 
 # Self-protection for root CODEOWNERS files (this file should not exist and should definitely require approval)
-/CODEOWNERS                                     @hashgraph/release-engineering-managers
+/CODEOWNERS                                     @hashgraph/release-engineering-managers @hashgraph/devops-ci
 
 # Protect the repository root files
-/README.md                                      @hashgraph/release-engineering @hashgraph/release-engineering-managers
-**/LICENSE                                      @hashgraph/release-engineering @hashgraph/release-engineering-managers
+/README.md                                      @hashgraph/release-engineering @hashgraph/release-engineering-managers @hashgraph/devops-ci
+**/LICENSE                                      @hashgraph/release-engineering @hashgraph/release-engineering-managers @hashgraph/devops-ci
 
 # CodeCov configuration
-**/codecov.yml                                  @hashgraph/release-engineering @hashgraph/release-engineering-managers
+**/codecov.yml                                  @hashgraph/release-engineering @hashgraph/release-engineering-managers @hashgraph/devops-ci
 
 # Git Ignore definitions
 **/.gitignore                                   @hashgraph/release-engineering @hashgraph/release-engineering-managers @hashgraph/devops-ci
