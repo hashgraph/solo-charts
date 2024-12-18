@@ -85,6 +85,7 @@ spec:
         {{ include "solo.volumeTemplate" (dict "name" "hgcapp-data-stats" "claimName" (printf "%s-%s-%s" "hgcapp-data-stats-pvc-network" $node.name "0") "pvcEnabled" $pvcEnabled ) | nindent 8 }}
         {{ include "solo.volumeTemplate" (dict "name" "hgcapp-data-upgrade" "claimName" (printf "%s-%s-%s" "hgcapp-data-upgrade-pvc-network" $node.name "0") "pvcEnabled" $pvcEnabled ) | nindent 8 }}
         {{ include "solo.volumeTemplate" (dict "name" "hgcapp-output" "claimName" (printf "%s-%s-%s" "hgcapp-output-pvc-network" $node.name "0") "pvcEnabled" $pvcEnabled ) | nindent 8 }}
+        {{ include "solo.volumeTemplate" (dict "name" "hgcapp-data-config" "claimName" (printf "%s-%s-%s" "hgcapp-data-config-network" $node.name "0") "pvcEnabled" $pvcEnabled ) | nindent 8 }}
         {{- if $otelCollector.enabled }}
         - name: otel-collector-volume
           configMap:
@@ -124,13 +125,6 @@ spec:
               - key: hedera-{{ $node.name }}.key
                 path: hedera.key
         {{- end }}
-        - name: network-node-genesis-network-json
-          configMap:
-            name: network-node-data-config-cm
-            optional: true
-            items:
-              - key: genesis-network.json
-                path: genesis-network.json
         - name: network-node-hapi-app-log4j2-xml
           configMap:
             name: network-node-hapi-app-cm
@@ -235,11 +229,6 @@ spec:
             mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/config/bootstrap.properties
             subPath: bootstrap.properties
           {{- end }}
-          {{- if $.Values.hedera.configMaps.genesisNetworkJson }}
-          - name: network-node-genesis-network-json
-            mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/config/genesis-network.json
-            subPath: genesis-network.json
-          {{- end }}
           {{- if $networkNodeKeySecrets }}
           - name: network-node-keys
             mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/keys
@@ -254,6 +243,8 @@ spec:
             mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/upgrade
           - name: hgcapp-output
             mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/output
+          - name: hgcapp-data-config
+            mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/config
         env:
           {{- include "solo.defaultEnvVars" . | nindent 10 }}
           {{- with $rootExtraEnv }}
@@ -567,6 +558,21 @@ spec:
         {{- end }}
       {{- end }}
       initContainers:
+        {{- if $.Values.hedera.configMaps.genesisNetworkJson }}
+        - name: init-data-config-directories
+          image: busybox:1.36.1
+          command:
+            - "/bin/sh"
+            - "-c"
+            - |
+              touch /opt/hgcapp/services-hedera/HapiApp2.0/data/config/genesis-network.json
+              chmod 777 /opt/hgcapp/services-hedera/HapiApp2.0/data/config/genesis-network.json
+              echo "{{ $.Values.hedera.configMaps.genesisNetworkJson }}" > /opt/hgcapp/services-hedera/HapiApp2.0/data/config/genesis-network.json
+          volumeMounts:
+            - name: hgcapp-data-config
+              mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/config
+        {{- end }}
+
         - name: init-record-streams-directories
           image: busybox:1.36.1
           command:
