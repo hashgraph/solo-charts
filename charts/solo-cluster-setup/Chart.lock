@@ -11,5 +11,11 @@ dependencies:
 - name: cert-manager
   repository: https://charts.jetstack.io
   version: v1.13.3
-digest: sha256:cd0eb03b231d5936416078dab1c715e1b6c23412a502d49e261db155096f40f7
-generated: "2024-01-12T17:15:10.149274Z"
+- name: acme-cluster-issuer
+  repository: https://swirldslabs.github.io/swirldslabs-helm-charts
+  version: 0.3.1
+- name: haproxy-ingress
+  repository: https://haproxy-ingress.github.io/charts
+  version: 0.14.5
+digest: sha256:a5d8d77b6ba60ffcc88246bc4dbd32138c0119772dbbdd13425595df7d4d10d9
+generated: "2024-12-19T11:00:56.039084-06:00"
