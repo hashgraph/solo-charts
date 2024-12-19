@@ -18,6 +18,18 @@ cloud:
   certManager:
     enabled: false
 
+
+selfSignedCertClusterIssuer: '{{ .Values.global.namespaceOverride | default .Release.Namespace | printf "%s-self-signed-cluster-issuer" }}'
+certClusterIssuerType: "self-signed" # "acme-staging", "acme-prod", or "self-signed"
+ingressClassName: "" # if set, takes precedence over the .Values.ingress.className
+acmeClusterIssuer:
+  enabled: false
+haproxyIngressController:
+  enabled: false
+selfSignedClusterIssuer:
+  enabled: false
+
+
 cert-manager:
   namespace: cert-manager
   installCRDs: false
@@ -42,3 +54,35 @@ prometheus-stack:
         any: true  # fetch metrics from other namespaces
       serviceMonitorSelector: { }
       serviceMonitorSelectorNilUsesHelmValues: false
+
+# lets encrypt acme cluster issuer configuration
+acme-cluster-issuer:
+  issuers:
+    staging:
+      email: ""
+      name: '{{ .Values.global.namespaceOverride | default .Release.Namespace | printf "%s-letsencrypt-staging" }}'
+    production:
+      email: ""
+      name: '{{ .Values.global.namespaceOverride | default .Release.Namespace | printf "%s-letsencrypt-prod" }}'
+  solvers: # TODO change in: https://github.com/hashgraph/full-stack-testing/issues/631
+    http01:
+      solverType: "ingress"
+
+haproxy-ingress:
+  controller:
+    service:
+      loadBalancerIP: "" # the external IP address of the hedera mirror node explorer
+
+ingress:
+  annotations: {}
+  className: ""
+  enabled: false
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
