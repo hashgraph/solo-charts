@@ -307,7 +307,7 @@ spec:
           - name: BUCKET_NAME
             value: {{ $cloud.buckets.streamBucket | quote }}
           - name: S3_ENABLE
-            value: {{- if $.Values.cloud.gcs.enabled }} "false" {{- else }} "true" {{- end }}
+            value: {{- if or $.Values.cloud.minio.enabled $.Values.cloud.s3.enabled }} "true" {{- else }} "false" {{- end }}
           - name: GCS_ENABLE
             value: {{ $.Values.cloud.gcs.enabled | quote }}
         envFrom:
@@ -372,7 +372,7 @@ spec:
           - name: BUCKET_NAME
             value: {{ $cloud.buckets.streamBucket | quote }}
           - name: S3_ENABLE
-            value: {{- if $.Values.cloud.gcs.enabled }} "false" {{- else }} "true" {{- end }}
+            value: {{- if or $.Values.cloud.minio.enabled $.Values.cloud.s3.enabled }} "true" {{- else }} "false" {{- end }}
           - name: GCS_ENABLE
             value: {{ $.Values.cloud.gcs.enabled | quote }}
         envFrom:
@@ -434,7 +434,7 @@ spec:
           - name: BUCKET_NAME
             value: {{ $cloud.buckets.streamBucket | quote }}
           - name: S3_ENABLE
-            value: {{- if $.Values.cloud.gcs.enabled }} "false" {{- else }} "true" {{- end }}
+            value: {{- if or $.Values.cloud.minio.enabled $.Values.cloud.s3.enabled }} "true" {{- else }} "false" {{- end }}
           - name: GCS_ENABLE
             value: {{ $.Values.cloud.gcs.enabled | quote }}
         envFrom:
@@ -494,7 +494,7 @@ spec:
           - name: BUCKET_NAME
             value: {{ $cloud.buckets.streamBucket | quote }}
           - name: S3_ENABLE
-            value: {{- if $.Values.cloud.gcs.enabled }} "false" {{- else }} "true" {{- end }}
+            value: {{- if or $.Values.cloud.minio.enabled $.Values.cloud.s3.enabled }} "true" {{- else }} "false" {{- end }}
           - name: GCS_ENABLE
             value: {{ $.Values.cloud.gcs.enabled | quote }}
         envFrom:
