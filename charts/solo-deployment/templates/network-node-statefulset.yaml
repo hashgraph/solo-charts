@@ -271,8 +271,16 @@ spec:
           - --linux
           - --watch-directory
           - /opt/hgcapp/accountBalances
+          {{- if $.Values.cloud.minio.enabled }}
           - --s3-endpoint
-          - "http://{{ $minioserver.tenant.name }}-hl:9000"
+          - http://{{ $minioserver.tenant.name }}-hl:9000
+          {{- else if $.Values.cloud.s3.enabled }}
+          - --s3-endpoint
+          - {{ $.Values.cloud.s3.endpoint }}
+          {{- else if $.Values.cloud.gcs.enabled }}
+          - --gcs-endpoint
+          - {{ $.Values.cloud.gcs.endpoint }}
+          {{- end }}
         volumeMounts:
           - name: hgcapp-account-balances
             mountPath: /opt/hgcapp/accountBalances
@@ -305,9 +313,9 @@ spec:
           - name: BUCKET_NAME
             value: {{ $cloud.buckets.streamBucket | quote }}
           - name: S3_ENABLE
-            value: "true"
+            value: {{- if or $.Values.cloud.minio.enabled $.Values.cloud.s3.enabled }} "true" {{- else }} "false" {{- end }}
           - name: GCS_ENABLE
-            value: "false"
+            value: {{ $.Values.cloud.gcs.enabled | quote }}
         envFrom:
           - secretRef:
               name: uploader-mirror-secrets
@@ -332,8 +340,16 @@ spec:
           - /opt/hgcapp/recordStreams
           - --csv-stats-directory
           - /opt/hgcapp/recordStreams/uploader-stats
+          {{- if $.Values.cloud.minio.enabled }}
           - --s3-endpoint
           - http://{{ $minioserver.tenant.name }}-hl:9000
+          {{- else if $.Values.cloud.s3.enabled }}
+          - --s3-endpoint
+          - {{ $.Values.cloud.s3.endpoint }}
+          {{- else if $.Values.cloud.gcs.enabled }}
+          - --gcs-endpoint
+          - {{ $.Values.cloud.gcs.endpoint }}
+          {{- end }}
         volumeMounts:
           - name: hgcapp-record-streams
             mountPath: /opt/hgcapp/recordStreams
@@ -370,9 +386,9 @@ spec:
           - name: BUCKET_NAME
             value: {{ $cloud.buckets.streamBucket | quote }}
           - name: S3_ENABLE
-            value: "true"
+            value: {{- if or $.Values.cloud.minio.enabled $.Values.cloud.s3.enabled }} "true" {{- else }} "false" {{- end }}
           - name: GCS_ENABLE
-            value: "false"
+            value: {{ $.Values.cloud.gcs.enabled | quote }}
         envFrom:
           - secretRef:
               name: uploader-mirror-secrets
@@ -394,8 +410,16 @@ spec:
           - --linux
           - --watch-directory
           - /opt/hgcapp/recordStreams/sidecar
+          {{- if $.Values.cloud.minio.enabled }}
           - --s3-endpoint
           - http://{{ $minioserver.tenant.name }}-hl:9000
+          {{- else if $.Values.cloud.s3.enabled }}
+          - --s3-endpoint
+          - {{ $.Values.cloud.s3.endpoint }}
+          {{- else if $.Values.cloud.gcs.enabled }}
+          - --gcs-endpoint
+          - {{ $.Values.cloud.gcs.endpoint }}
+          {{- end }}
         volumeMounts:
           - name: hgcapp-record-streams
             mountPath: /opt/hgcapp/recordStreams
@@ -432,9 +456,9 @@ spec:
           - name: BUCKET_NAME
             value: {{ $cloud.buckets.streamBucket | quote }}
           - name: S3_ENABLE
-            value: "true"
+            value: {{- if or $.Values.cloud.minio.enabled $.Values.cloud.s3.enabled }} "true" {{- else }} "false" {{- end }}
           - name: GCS_ENABLE
-            value: "false"
+            value: {{ $.Values.cloud.gcs.enabled | quote }}
         envFrom:
           - secretRef:
               name: uploader-mirror-secrets
@@ -458,8 +482,16 @@ spec:
           - --watch-directory
           - /opt/hgcapp/eventStreams
           - --debug
+          {{- if $.Values.cloud.minio.enabled }}
           - --s3-endpoint
           - http://{{ $minioserver.tenant.name }}-hl:9000
+          {{- else if $.Values.cloud.s3.enabled }}
+          - --s3-endpoint
+          - {{ $.Values.cloud.s3.endpoint }}
+          {{- else if $.Values.cloud.gcs.enabled }}
+          - --gcs-endpoint
+          - {{ $.Values.cloud.gcs.endpoint }}
+          {{- end }}
         volumeMounts:
           - name: hgcapp-event-streams
             mountPath: /opt/hgcapp/eventStreams
@@ -492,9 +524,9 @@ spec:
           - name: BUCKET_NAME
             value: {{ $cloud.buckets.streamBucket | quote }}
           - name: S3_ENABLE
-            value: "true"
+            value: {{- if or $.Values.cloud.minio.enabled $.Values.cloud.s3.enabled }} "true" {{- else }} "false" {{- end }}
           - name: GCS_ENABLE
-            value: "false"
+            value: {{ $.Values.cloud.gcs.enabled | quote }}
         envFrom:
           - secretRef:
               name: uploader-mirror-secrets
