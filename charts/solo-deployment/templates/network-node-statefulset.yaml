@@ -277,7 +277,8 @@ spec:
           {{- else if $.Values.cloud.s3.enabled }}
           - --s3-endpoint
           - {{ $.Values.cloud.s3.endpoint }}
-          {{- else if $.Values.cloud.gcs.enabled }}
+          {{- end}}
+          {{- if $.Values.cloud.gcs.enabled }}
           - --gcs-endpoint
           - {{ $.Values.cloud.gcs.endpoint }}
           {{- end }}
@@ -346,7 +347,8 @@ spec:
           {{- else if $.Values.cloud.s3.enabled }}
           - --s3-endpoint
           - {{ $.Values.cloud.s3.endpoint }}
-          {{- else if $.Values.cloud.gcs.enabled }}
+          {{- end}}
+          {{- if $.Values.cloud.gcs.enabled }}
           - --gcs-endpoint
           - {{ $.Values.cloud.gcs.endpoint }}
           {{- end }}
@@ -416,7 +418,8 @@ spec:
           {{- else if $.Values.cloud.s3.enabled }}
           - --s3-endpoint
           - {{ $.Values.cloud.s3.endpoint }}
-          {{- else if $.Values.cloud.gcs.enabled }}
+          {{- end}}
+          {{- if $.Values.cloud.gcs.enabled }}
           - --gcs-endpoint
           - {{ $.Values.cloud.gcs.endpoint }}
           {{- end }}
@@ -488,7 +491,8 @@ spec:
           {{- else if $.Values.cloud.s3.enabled }}
           - --s3-endpoint
           - {{ $.Values.cloud.s3.endpoint }}
-          {{- else if $.Values.cloud.gcs.enabled }}
+          {{- end}}
+          {{- if $.Values.cloud.gcs.enabled }}
           - --gcs-endpoint
           - {{ $.Values.cloud.gcs.endpoint }}
           {{- end }}
