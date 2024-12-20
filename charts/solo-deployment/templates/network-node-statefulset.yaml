@@ -49,6 +49,7 @@ spec:
     {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-data-stats-pvc" "storage" $nodeStorage.dataStats) | nindent 4 }}
     {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-data-upgrade-pvc" "storage" $nodeStorage.dataUpgrade) | nindent 4 }}
     {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-output-pvc" "storage" $nodeStorage.output) | nindent 4 }}
+    {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-data-config-pvc" "storage" $nodeStorage.output) | nindent 4 }}
   {{- end }}
   template:
     metadata:
@@ -85,7 +86,7 @@ spec:
         {{ include "solo.volumeTemplate" (dict "name" "hgcapp-data-stats" "claimName" (printf "%s-%s-%s" "hgcapp-data-stats-pvc-network" $node.name "0") "pvcEnabled" $pvcEnabled ) | nindent 8 }}
         {{ include "solo.volumeTemplate" (dict "name" "hgcapp-data-upgrade" "claimName" (printf "%s-%s-%s" "hgcapp-data-upgrade-pvc-network" $node.name "0") "pvcEnabled" $pvcEnabled ) | nindent 8 }}
         {{ include "solo.volumeTemplate" (dict "name" "hgcapp-output" "claimName" (printf "%s-%s-%s" "hgcapp-output-pvc-network" $node.name "0") "pvcEnabled" $pvcEnabled ) | nindent 8 }}
-        {{ include "solo.volumeTemplate" (dict "name" "hgcapp-data-config" "claimName" (printf "%s-%s-%s" "hgcapp-data-config-network" $node.name "0") "pvcEnabled" $pvcEnabled ) | nindent 8 }}
+        {{ include "solo.volumeTemplate" (dict "name" "hgcapp-data-config" "claimName" (printf "%s-%s-%s" "hgcapp-data-config-pvc-network" $node.name "0") "pvcEnabled" $pvcEnabled ) | nindent 8 }}
         {{- if $otelCollector.enabled }}
         - name: otel-collector-volume
           configMap:
