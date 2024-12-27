@@ -17,6 +17,9 @@ data:
   bootstrap.properties: {{ toYaml .Values.hedera.configMaps.bootstrapProperties  | indent 4 }}
 {{- end }}
 {{- if $.Values.hedera.configMaps.genesisNetworkJson }}
-  genesis-network.json: {{ toYaml .Values.hedera.configMaps.genesisNetworkJson  | indent 4 }}
+  genesis-network.json: {{ toYaml .Values.hedera.configMaps.genesisNetworkJson | indent 4 }}
+{{- end }}
+{{- if $.Values.hedera.configMaps.genesisThrottlesJson }}
+  genesis-throttles.json: {{ toYaml .Values.hedera.configMaps.genesisThrottlesJson | indent 4 }}
 {{- end }}
 {{- end }}
