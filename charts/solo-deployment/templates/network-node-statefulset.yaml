@@ -17,6 +17,7 @@
 {{- $nodeStorage := $.Values.defaults.volumeClaims.node }}
 {{- $pvcEnabled := $.Values.defaults.volumeClaims.enabled }}
 {{- $initContainersLength := len $.Values.hedera.initContainers}}
+{{- $lookup_secrets := lookup "v1" "Secret" $.Release.Namespace "uploader-mirror-secrets" }}
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -280,8 +281,6 @@ spec:
             --linux \
             --watch-directory \
             /opt/hgcapp/accountBalances \
-            --csv-stats-directory \
-            /opt/hgcapp/recordStreams/uploader-stats \
             {{- if $.Values.cloud.minio.enabled }}
             --s3-endpoint http://{{ $minioserver.tenant.name }}-hl:9000 \
             {{- else if $.Values.cloud.s3.enabled }}
