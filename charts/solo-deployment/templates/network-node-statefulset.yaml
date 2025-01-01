@@ -273,23 +273,23 @@ spec:
         securityContext:
           {{- include "solo.hedera.security.context" . | nindent 10 }}
         command:
-          - /usr/bin/env
-          - python3.7
-          - /usr/local/bin/mirror.py
-          - --linux
-          - --watch-directory
-          - /opt/hgcapp/accountBalances
-          {{- if $.Values.cloud.minio.enabled }}
-          - --s3-endpoint
-          - http://{{ $minioserver.tenant.name }}-hl:9000
-          {{- else if $.Values.cloud.s3.enabled }}
-          - --s3-endpoint
-          - {{ $.Values.cloud.s3.endpoint }}
-          {{- end}}
-          {{- if $.Values.cloud.gcs.enabled }}
-          - --gcs-endpoint
-          - {{ $.Values.cloud.gcs.endpoint }}
-          {{- end }}
+          - /bin/sh
+          - -c
+          - |
+            /usr/bin/env python3.7 /usr/local/bin/mirror.py \
+            --linux \
+            --watch-directory \
+            /opt/hgcapp/accountBalances \
+            --csv-stats-directory \
+            /opt/hgcapp/recordStreams/uploader-stats \
+            {{- if $.Values.cloud.minio.enabled }}
+            --s3-endpoint http://{{ $minioserver.tenant.name }}-hl:9000 \
+            {{- else if $.Values.cloud.s3.enabled }}
+            --s3-endpoint $S3_ENDPOINT \
+            {{- end}}
+            {{- if $.Values.cloud.gcs.enabled }}
+            --gcs-endpoint $GCS_ENDPOINT
+            {{- end }}
         volumeMounts:
           - name: hgcapp-account-balances
             mountPath: /opt/hgcapp/accountBalances
@@ -325,9 +325,27 @@ spec:
             value: {{- if or $.Values.cloud.minio.enabled $.Values.cloud.s3.enabled }} "true" {{- else }} "false" {{- end }}
           - name: GCS_ENABLE
             value: {{ $.Values.cloud.gcs.enabled | quote }}
+          {{- if $.Values.cloud.gcs.enabled }}
+          - name: GCS_ENDPOINT
+            valueFrom:
+              secretKeyRef:
+                name: cloud-storage-secrets
+                key: GCS_ENDPOINT
+          {{- end }}
+          {{- if $.Values.cloud.s3.enabled }}
+          - name: S3_ENDPOINT
+            valueFrom:
+              secretKeyRef:
+                name: cloud-storage-secrets
+                key: S3_ENDPOINT
+          {{- end }}
         envFrom:
           - secretRef:
+              {{- if or $.Values.cloud.s3.enabled $.Values.cloud.gcs.enabled }}
+              name: cloud-storage-secrets
+              {{- else if $.Values.cloud.minio.enabled }}
               name: uploader-mirror-secrets
+              {{- end}}
         {{- with default $defaults.sidecars.accountBalanceUploader.resources $balanceUploader.resources }}
         resources:
           {{- toYaml . | nindent 10 }}
@@ -341,25 +359,23 @@ spec:
         securityContext:
           {{- include "solo.hedera.security.context" . | nindent 10 }}
         command:
-          - /usr/bin/env
-          - python3.7
-          - /usr/local/bin/mirror.py
-          - --linux
-          - --watch-directory
-          - /opt/hgcapp/recordStreams
-          - --csv-stats-directory
-          - /opt/hgcapp/recordStreams/uploader-stats
-          {{- if $.Values.cloud.minio.enabled }}
-          - --s3-endpoint
-          - http://{{ $minioserver.tenant.name }}-hl:9000
-          {{- else if $.Values.cloud.s3.enabled }}
-          - --s3-endpoint
-          - {{ $.Values.cloud.s3.endpoint }}
-          {{- end}}
-          {{- if $.Values.cloud.gcs.enabled }}
-          - --gcs-endpoint
-          - {{ $.Values.cloud.gcs.endpoint }}
-          {{- end }}
+          - /bin/sh
+          - -c
+          - |
+            /usr/bin/env python3.7 /usr/local/bin/mirror.py \
+            --linux \
+            --watch-directory \
+            /opt/hgcapp/recordStreams \
+            --csv-stats-directory \
+            /opt/hgcapp/recordStreams/uploader-stats \
+            {{- if $.Values.cloud.minio.enabled }}
+            --s3-endpoint http://{{ $minioserver.tenant.name }}-hl:9000 \
+            {{- else if $.Values.cloud.s3.enabled }}
+            --s3-endpoint $S3_ENDPOINT \
+            {{- end}}
+            {{- if $.Values.cloud.gcs.enabled }}
+            --gcs-endpoint $GCS_ENDPOINT
+            {{- end }}
         volumeMounts:
           - name: hgcapp-record-streams
             mountPath: /opt/hgcapp/recordStreams
@@ -399,9 +415,27 @@ spec:
             value: {{- if or $.Values.cloud.minio.enabled $.Values.cloud.s3.enabled }} "true" {{- else }} "false" {{- end }}
           - name: GCS_ENABLE
             value: {{ $.Values.cloud.gcs.enabled | quote }}
+          {{- if $.Values.cloud.gcs.enabled }}
+          - name: GCS_ENDPOINT
+            valueFrom:
+              secretKeyRef:
+                name: cloud-storage-secrets
+                key: GCS_ENDPOINT
+          {{- end }}
+          {{- if $.Values.cloud.s3.enabled }}
+          - name: S3_ENDPOINT
+            valueFrom:
+              secretKeyRef:
+                name: cloud-storage-secrets
+                key: S3_ENDPOINT
+          {{- end }}
         envFrom:
           - secretRef:
+              {{- if or $.Values.cloud.s3.enabled $.Values.cloud.gcs.enabled }}
+              name: cloud-storage-secrets
+              {{- else if $.Values.cloud.minio.enabled }}
               name: uploader-mirror-secrets
+              {{- end}}
         {{- with default $defaults.sidecars.recordStreamUploader.resources $recordStream.resources }}
         resources:
           {{- toYaml . | nindent 10 }}
@@ -414,23 +448,21 @@ spec:
         securityContext:
           {{- include "solo.hedera.security.context" . | nindent 10 }}
         command:
-          - /usr/bin/env
-          - python3.7
-          - /usr/local/bin/mirror.py
-          - --linux
-          - --watch-directory
-          - /opt/hgcapp/recordStreams/sidecar
-          {{- if $.Values.cloud.minio.enabled }}
-          - --s3-endpoint
-          - http://{{ $minioserver.tenant.name }}-hl:9000
-          {{- else if $.Values.cloud.s3.enabled }}
-          - --s3-endpoint
-          - {{ $.Values.cloud.s3.endpoint }}
-          {{- end}}
-          {{- if $.Values.cloud.gcs.enabled }}
-          - --gcs-endpoint
-          - {{ $.Values.cloud.gcs.endpoint }}
-          {{- end }}
+          - /bin/sh
+          - -c
+          - |
+            /usr/bin/env python3.7 /usr/local/bin/mirror.py \
+            --linux \
+            --watch-directory \
+            /opt/hgcapp/recordStreams/sidecar \
+            {{- if $.Values.cloud.minio.enabled }}
+            --s3-endpoint http://{{ $minioserver.tenant.name }}-hl:9000 \
+            {{- else if $.Values.cloud.s3.enabled }}
+            --s3-endpoint $S3_ENDPOINT \
+            {{- end}}
+            {{- if $.Values.cloud.gcs.enabled }}
+            --gcs-endpoint $GCS_ENDPOINT
+            {{- end }}
         volumeMounts:
           - name: hgcapp-record-streams
             mountPath: /opt/hgcapp/recordStreams
@@ -470,9 +502,27 @@ spec:
             value: {{- if or $.Values.cloud.minio.enabled $.Values.cloud.s3.enabled }} "true" {{- else }} "false" {{- end }}
           - name: GCS_ENABLE
             value: {{ $.Values.cloud.gcs.enabled | quote }}
+          {{- if $.Values.cloud.gcs.enabled }}
+          - name: GCS_ENDPOINT
+            valueFrom:
+              secretKeyRef:
+                name: cloud-storage-secrets
+                key: GCS_ENDPOINT
+          {{- end }}
+          {{- if $.Values.cloud.s3.enabled }}
+          - name: S3_ENDPOINT
+            valueFrom:
+              secretKeyRef:
+                name: cloud-storage-secrets
+                key: S3_ENDPOINT
+          {{- end }}
         envFrom:
           - secretRef:
+              {{- if or $.Values.cloud.s3.enabled $.Values.cloud.gcs.enabled }}
+              name: cloud-storage-secrets
+              {{- else if $.Values.cloud.minio.enabled }}
               name: uploader-mirror-secrets
+              {{- end}}
         {{- with default $defaults.sidecars.recordStreamSidecarUploader.resources $recordStreamSidecar.resources }}
         resources:
           {{- toYaml . | nindent 10 }}
@@ -486,24 +536,21 @@ spec:
         securityContext:
           {{- include "solo.hedera.security.context" . | nindent 10 }}
         command:
-          - /usr/bin/env
-          - python3.7
-          - /usr/local/bin/mirror.py
-          - --linux
-          - --watch-directory
-          - /opt/hgcapp/eventStreams
-          - --debug
-          {{- if $.Values.cloud.minio.enabled }}
-          - --s3-endpoint
-          - http://{{ $minioserver.tenant.name }}-hl:9000
-          {{- else if $.Values.cloud.s3.enabled }}
-          - --s3-endpoint
-          - {{ $.Values.cloud.s3.endpoint }}
-          {{- end}}
-          {{- if $.Values.cloud.gcs.enabled }}
-          - --gcs-endpoint
-          - {{ $.Values.cloud.gcs.endpoint }}
-          {{- end }}
+          - /bin/sh
+          - -c
+          - |
+            /usr/bin/env python3.7 /usr/local/bin/mirror.py \
+            --linux \
+            --watch-directory \
+            /opt/hgcapp/eventStreams \
+            {{- if $.Values.cloud.minio.enabled }}
+            --s3-endpoint http://{{ $minioserver.tenant.name }}-hl:9000 \
+            {{- else if $.Values.cloud.s3.enabled }}
+            --s3-endpoint $S3_ENDPOINT \
+            {{- end}}
+            {{- if $.Values.cloud.gcs.enabled }}
+            --gcs-endpoint $GCS_ENDPOINT
+            {{- end }}
         volumeMounts:
           - name: hgcapp-event-streams
             mountPath: /opt/hgcapp/eventStreams
@@ -539,9 +586,27 @@ spec:
             value: {{- if or $.Values.cloud.minio.enabled $.Values.cloud.s3.enabled }} "true" {{- else }} "false" {{- end }}
           - name: GCS_ENABLE
             value: {{ $.Values.cloud.gcs.enabled | quote }}
+          {{- if $.Values.cloud.gcs.enabled }}
+          - name: GCS_ENDPOINT
+            valueFrom:
+              secretKeyRef:
+                name: cloud-storage-secrets
+                key: GCS_ENDPOINT
+          {{- end }}
+          {{- if $.Values.cloud.s3.enabled }}
+          - name: S3_ENDPOINT
+            valueFrom:
+              secretKeyRef:
+                name: cloud-storage-secrets
+                key: S3_ENDPOINT
+          {{- end }}
         envFrom:
           - secretRef:
+              {{- if or $.Values.cloud.s3.enabled $.Values.cloud.gcs.enabled }}
+              name: cloud-storage-secrets
+              {{- else if $.Values.cloud.minio.enabled }}
               name: uploader-mirror-secrets
+              {{- end}}
         {{- with default $defaults.sidecars.eventStreamUploader.resources $eventStream.resources }}
         resources:
           {{- toYaml . | nindent 10 }}
