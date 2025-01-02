@@ -17,7 +17,6 @@
 {{- $nodeStorage := $.Values.defaults.volumeClaims.node }}
 {{- $pvcEnabled := $.Values.defaults.volumeClaims.enabled }}
 {{- $initContainersLength := len $.Values.hedera.initContainers}}
-{{- $lookup_secrets := lookup "v1" "Secret" $.Release.Namespace "uploader-mirror-secrets" }}
 ---
 apiVersion: apps/v1
 kind: StatefulSet
