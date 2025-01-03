@@ -166,6 +166,26 @@ defaults:
           require: true
           prioritize: true
       resources: {}
+    blockstreamUploader:
+      enabled: false
+      nameOverride: "blockstream-uploader"
+      image:
+        registry: gcr.io
+        repository: hedera-registry/uploader-mirror
+        tag: "2.0.0"  # Defaults to the chart's app version if empty
+        pullPolicy: "IfNotPresent"
+      config:
+        debug: true
+        compression: true
+        reaper:
+          enabled: true
+          minKeep: 1
+          interval: 1
+          defaultBackoff: 1
+        signature:
+          require: true
+          prioritize: true
+      resources: { }
     backupUploader:
       enabled: false
       nameOverride: "backup-uploader"
