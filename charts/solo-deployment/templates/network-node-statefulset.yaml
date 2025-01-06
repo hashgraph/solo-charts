@@ -370,27 +370,27 @@ spec:
             subPath: blockstream
         env:
           - name: DEBUG
-            value: {{ default $defaults.sidecars.blockstreamUploader.config.debug ($balanceUploader.config).debug | quote }}
+            value: {{ default $defaults.sidecars.blockstreamUploader.config.debug ($blockstreamUploader.config).debug | quote }}
           - name: REAPER_ENABLE
-            value: {{ default $defaults.sidecars.blockstreamUploader.config.reaper.enabled (($balanceUploader.config).reaper).enabled | quote  }}
+            value: {{ default $defaults.sidecars.blockstreamUploader.config.reaper.enabled (($blockstreamUploader.config).reaper).enabled | quote  }}
           - name: REAPER_MIN_KEEP
-            value: {{ default $defaults.sidecars.blockstreamUploader.config.reaper.minKeep (($balanceUploader.config).reaper).minKeep | quote }}
+            value: {{ default $defaults.sidecars.blockstreamUploader.config.reaper.minKeep (($blockstreamUploader.config).reaper).minKeep | quote }}
           - name: REAPER_INTERVAL
-            value: {{ default $defaults.sidecars.blockstreamUploader.config.reaper.interval (($balanceUploader.config).reaper).interval  | quote }}
+            value: {{ default $defaults.sidecars.blockstreamUploader.config.reaper.interval (($blockstreamUploader.config).reaper).interval  | quote }}
           - name: REAPER_DEFAULT_BACKOFF
-            value: {{ default $defaults.sidecars.blockstreamUploader.config.reaper.defaultBackoff (($balanceUploader.config).reaper).defaultBackoff | quote }}
+            value: {{ default $defaults.sidecars.blockstreamUploader.config.reaper.defaultBackoff (($blockstreamUploader.config).reaper).defaultBackoff | quote }}
           - name: STREAM_FILE_EXTENSION
             value: "pb"
           - name: STREAM_SIG_EXTENSION
             value: "pb_sig"
           - name: STREAM_EXTENSION
-            value: {{ default $defaults.sidecars.blockstreamUploader.config.compression ($balanceUploader.config).compression | ternary "pb.gz" "pb" | quote }}
+            value: {{ default $defaults.sidecars.blockstreamUploader.config.compression ($blockstreamUploader.config).compression | ternary "pb.gz" "pb" | quote }}
           - name: SIG_EXTENSION
-            value: {{ default $defaults.sidecars.blockstreamUploader.config.compression ($balanceUploader.config).compression | ternary "pb_sig.gz" "pb_sig" | quote }}
+            value: {{ default $defaults.sidecars.blockstreamUploader.config.compression ($blockstreamUploader.config).compression | ternary "pb_sig.gz" "pb_sig" | quote }}
           - name: SIG_REQUIRE
-            value: {{ default $defaults.sidecars.blockstreamUploader.config.signature.require (($balanceUploader.config).signature).require | quote }}
+            value: {{ default $defaults.sidecars.blockstreamUploader.config.signature.require (($blockstreamUploader.config).signature).require | quote }}
           - name: SIG_PRIORITIZE
-            value: {{ default $defaults.sidecars.blockstreamUploader.config.signature.prioritize (($balanceUploader.config).signature).prioritize | quote }}
+            value: {{ default $defaults.sidecars.blockstreamUploader.config.signature.prioritize (($blockstreamUploader.config).signature).prioritize | quote }}
           - name: BUCKET_PATH
             value: "blockstreams/balance{{ $node.accountId }}"
           - name: BUCKET_NAME
@@ -402,7 +402,7 @@ spec:
         envFrom:
           - secretRef:
               name: uploader-mirror-secrets
-          {{- with default $defaults.sidecars.blockstreamUploader.resources $balanceUploader.resources }}
+          {{- with default $defaults.sidecars.blockstreamUploader.resources $blockstreamUploader.resources }}
         resources:
           {{- toYaml . | nindent 10 }}
         {{- end }}
