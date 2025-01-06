@@ -3,7 +3,9 @@ global:
 
 # cloud configuration
 cloud:
-  generateNewSecrets: false
+  # if generateNewSecrets set false, the secret will not be rendered in template,
+  # instead, secrets will be created from solo in run time
+  generateNewSecrets: true
   buckets:
     streamBucket: "solo-streams"
     backupBucket: "solo-backups"
