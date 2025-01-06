@@ -47,6 +47,7 @@ defaults:
       accountBalances: "100Gi"
       eventStreams: "100Gi"
       recordStreams: "100Gi"
+      blockStreams: "100Gi"
       recordStreamsSidecar: "100Gi"
       dataOnboard: "1Gi"
       dataSaved: "500Gi"

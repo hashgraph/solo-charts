@@ -42,7 +42,7 @@ spec:
   {{- if $pvcEnabled }}
   volumeClaimTemplates:
     {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-account-balances-pvc" "storage" $nodeStorage.accountBalances) | nindent 4 }}
-    {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-blockstream-pvc" "storage" $nodeStorage.accountBalances) | nindent 4 }}
+    {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-blockstream-pvc" "storage" $nodeStorage.blockStreams) | nindent 4 }}
     {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-event-streams-pvc" "storage" $nodeStorage.eventStreams) | nindent 4 }}
     {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-record-streams-pvc" "storage" $nodeStorage.recordStreams) | nindent 4 }}
     {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-record-streams-sidecar-pvc" "storage" $nodeStorage.recordStreamsSidecar) | nindent 4 }}
