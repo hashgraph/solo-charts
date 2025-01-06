@@ -327,23 +327,19 @@ spec:
           - name: GCS_ENDPOINT
             valueFrom:
               secretKeyRef:
-                name: cloud-storage-secrets
+                name: uploader-mirror-secrets
                 key: GCS_ENDPOINT
           {{- end }}
           {{- if $.Values.cloud.s3.enabled }}
           - name: S3_ENDPOINT
             valueFrom:
               secretKeyRef:
-                name: cloud-storage-secrets
+                name: uploader-mirror-secrets
                 key: S3_ENDPOINT
           {{- end }}
         envFrom:
           - secretRef:
-              {{- if or $.Values.cloud.s3.enabled $.Values.cloud.gcs.enabled }}
-              name: cloud-storage-secrets
-              {{- else if $.Values.cloud.minio.enabled }}
               name: uploader-mirror-secrets
-              {{- end}}
         {{- with default $defaults.sidecars.accountBalanceUploader.resources $balanceUploader.resources }}
         resources:
           {{- toYaml . | nindent 10 }}
@@ -417,23 +413,19 @@ spec:
           - name: GCS_ENDPOINT
             valueFrom:
               secretKeyRef:
-                name: cloud-storage-secrets
+                name: uploader-mirror-secrets
                 key: GCS_ENDPOINT
           {{- end }}
           {{- if $.Values.cloud.s3.enabled }}
           - name: S3_ENDPOINT
             valueFrom:
               secretKeyRef:
-                name: cloud-storage-secrets
+                name: uploader-mirror-secrets
                 key: S3_ENDPOINT
           {{- end }}
         envFrom:
           - secretRef:
-              {{- if or $.Values.cloud.s3.enabled $.Values.cloud.gcs.enabled }}
-              name: cloud-storage-secrets
-              {{- else if $.Values.cloud.minio.enabled }}
               name: uploader-mirror-secrets
-              {{- end}}
         {{- with default $defaults.sidecars.recordStreamUploader.resources $recordStream.resources }}
         resources:
           {{- toYaml . | nindent 10 }}
@@ -504,23 +496,19 @@ spec:
           - name: GCS_ENDPOINT
             valueFrom:
               secretKeyRef:
-                name: cloud-storage-secrets
+                name: uploader-mirror-secrets
                 key: GCS_ENDPOINT
           {{- end }}
           {{- if $.Values.cloud.s3.enabled }}
           - name: S3_ENDPOINT
             valueFrom:
               secretKeyRef:
-                name: cloud-storage-secrets
+                name: uploader-mirror-secrets
                 key: S3_ENDPOINT
           {{- end }}
         envFrom:
           - secretRef:
-              {{- if or $.Values.cloud.s3.enabled $.Values.cloud.gcs.enabled }}
-              name: cloud-storage-secrets
-              {{- else if $.Values.cloud.minio.enabled }}
               name: uploader-mirror-secrets
-              {{- end}}
         {{- with default $defaults.sidecars.recordStreamSidecarUploader.resources $recordStreamSidecar.resources }}
         resources:
           {{- toYaml . | nindent 10 }}
@@ -588,23 +576,19 @@ spec:
           - name: GCS_ENDPOINT
             valueFrom:
               secretKeyRef:
-                name: cloud-storage-secrets
+                name: uploader-mirror-secrets
                 key: GCS_ENDPOINT
           {{- end }}
           {{- if $.Values.cloud.s3.enabled }}
           - name: S3_ENDPOINT
             valueFrom:
               secretKeyRef:
-                name: cloud-storage-secrets
+                name: uploader-mirror-secrets
                 key: S3_ENDPOINT
           {{- end }}
         envFrom:
           - secretRef:
-              {{- if or $.Values.cloud.s3.enabled $.Values.cloud.gcs.enabled }}
-              name: cloud-storage-secrets
-              {{- else if $.Values.cloud.minio.enabled }}
               name: uploader-mirror-secrets
-              {{- end}}
         {{- with default $defaults.sidecars.eventStreamUploader.resources $eventStream.resources }}
         resources:
           {{- toYaml . | nindent 10 }}

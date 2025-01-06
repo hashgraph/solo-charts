@@ -3,6 +3,7 @@ global:
 
 # cloud configuration
 cloud:
+  generateNewSecrets: false
   buckets:
     streamBucket: "solo-streams"
     backupBucket: "solo-backups"
