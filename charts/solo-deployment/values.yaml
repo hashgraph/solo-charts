@@ -168,7 +168,7 @@ defaults:
           prioritize: true
       resources: {}
     blockstreamUploader:
-      enabled: false
+      enabled: true
       nameOverride: "blockstream-uploader"
       image:
         registry: gcr.io
