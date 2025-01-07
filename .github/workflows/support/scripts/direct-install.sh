@@ -90,7 +90,7 @@ function start_node_all() {
 
   verify_node_all || return "${EX_ERR}"
 
-  sleep 2
+  sleep 30
 
   verify_haproxy || return "${EX_ERR}"
 

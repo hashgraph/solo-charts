@@ -12,6 +12,7 @@ metadata:
     solo.hedera.com/type: network-node{{ if $isHeadless }}-headless{{ end }}-svc
     solo.hedera.com/node-name: {{ $nodeConfig.name }}
     solo.hedera.com/account-id: {{ $nodeConfig.accountId }}
+    solo.hedera.com/node-id: "{{ $nodeConfig.nodeId }}"
     solo.hedera.com/prometheus-endpoint: active
     {{- include "solo.testLabels" $ | nindent 4 }}
 spec:
@@ -19,7 +20,6 @@ spec:
   clusterIP: None
   {{- else }}
   type: {{ $defaults.serviceType | default "ClusterIP" }}
-  externalTrafficPolicy: Local
   {{- end }}
   publishNotReadyAddresses: true
   selector:

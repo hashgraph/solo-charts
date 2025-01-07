@@ -18,6 +18,9 @@ spec:
       labels:
         app: haproxy-{{ $node.name }}
         solo.hedera.com/type: haproxy
+        solo.hedera.com/node-name: {{ $node.name }}
+        solo.hedera.com/node-id: "{{ $node.nodeId }}"
+        solo.hedera.com/account-id: {{ $node.accountId }}
         {{- include "solo.testLabels" $ | nindent 8 }}
     spec:
       {{- if or $.Values.haproxyDeployment.nodeSelector $.Values.deployment.nodeSelector }}
