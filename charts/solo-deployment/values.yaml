@@ -53,6 +53,8 @@ defaults:
       dataStats: "50Gi"
       dataUpgrade: "5Gi"
       output: "5Gi"
+      config: "5Gi"
+      keys: "5Gi"
   root: # root container
     image:
       registry: "ghcr.io"
