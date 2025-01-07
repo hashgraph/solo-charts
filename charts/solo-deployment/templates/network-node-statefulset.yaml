@@ -60,7 +60,7 @@ spec:
         app: network-{{ $node.name }}
         solo.hedera.com/type: network-node
         solo.hedera.com/node-name: {{ $node.name }}
-        solo.hedera.com/node-id: {{ $node.nodeId }}
+        solo.hedera.com/node-id: "{{ $node.nodeId }}"
         solo.hedera.com/account-id: {{ $node.accountId }}
         {{- include "solo.testLabels" $ | nindent 8 }}
     spec:
@@ -268,7 +268,7 @@ spec:
             mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/keys
         env:
           - name: CONSENSUS_NODE_ID
-            value: {{ $node.nodeId }}
+            value: "{{ $node.nodeId }}"
           - name: CONSENSUS_NODE_ALIAS
             value: {{ $node.name }}
           {{- include "solo.defaultEnvVars" . | nindent 10 }}
@@ -366,7 +366,7 @@ spec:
         command:
           - /usr/bin/env
           - python3.7
-          - /app/mirror.py
+          - /app/application.py
           - --linux
           - --watch-directory
           - /opt/hgcapp/blockstream
@@ -384,7 +384,6 @@ spec:
         volumeMounts:
           - name: hgcapp-blockstream
             mountPath: /opt/hgcapp/blockstream
-            subPath: blockstream
         env:
           - name: DEBUG
             value: {{ default $defaults.sidecars.blockstreamUploader.config.debug ($blockstreamUploader.config).debug | quote }}
@@ -409,7 +408,7 @@ spec:
           - name: SIG_PRIORITIZE
             value: {{ default $defaults.sidecars.blockstreamUploader.config.signature.prioritize (($blockstreamUploader.config).signature).prioritize | quote }}
           - name: BUCKET_PATH
-            value: "blockstreams/balance{{ $node.accountId }}"
+            value: "blockstreams/block{{ $node.accountId }}"
           - name: BUCKET_NAME
             value: {{ $cloud.buckets.streamBucket | quote }}
           - name: S3_ENABLE

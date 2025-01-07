@@ -11,7 +11,7 @@ metadata:
   labels:
     solo.hedera.com/type: envoy-proxy-svc
     solo.hedera.com/node-name: {{ $node.name }}
-    solo.hedera.com/node-id: {{ $node.nodeId }}
+    solo.hedera.com/node-id: "{{ $node.nodeId }}"
     solo.hedera.com/account-id: {{ $node.accountId }}
     solo.hedera.com/prometheus-endpoint: active
     {{- include "solo.testLabels" $ | nindent 4 }}

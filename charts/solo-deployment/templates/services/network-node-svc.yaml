@@ -12,7 +12,7 @@ metadata:
     solo.hedera.com/type: network-node{{ if $isHeadless }}-headless{{ end }}-svc
     solo.hedera.com/node-name: {{ $nodeConfig.name }}
     solo.hedera.com/account-id: {{ $nodeConfig.accountId }}
-    solo.hedera.com/node-id: {{ $nodeConfig.nodeId }}
+    solo.hedera.com/node-id: "{{ $nodeConfig.nodeId }}"
     solo.hedera.com/prometheus-endpoint: active
     {{- include "solo.testLabels" $ | nindent 4 }}
 spec:
