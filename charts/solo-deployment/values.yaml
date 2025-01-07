@@ -62,7 +62,7 @@ defaults:
     resources: {}
     extraEnv: []
   service:
-    serviceType: "LoadBalancer"
+    serviceType: "ClusterIP"
   haproxy:
     enabled: true
     nameOverride: "haproxy"
@@ -72,7 +72,7 @@ defaults:
       tag: "2.4.25"
       pullPolicy: "IfNotPresent"
     resources: {}
-    serviceType: "LoadBalancer"
+    serviceType: "ClusterIP"
   envoyProxy:
     enabled: true
     nameOverride: "envoy-proxy"
@@ -82,7 +82,7 @@ defaults:
       tag: "v1.21.1"
       pullPolicy: "IfNotPresent"
     resources: {}
-    serviceType: "LoadBalancer"
+    serviceType: "ClusterIP"
   sidecars:
     recordStreamUploader:
       enabled: true
@@ -343,16 +343,19 @@ hedera:
   # Only the name of the node is required. The rest of the configuration will be inherited from `defaults` section
   nodes:
     - name: node1
+      nodeId: 0
       accountId: 0.0.3
       envoyProxyStaticIP: "" # Static IP for Envoy, leave empty to not use
       haproxyStaticIP: "" # Static IP for HAProxy can be empty if not used
 
     - name: node2
+      nodeId: 1
       accountId: 0.0.4
       envoyProxyStaticIP: ""
       haproxyStaticIP: ""
 
     - name: node3
+      nodeId: 2
       accountId: 0.0.5
       envoyProxyStaticIP: ""
       haproxyStaticIP: ""

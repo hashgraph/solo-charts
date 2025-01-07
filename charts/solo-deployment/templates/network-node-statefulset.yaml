@@ -60,6 +60,7 @@ spec:
         app: network-{{ $node.name }}
         solo.hedera.com/type: network-node
         solo.hedera.com/node-name: {{ $node.name }}
+        solo.hedera.com/node-id: {{ $node.nodeId }}
         solo.hedera.com/account-id: {{ $node.accountId }}
         {{- include "solo.testLabels" $ | nindent 8 }}
     spec:
@@ -266,6 +267,10 @@ spec:
           - name: hgcapp-data-keys
             mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/keys
         env:
+          - name: CONSENSUS_NODE_ID
+            value: {{ $node.nodeId }}
+          - name: CONSENSUS_NODE_ALIAS
+            value: {{ $node.name }}
           {{- include "solo.defaultEnvVars" . | nindent 10 }}
           {{- with $rootExtraEnv }}
             {{- toYaml . | nindent 10 }}
