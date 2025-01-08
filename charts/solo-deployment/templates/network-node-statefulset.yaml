@@ -116,6 +116,13 @@ spec:
             items:
               - key: config.txt
                 path: config.txt
+        - name: backup-upload-sa-json
+          configMap:
+            name: network-node-hapi-app-cm
+            optional: true
+            items:
+              - key: sa.json
+                path: sa.json
         {{- if $hapiAppSecrets }}
         - name: network-node-hapi-app-hedera-crt
           secret:
@@ -685,6 +692,9 @@ spec:
             mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/saved
           - name: hgcapp-data-stats
             mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/stats
+          - name: backup-upload-sa-json
+            mountPath: /sa.json
+            subPath: sa.json
         env:
           - name: BACKUP_UPLOADER_BUCKET_1
             value: {{ default $defaults.sidecars.backupUploader.config.backupBucket ($backupUploader.config).backupBucket | quote }}
