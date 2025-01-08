@@ -712,9 +712,6 @@ spec:
         env:
           - name: BACKUP_UPLOADER_BUCKET_1
             value: {{ default $defaults.sidecars.backupUploader.config.backupBucket ($backupUploader.config).backupBucket | quote }}
-        envFrom:
-          - secretRef:
-              name: backup-uploader-secrets
         {{- with default $defaults.sidecars.backupUploader.resources $backupUploader.resources }}
         resources:
           {{- toYaml . | nindent 10 }}
