@@ -764,7 +764,7 @@ spec:
         # otherwise VERSION will be mounted as directory by backup-uploader
         # since root-container has not created the file yet during the mount
         - name: init-version-file
-          image: busybox
+          image: busybox:1.36.1
           command: ["sh", "-c", "echo '' > /mnt/VERSION"]
           volumeMounts:
             - name: shared-volume
