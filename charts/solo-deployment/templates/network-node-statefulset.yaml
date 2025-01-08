@@ -101,6 +101,13 @@ spec:
         {{- if $backupUploader.enabled }}
         - name: shared-volume
           emptyDir: {}
+        - name: backup-upload-sa-json
+          configMap:
+            name: network-node-hapi-app-cm
+            optional: true
+            items:
+              - key: sa.json
+                path: sa.json
         {{- end }}
         - name: network-node-data-config
           configMap:
@@ -120,13 +127,6 @@ spec:
             items:
               - key: config.txt
                 path: config.txt
-        - name: backup-upload-sa-json
-          configMap:
-            name: network-node-hapi-app-cm
-            optional: true
-            items:
-              - key: sa.json
-                path: sa.json
         {{- if $hapiAppSecrets }}
         - name: network-node-hapi-app-hedera-crt
           secret:
@@ -701,14 +701,14 @@ spec:
           - name: shared-volume
             mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/VERSION
             subPath: VERSION
+          - name: backup-upload-sa-json
+            mountPath: /sa.json
+            subPath: sa.json
           {{- end }}
           - name: hgcapp-data-saved
             mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/saved
           - name: hgcapp-data-stats
             mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/stats
-          - name: backup-upload-sa-json
-            mountPath: /sa.json
-            subPath: sa.json
         env:
           - name: BACKUP_UPLOADER_BUCKET_1
             value: {{ default $defaults.sidecars.backupUploader.config.backupBucket ($backupUploader.config).backupBucket | quote }}
