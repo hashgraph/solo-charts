@@ -17,6 +17,6 @@ data:
   settings.txt: {{ toYaml .Values.hedera.configMaps.settingsTxt  | indent 4 }}
 {{- end }}
 {{- if $.Values.hedera.configMaps.saJson }}
-  sa.json: {{ toYaml .Values.hedera.configMaps.saJson | indent 4 }}
+  sa.json: {{ toYaml (b64dec .Values.hedera.configMaps.saJson) | indent 4 }}
 {{- end }}
 {{- end }}
