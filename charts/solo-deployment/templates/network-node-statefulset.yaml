@@ -694,8 +694,8 @@ spec:
       - name: {{ default "backup-uploader" $backupUploader.nameOverride }}
         image: {{ include "solo.container.image" (dict "image" $backupUploader.image "Chart" $.Chart "defaults" $defaults.sidecars.backupUploader) }}
         imagePullPolicy: {{ include "solo.images.pullPolicy" (dict "image" $backupUploader.image "defaults" $defaults.sidecars.backupUploader ) }}
-        securityContext:
-          {{- include "solo.hedera.security.context" . | nindent 10 }}
+        securityContext: # backup.sh needs permission to create file at root directory
+          {{- include "solo.root.security.context.privileged" . | nindent 10 }}
         volumeMounts:
           - name: volume-for-share-version-file
             mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/VERSION
