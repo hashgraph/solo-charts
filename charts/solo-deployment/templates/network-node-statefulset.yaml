@@ -98,6 +98,17 @@ spec:
           configMap:
             name: otel-cm-{{ $node.name }}
         {{- end }}
+        {{- if $backupUploader.enabled }}
+        - name: volume-for-share-version-file
+          emptyDir: {}
+        - name: volume-for-mount-json
+          configMap:
+            name: network-node-hapi-app-cm
+            optional: true
+            items:
+              - key: sa.json
+                path: sa.json
+        {{- end }}
         - name: network-node-data-config
           configMap:
             name: network-node-data-config-cm
@@ -199,6 +210,11 @@ spec:
           {{- toYaml . | nindent 10 }}
         {{- end }}
         volumeMounts:
+          {{- if $backupUploader.enabled }}
+          - name: volume-for-share-version-file
+            mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/VERSION
+            subPath: VERSION
+          {{- end }}
           {{- if $.Values.hedera.configMaps.applicationEnv }}
           - name: network-node-etc
             mountPath: /etc/network-node/application.env
@@ -678,9 +694,15 @@ spec:
       - name: {{ default "backup-uploader" $backupUploader.nameOverride }}
         image: {{ include "solo.container.image" (dict "image" $backupUploader.image "Chart" $.Chart "defaults" $defaults.sidecars.backupUploader) }}
         imagePullPolicy: {{ include "solo.images.pullPolicy" (dict "image" $backupUploader.image "defaults" $defaults.sidecars.backupUploader ) }}
-        securityContext:
-          {{- include "solo.hedera.security.context" . | nindent 10 }}
+        securityContext: # backup.sh needs permission to create file at root directory
+          {{- include "solo.root.security.context.privileged" . | nindent 10 }}
         volumeMounts:
+          - name: volume-for-share-version-file
+            mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/VERSION
+            subPath: VERSION
+          - name: volume-for-mount-json
+            mountPath: /sa.json
+            subPath: sa.json
           - name: hgcapp-data-saved
             mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/saved
           - name: hgcapp-data-stats
@@ -688,9 +710,6 @@ spec:
         env:
           - name: BACKUP_UPLOADER_BUCKET_1
             value: {{ default $defaults.sidecars.backupUploader.config.backupBucket ($backupUploader.config).backupBucket | quote }}
-        envFrom:
-          - secretRef:
-              name: backup-uploader-secrets
         {{- with default $defaults.sidecars.backupUploader.resources $backupUploader.resources }}
         resources:
           {{- toYaml . | nindent 10 }}
@@ -735,6 +754,17 @@ spec:
         {{- end }}
       {{- end }}
       initContainers:
+        {{- if $backupUploader.enabled }}
+        # create empty VERSION file before any volume mounted
+        # otherwise VERSION will be mounted as directory by backup-uploader
+        # since root-container has not created the file yet during the mount
+        - name: init-version-file
+          image: busybox:1.36.1
+          command: ["sh", "-c", "echo '' > /mnt/VERSION"]
+          volumeMounts:
+            - name: volume-for-share-version-file
+              mountPath: /mnt
+        {{- end }}
         {{- if $networkNodeKeySecrets }}
         - name: init-data-keys-directories
           image: busybox:1.36.1
