@@ -62,7 +62,8 @@ defaults:
     resources: {}
     extraEnv: []
   service:
-    serviceType: "ClusterIP"
+    serviceType: "NodePort"
+    externalTrafficPolicy: "Local"
   haproxy:
     enabled: true
     nameOverride: "haproxy"
@@ -72,7 +73,8 @@ defaults:
       tag: "2.4.25"
       pullPolicy: "IfNotPresent"
     resources: {}
-    serviceType: "ClusterIP"
+    serviceType: "NodePort"
+    externalTrafficPolicy: "Local"
   envoyProxy:
     enabled: true
     nameOverride: "envoy-proxy"
@@ -82,7 +84,8 @@ defaults:
       tag: "v1.21.1"
       pullPolicy: "IfNotPresent"
     resources: {}
-    serviceType: "ClusterIP"
+    serviceType: "NodePort"
+    externalTrafficPolicy: "Local"
   sidecars:
     recordStreamUploader:
       enabled: true
