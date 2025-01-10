@@ -17,7 +17,9 @@ metadata:
     {{- include "solo.testLabels" $ | nindent 4 }}
 spec:
   type: {{ $defaults.serviceType | default "ClusterIP" }}
+  {{- if or (eq $defaults.serviceType "LoadBalancer") (eq $defaults.serviceType "NodePort") }}
   externalTrafficPolicy: {{ $defaults.externalTrafficPolicy | default "Local" }}
+  {{- end }}
   {{- if $node.envoyProxyStaticIP }}
   loadBalancerIP: {{ $node.envoyProxyStaticIP }}
   {{- end }}
