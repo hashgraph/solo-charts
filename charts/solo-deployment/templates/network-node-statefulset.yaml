@@ -761,6 +761,7 @@ spec:
             - name: volume-for-share-version-file
               mountPath: /mnt
         {{- end }}
+
         {{- if $networkNodeKeySecrets }}
         - name: init-data-keys-directories
           image: busybox:1.36.1
@@ -811,7 +812,7 @@ spec:
               subPath: genesis-throttles.json
         {{- end }}
 
-        - name: init-record-streams-directories
+        - name: init-streams-directories
           image: busybox:1.36.1
           command:
             - "/bin/sh"
@@ -819,10 +820,14 @@ spec:
             - |
               mkdir -p /opt/hgcapp/recordStreams/sidecar
               chmod 777 /opt/hgcapp/recordStreams/sidecar
+              mkdir -p /opt/hgcapp/blockStreams/block-{{ $node.accountId }}
+              chmod 777 /opt/hgcapp/blockStreams/block-{{ $node.accountId }}
           volumeMounts:
             - name: hgcapp-record-streams
               mountPath: /opt/hgcapp/recordStreams
               subPath: record{{ $node.accountId }}
+            - name: hgcapp-blockstream
+              mountPath: /opt/hgcapp/blockStreams
         - name: init-hedera
           image: curlimages/curl:8.9.1
           command:
