@@ -63,6 +63,7 @@ defaults:
     extraEnv: []
   service:
     serviceType: "ClusterIP"
+    externalTrafficPolicy: "Local"
   haproxy:
     enabled: true
     nameOverride: "haproxy"
@@ -73,6 +74,7 @@ defaults:
       pullPolicy: "IfNotPresent"
     resources: {}
     serviceType: "ClusterIP"
+    externalTrafficPolicy: "Local"
   envoyProxy:
     enabled: true
     nameOverride: "envoy-proxy"
@@ -83,6 +85,7 @@ defaults:
       pullPolicy: "IfNotPresent"
     resources: {}
     serviceType: "ClusterIP"
+    externalTrafficPolicy: "Local"
   sidecars:
     recordStreamUploader:
       enabled: true
