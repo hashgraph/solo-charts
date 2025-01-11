@@ -60,6 +60,7 @@ export MINIO_ROOT_PASSWORD={{ include "minio.secretKey" . }}
       solo.hedera.com/type: node-pvc
   spec:
     accessModes: [ "ReadWriteOnce" ]
+    storageClassName: {{ .storageClassName }}
     resources:
       requests:
         storage: {{ default "2Gi" .storage }}
