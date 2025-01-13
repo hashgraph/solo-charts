@@ -40,6 +40,7 @@ tester:
 defaults:
   volumeClaims:
     enabled: false
+    storageClassName: ""
     node:
       accountBalances: "100Gi"
       eventStreams: "100Gi"

@@ -41,18 +41,18 @@ spec:
       app: network-{{ $node.name }}
   {{- if $pvcEnabled }}
   volumeClaimTemplates:
-    {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-account-balances-pvc" "storage" $nodeStorage.accountBalances) | nindent 4 }}
-    {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-blockstream-pvc" "storage" $nodeStorage.blockStreams) | nindent 4 }}
-    {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-event-streams-pvc" "storage" $nodeStorage.eventStreams) | nindent 4 }}
-    {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-record-streams-pvc" "storage" $nodeStorage.recordStreams) | nindent 4 }}
-    {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-record-streams-sidecar-pvc" "storage" $nodeStorage.recordStreamsSidecar) | nindent 4 }}
-    {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-data-onboard-pvc" "storage" $nodeStorage.dataOnboard) | nindent 4 }}
-    {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-data-saved-pvc" "storage" $nodeStorage.dataSaved) | nindent 4 }}
-    {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-data-stats-pvc" "storage" $nodeStorage.dataStats) | nindent 4 }}
-    {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-data-upgrade-pvc" "storage" $nodeStorage.dataUpgrade) | nindent 4 }}
-    {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-output-pvc" "storage" $nodeStorage.output) | nindent 4 }}
-    {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-data-config-pvc" "storage" $nodeStorage.config) | nindent 4 }}
-    {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-data-keys-pvc" "storage" $nodeStorage.keys) | nindent 4 }}
+    {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-account-balances-pvc" "storage" $nodeStorage.accountBalances "storageClassName" $defaults.volumeClaims.storageClassName) | nindent 4 }}
+    {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-blockstream-pvc" "storage" $nodeStorage.blockStreams "storageClassName" $defaults.volumeClaims.storageClassName) | nindent 4 }}
+    {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-event-streams-pvc" "storage" $nodeStorage.eventStreams "storageClassName" $defaults.volumeClaims.storageClassName) | nindent 4 }}
+    {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-record-streams-pvc" "storage" $nodeStorage.recordStreams "storageClassName" $defaults.volumeClaims.storageClassName) | nindent 4 }}
+    {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-record-streams-sidecar-pvc" "storage" $nodeStorage.recordStreamsSidecar "storageClassName" $defaults.volumeClaims.storageClassName) | nindent 4 }}
+    {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-data-onboard-pvc" "storage" $nodeStorage.dataOnboard "storageClassName" $defaults.volumeClaims.storageClassName) | nindent 4 }}
+    {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-data-saved-pvc" "storage" $nodeStorage.dataSaved "storageClassName" $defaults.volumeClaims.storageClassName) | nindent 4 }}
+    {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-data-stats-pvc" "storage" $nodeStorage.dataStats "storageClassName" $defaults.volumeClaims.storageClassName) | nindent 4 }}
+    {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-data-upgrade-pvc" "storage" $nodeStorage.dataUpgrade "storageClassName" $defaults.volumeClaims.storageClassName) | nindent 4 }}
+    {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-output-pvc" "storage" $nodeStorage.output "storageClassName" $defaults.volumeClaims.storageClassName) | nindent 4 }}
+    {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-data-config-pvc" "storage" $nodeStorage.config "storageClassName" $defaults.volumeClaims.storageClassName) | nindent 4 }}
+    {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-data-keys-pvc" "storage" $nodeStorage.keys "storageClassName" $defaults.volumeClaims.storageClassName) | nindent 4 }}
   {{- end }}
   template:
     metadata:
@@ -819,15 +819,21 @@ spec:
             - "-c"
             - |
               mkdir -p /opt/hgcapp/recordStreams/sidecar
-              chmod 777 /opt/hgcapp/recordStreams/sidecar
+              mkdir -p /opt/hgcapp/recordStreams/record{{ $node.accountId }}/sidecar
+              mkdir -p /opt/hgcapp/recordStreams/record{{ $node.accountId }}/uploader-stats
+              chmod -R 777 /opt/hgcapp/recordStreams
               mkdir -p /opt/hgcapp/blockStreams/block-{{ $node.accountId }}
-              chmod 777 /opt/hgcapp/blockStreams/block-{{ $node.accountId }}
+              chmod 777 /opt/hgcapp/blockStreams
+              mkdir -p /opt/hgcapp/eventStreams/events_{{ $node.accountId }}
+              chmod 777 /opt/hgcapp/eventStreams
           volumeMounts:
             - name: hgcapp-record-streams
               mountPath: /opt/hgcapp/recordStreams
-              subPath: record{{ $node.accountId }}
             - name: hgcapp-blockstream
               mountPath: /opt/hgcapp/blockStreams
+            - name: hgcapp-event-streams
+              mountPath: /opt/hgcapp/eventStreams
+              subPath: events_{{ $node.accountId }}
         - name: init-hedera
           image: curlimages/curl:8.9.1
           command:
