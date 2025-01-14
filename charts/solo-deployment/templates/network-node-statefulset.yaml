@@ -834,6 +834,8 @@ spec:
             - name: hgcapp-event-streams
               mountPath: /opt/hgcapp/eventStreams
               subPath: events_{{ $node.accountId }}
+
+        {{- if .Values.deployment.init.enableDnsValidation }}
         - name: init-hedera
           image: curlimages/curl:8.9.1
           command:
@@ -855,6 +857,7 @@ spec:
                 sleep 5;
               done
               return 0
+      {{- end }}
       {{- if gt $initContainersLength 0 }}
         {{- toYaml $.Values.hedera.initContainers | nindent 8 }}
       {{- end }}
