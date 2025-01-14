@@ -835,7 +835,7 @@ spec:
               mountPath: /opt/hgcapp/eventStreams
               subPath: events_{{ $node.accountId }}
 
-        {{- if .Values.deployment.init.enableDnsValidation }}
+        {{- if $.Values.deployment.init.enableDnsValidation }}
         - name: init-hedera
           image: curlimages/curl:8.9.1
           command:
