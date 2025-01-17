@@ -113,13 +113,15 @@ spec:
           configMap:
             name: network-node-data-config-cm
             optional: true
-        - name: network-node-etc
+        - name: network-node-etc-init
           configMap:
             name: network-node-etc-cm
             optional: true
             items:
               - key: application.env
                 path: application.env
+        - name: network-node-etc
+          emptyDir: {}
         - name: network-node-hapi-app-config-txt
           configMap:
             name: network-node-hapi-app-cm
@@ -215,11 +217,8 @@ spec:
             mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/VERSION
             subPath: VERSION
           {{- end }}
-          {{- if $.Values.hedera.configMaps.applicationEnv }}
           - name: network-node-etc
-            mountPath: /etc/network-node/application.env
-            subPath: application.env
-          {{- end }}
+            mountPath: /etc/network-node/
           - name: hgcapp-account-balances
             mountPath: /opt/hgcapp/accountBalances
           - name: hgcapp-blockstream
@@ -845,6 +844,23 @@ spec:
             - name: hgcapp-event-streams
               mountPath: /opt/hgcapp/eventStreams
               subPath: events_{{ $node.accountId }}
+
+        {{- if $.Values.hedera.configMaps.applicationEnv }}
+        - name: init-streams-directories
+          image: busybox:1.36.1
+          command:
+            - "/bin/sh"
+            - "-c"
+            - |
+              cp /etc/network-node/init/* /etc/network-node
+              chmod -R 755 /etc/network-node
+              chown -R 2000:2000 /etc/network-node
+          volumeMounts:
+            - name: network-node-etc-init
+              mountPath: /etc/network-node/init/
+            - name: network-node-etc
+              mountPath: /etc/network-node/
+        {{- end }}
 
         {{- if $.Values.deployment.init.enableDnsValidation }}
         - name: init-hedera
