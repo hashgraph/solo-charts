@@ -850,7 +850,11 @@ spec:
             - "/bin/sh"
             - "-c"
             - |
+              {{- if $.Values.hedera.configMaps.applicationEnv }}
               cp /etc/network-node/init/* /etc/network-node
+              {{- else }}
+              touch /etc/network-node/application.env
+              {{- end }}
               chmod -R 755 /etc/network-node
               chown -R 2000:2000 /etc/network-node
           volumeMounts:
