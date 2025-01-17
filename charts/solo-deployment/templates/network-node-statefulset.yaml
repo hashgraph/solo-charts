@@ -113,13 +113,15 @@ spec:
           configMap:
             name: network-node-data-config-cm
             optional: true
-        - name: network-node-etc
+        - name: network-node-etc-init
           configMap:
             name: network-node-etc-cm
             optional: true
             items:
               - key: application.env
                 path: application.env
+        - name: network-node-etc
+          emptyDir: {}
         - name: network-node-hapi-app-config-txt
           configMap:
             name: network-node-hapi-app-cm
@@ -215,11 +217,8 @@ spec:
             mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/VERSION
             subPath: VERSION
           {{- end }}
-          {{- if $.Values.hedera.configMaps.applicationEnv }}
           - name: network-node-etc
-            mountPath: /etc/network-node/application.env
-            subPath: application.env
-          {{- end }}
+            mountPath: /etc/network-node/
           - name: hgcapp-account-balances
             mountPath: /opt/hgcapp/accountBalances
           - name: hgcapp-blockstream
@@ -283,10 +282,7 @@ spec:
           - name: hgcapp-data-keys
             mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/keys
         env:
-          - name: CONSENSUS_NODE_ID
-            value: "{{ $node.nodeId }}"
-          - name: CONSENSUS_NODE_ALIAS
-            value: {{ $node.name }}
+          # these only get used as root, to set them for hedera user ID they need to be populated in the /etc/network-node/application.env
           {{- include "solo.defaultEnvVars" . | nindent 10 }}
           {{- with $rootExtraEnv }}
             {{- toYaml . | nindent 10 }}
@@ -845,6 +841,27 @@ spec:
             - name: hgcapp-event-streams
               mountPath: /opt/hgcapp/eventStreams
               subPath: events_{{ $node.accountId }}
+
+        # copy in the application.env to supply the environment variables to the application, will need
+        # CONSENSUS_NODE_ID set to the unique Node ID with hedera platform v0.59+
+        - name: init-etc-network-node-directories
+          image: busybox:1.36.1
+          command:
+            - "/bin/sh"
+            - "-c"
+            - |
+              {{- if $.Values.hedera.configMaps.applicationEnv }}
+              cp /etc/network-node-temp/* /etc/network-node
+              {{- else }}
+              touch /etc/network-node/application.env
+              {{- end }}
+              chmod -R 755 /etc/network-node
+              chown -R 2000:2000 /etc/network-node
+          volumeMounts:
+            - name: network-node-etc-init
+              mountPath: /etc/network-node-temp/
+            - name: network-node-etc
+              mountPath: /etc/network-node/
 
         {{- if $.Values.deployment.init.enableDnsValidation }}
         - name: init-hedera
