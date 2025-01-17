@@ -282,10 +282,7 @@ spec:
           - name: hgcapp-data-keys
             mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/keys
         env:
-          - name: CONSENSUS_NODE_ID
-            value: "{{ $node.nodeId }}"
-          - name: CONSENSUS_NODE_ALIAS
-            value: {{ $node.name }}
+          # these only get used as root, to set them for hedera user ID they need to be populated in the /etc/network-node/application.env
           {{- include "solo.defaultEnvVars" . | nindent 10 }}
           {{- with $rootExtraEnv }}
             {{- toYaml . | nindent 10 }}
@@ -845,8 +842,9 @@ spec:
               mountPath: /opt/hgcapp/eventStreams
               subPath: events_{{ $node.accountId }}
 
-        {{- if $.Values.hedera.configMaps.applicationEnv }}
-        - name: init-streams-directories
+        # copy in the application.env to supply the environment variables to the application, will need
+        # CONSENSUS_NODE_ID set to the unique Node ID with hedera platform v0.59+
+        - name: init-etc-network-node-directories
           image: busybox:1.36.1
           command:
             - "/bin/sh"
@@ -860,7 +858,6 @@ spec:
               mountPath: /etc/network-node/init/
             - name: network-node-etc
               mountPath: /etc/network-node/
-        {{- end }}
 
         {{- if $.Values.deployment.init.enableDnsValidation }}
         - name: init-hedera
