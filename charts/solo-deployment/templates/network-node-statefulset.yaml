@@ -282,7 +282,13 @@ spec:
           - name: hgcapp-data-keys
             mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/keys
         env:
-          # these only get used as root, to set them for hedera user ID they need to be populated in the /etc/network-node/application.env
+          # these only get used as root, to set them for hedera user ID they need to be populated in the
+          # /etc/network-node/application.env, if you want the docker container to use them they need to also be in
+          # solo-containers > network-node.service > PassEnvironment
+          - name: CONSENSUS_NODE_ID
+            value: "{{ $node.nodeId }}"
+          - name: CONSENSUS_NODE_ALIAS
+            value: {{ $node.name }}
           {{- include "solo.defaultEnvVars" . | nindent 10 }}
           {{- with $rootExtraEnv }}
             {{- toYaml . | nindent 10 }}
