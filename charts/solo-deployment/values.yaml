@@ -8,7 +8,8 @@ cloud:
   generateNewSecrets: true
   buckets:
     streamBucket: "solo-streams"
-    backupBucket: "solo-backups"
+    streamBucketPrefix: ""
+    backupBucket: "solo-backups" # does not need prefix to save to subfolder, just use "bucket/folder"
   minio:
     enabled: true
   s3:
