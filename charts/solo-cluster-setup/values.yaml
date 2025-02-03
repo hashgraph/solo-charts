@@ -6,7 +6,7 @@ global:
   namespaceOverride: ""
   nameOverride: ""
   fullnameOverride: ""
-
+  explorerNamespace: ""
 # cloud configuration
 cloud:
   minio:
