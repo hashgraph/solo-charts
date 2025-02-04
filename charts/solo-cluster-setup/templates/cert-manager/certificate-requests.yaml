@@ -3,7 +3,7 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: ca-secret-hiero-explorer
-  namespace: {{ default $.Release.Namespace $.Values.global.namespaceOverride }}
+  namespace: {{ $.Values.global.explorerNamespace }}
 spec:
   isCA: false
   commonName: {{ index $.Values "ingress" "hosts" 0 "host" }}
