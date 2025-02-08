@@ -6,7 +6,6 @@ global:
   namespaceOverride: ""
   nameOverride: ""
   fullnameOverride: ""
-  explorerNamespace: ""
 # cloud configuration
 cloud:
   minio:
@@ -21,10 +20,8 @@ cloud:
 
 selfSignedCertClusterIssuer: '{{ .Values.global.namespaceOverride | default .Release.Namespace | printf "%s-self-signed-cluster-issuer" }}'
 certClusterIssuerType: "self-signed" # "acme-staging", "acme-prod", or "self-signed"
-ingressClassName: "" # if set, takes precedence over the .Values.ingress.className
+
 acmeClusterIssuer:
-  enabled: false
-haproxyIngressController:
   enabled: false
 selfSignedClusterIssuer:
   enabled: false
@@ -68,21 +65,16 @@ acme-cluster-issuer:
     http01:
       solverType: "ingress"
 
-haproxy-ingress:
-  controller:
-    service:
-      loadBalancerIP: "" # the external IP address of the hedera mirror node explorer
-
-ingress:
-  annotations: {}
-  className: ""
-  enabled: false
-  hosts:
-    - host: chart-example.local
-      paths:
-        - path: /
-          pathType: ImplementationSpecific
-  tls: []
+#ingress:
+#  annotations: {}
+#  className: ""
+#  enabled: false
+#  hosts:
+#    - host: chart-example.local
+#      paths:
+#        - path: /
+#          pathType: ImplementationSpecific
+#  tls: []
   #  - secretName: chart-example-tls
   #    hosts:
   #      - chart-example.local

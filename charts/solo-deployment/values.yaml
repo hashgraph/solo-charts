@@ -25,6 +25,21 @@ telemetry:
 # reduce default termination grace period
 terminationGracePeriodSeconds: 10
 
+mirrorIngressController:
+  enabled: false
+  mirrorIngressClassName: ""
+
+explorerIngressController:
+  enabled: false
+  explorerNamespace: ""
+  explorerIngressClassName: ""
+
+haproxy-ingress:
+  fullnameOverride: "mirror-ingress-controller"
+  controller:
+    service:
+      loadBalancerIP: "" # the external IP address of the mirror load balancer
+
 # helm test container
 tester:
   deployPodMonitor: true
