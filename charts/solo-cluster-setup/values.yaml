@@ -65,15 +65,6 @@ acme-cluster-issuer:
     http01:
       solverType: "ingress"
 
-#ingress:
-#  annotations: {}
-#  className: ""
-#  enabled: false
-#  hosts:
-#    - host: chart-example.local
-#      paths:
-#        - path: /
-#          pathType: ImplementationSpecific
 #  tls: []
   #  - secretName: chart-example-tls
   #    hosts:
