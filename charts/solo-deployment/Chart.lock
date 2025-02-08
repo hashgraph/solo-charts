@@ -2,8 +2,5 @@ dependencies:
 - name: tenant
   repository: https://operator.min.io/
   version: 5.0.12
-- name: haproxy-ingress
-  repository: https://haproxy-ingress.github.io/charts
-  version: 0.14.5
-digest: sha256:082ca2d1d99ef9bee96d9a7bf5ec15f5652ce6d0bacbee435e7540cf8a39e2e5
-generated: "2025-02-07T23:01:40.914011-06:00"
+digest: sha256:ef43eb2c35e7e2c1d66d2ff4db979226ef57baa26dd7331c8c24e3b173907f76
+generated: "2025-02-08T08:29:27.225953-06:00"
