@@ -14,22 +14,7 @@ cloud:
     enabled: false
   grafanaAgent:
     enabled: false
-  certManager:
-    enabled: false
 
-
-selfSignedCertClusterIssuer: '{{ .Values.global.namespaceOverride | default .Release.Namespace | printf "%s-self-signed-cluster-issuer" }}'
-certClusterIssuerType: "self-signed" # "acme-staging", "acme-prod", or "self-signed"
-
-acmeClusterIssuer:
-  enabled: false
-selfSignedClusterIssuer:
-  enabled: false
-
-
-cert-manager:
-  namespace: cert-manager
-  installCRDs: false
 
 minio-operator:
   operator:
@@ -51,19 +36,6 @@ prometheus-stack:
         any: true  # fetch metrics from other namespaces
       serviceMonitorSelector: { }
       serviceMonitorSelectorNilUsesHelmValues: false
-
-# lets encrypt acme cluster issuer configuration
-acme-cluster-issuer:
-  issuers:
-    staging:
-      email: ""
-      name: '{{ .Values.global.namespaceOverride | default .Release.Namespace | printf "%s-letsencrypt-staging" }}'
-    production:
-      email: ""
-      name: '{{ .Values.global.namespaceOverride | default .Release.Namespace | printf "%s-letsencrypt-prod" }}'
-  solvers: # TODO change in: https://github.com/hashgraph/full-stack-testing/issues/631
-    http01:
-      solverType: "ingress"
 
 #  tls: []
   #  - secretName: chart-example-tls

@@ -1,7 +1,6 @@
 apiVersion: v2
-name: solo-cluster-setup
-description: An umbrella Helm chart to setup shared resources for 1+ deployments
-  of the `solo-deployment` chart(s)
+name: solo-cert-manager
+description: Provide cert-manager for the Hedera Mirror Node Explorer
 
 # A chart can be either an 'application' or a 'library' chart.
 #
@@ -25,19 +24,12 @@ version: 0.43.1
 appVersion: "0.43.1"
 
 dependencies:
-  - name: operator
-    alias: minio-operator
-    version: 5.0.7
-    repository: https://operator.min.io/
-    condition: cloud.minio.enabled
+  - name: cert-manager
+    version: v1.13.3
+    repository: https://charts.jetstack.io
+    condition: cloud.certManager.enabled
 
-  - name: kube-prometheus-stack
-    alias: prometheus-stack
-    version: 52.0.1
-    repository: https://prometheus-community.github.io/helm-charts
-    condition: cloud.prometheusStack.enabled
-
-  - name: grafana-agent
-    version: 0.27.1
-    repository: https://grafana.github.io/helm-charts
-    condition: cloud.grafanaAgent.enabled
+  - name: acme-cluster-issuer
+    version: 0.3.1
+    repository: https://swirldslabs.github.io/swirldslabs-helm-charts
+    condition: acmeClusterIssuer.enabled
