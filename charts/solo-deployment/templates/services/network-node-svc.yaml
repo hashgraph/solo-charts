@@ -1,4 +1,4 @@
-{{- $defaults := $.Values.defaults.service }}
+{{- $defaults := $.Values.defaults.consensus }}
 {{ $headless := list true false }}
 {{ range $nodeConfig := ($.Values.hedera.nodes) }}
 {{ range $isHeadless := $headless}}
@@ -8,6 +8,10 @@ kind: Service
 metadata:
   name: network-{{ $nodeConfig.name }}{{ if not $isHeadless }}-svc{{ end }}
   namespace: {{ default $.Release.Namespace $.Values.global.namespaceOverride }}
+  {{- with $defaults.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
   labels:
     solo.hedera.com/type: network-node{{ if $isHeadless }}-headless{{ end }}-svc
     solo.hedera.com/node-name: {{ $nodeConfig.name }}
@@ -15,13 +19,16 @@ metadata:
     solo.hedera.com/node-id: "{{ $nodeConfig.nodeId }}"
     solo.hedera.com/prometheus-endpoint: active
     {{- include "solo.testLabels" $ | nindent 4 }}
+    {{- with $defaults.service.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
 spec:
   {{- if $isHeadless }}
   clusterIP: None
   {{- else }}
-  type: {{ $defaults.serviceType | default "ClusterIP" }}
-  {{- if or (eq $defaults.serviceType "LoadBalancer") (eq $defaults.serviceType "NodePort") }}
-  externalTrafficPolicy: {{ $defaults.externalTrafficPolicy | default "Local" }}
+  type: {{ $defaults.service.type | default "ClusterIP" }}
+  {{- if or (eq $defaults.service.type "LoadBalancer") (eq $defaults.service.type "NodePort") }}
+  externalTrafficPolicy: {{ $defaults.service.externalTrafficPolicy | default "Local" }}
   {{- end }}
   {{- end }}
   publishNotReadyAddresses: true

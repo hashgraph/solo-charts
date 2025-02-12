@@ -63,9 +63,12 @@ defaults:
       pullPolicy: "IfNotPresent"
     resources: {}
     extraEnv: []
-  service:
-    serviceType: "NodePort"
-    externalTrafficPolicy: "Local"
+  consensus:
+    service:
+      type: "NodePort"
+      externalTrafficPolicy: "Local"
+      annotations: { }
+      labels: { }
   haproxy:
     enabled: true
     nameOverride: "haproxy"
@@ -75,8 +78,11 @@ defaults:
       tag: "2.4.25"
       pullPolicy: "IfNotPresent"
     resources: {}
-    serviceType: "NodePort"
-    externalTrafficPolicy: "Local"
+    service:
+      type: "NodePort"
+      externalTrafficPolicy: "Local"
+      annotations: {}
+      labels: {}
   envoyProxy:
     enabled: true
     nameOverride: "envoy-proxy"
@@ -86,8 +92,11 @@ defaults:
       tag: "v1.21.1"
       pullPolicy: "IfNotPresent"
     resources: {}
-    serviceType: "NodePort"
-    externalTrafficPolicy: "Local"
+    service:
+      type: "NodePort"
+      externalTrafficPolicy: "Local"
+      annotations: {}
+      labels: {}
   sidecars:
     recordStreamUploader:
       enabled: true
