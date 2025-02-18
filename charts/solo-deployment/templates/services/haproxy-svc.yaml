@@ -8,6 +8,10 @@ kind: Service
 metadata:
   name: haproxy-{{ $node.name }}-svc
   namespace: {{ default $.Release.Namespace $.Values.global.namespaceOverride }}
+  {{- with $defaults.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
   labels:
     solo.hedera.com/type: haproxy-svc
     solo.hedera.com/node-name: {{ $node.name }}
@@ -15,10 +19,13 @@ metadata:
     solo.hedera.com/account-id: {{ $node.accountId }}
     solo.hedera.com/prometheus-endpoint: active
     {{- include "solo.testLabels" $ | nindent 4 }}
+    {{- with $defaults.service.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
 spec:
-  type: {{ $defaults.serviceType | default "ClusterIP" }}
-  {{- if or (eq $defaults.serviceType "LoadBalancer") (eq $defaults.serviceType "NodePort") }}
-  externalTrafficPolicy: {{ $defaults.externalTrafficPolicy | default "Local" }}
+  type: {{ default "ClusterIP" $defaults.service.type }}
+  {{- if or (eq $defaults.service.type "LoadBalancer") (eq $defaults.service.type "NodePort") }}
+  externalTrafficPolicy: {{ default "Local" $defaults.service.externalTrafficPolicy }}
   {{- end }}
   {{- if $node.haproxyStaticIP }}
   loadBalancerIP: {{ $node.haproxyStaticIP }}
