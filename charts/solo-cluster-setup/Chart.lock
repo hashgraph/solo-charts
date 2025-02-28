@@ -8,14 +8,5 @@ dependencies:
 - name: grafana-agent
   repository: https://grafana.github.io/helm-charts
   version: 0.27.1
-- name: cert-manager
-  repository: https://charts.jetstack.io
-  version: v1.13.3
-- name: acme-cluster-issuer
-  repository: https://swirldslabs.github.io/swirldslabs-helm-charts
-  version: 0.3.1
-- name: haproxy-ingress
-  repository: https://haproxy-ingress.github.io/charts
-  version: 0.14.5
-digest: sha256:a5d8d77b6ba60ffcc88246bc4dbd32138c0119772dbbdd13425595df7d4d10d9
-generated: "2025-01-06T21:50:09.196317Z"
+digest: sha256:6651cf6d704be345ee586d8664a65202bbf4c9d40ff6d524ea4713bbbd8b49ad
+generated: "2025-02-08T19:12:45.213074-06:00"

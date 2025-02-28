@@ -1,0 +1,9 @@
+dependencies:
+- name: cert-manager
+  repository: https://charts.jetstack.io
+  version: v1.13.3
+- name: acme-cluster-issuer
+  repository: https://swirldslabs.github.io/swirldslabs-helm-charts
+  version: 0.3.1
+digest: sha256:9f6a08ae41e5f2a4e97f15efc1109020e978756ed882de44be5adceb1bc3dd79
+generated: "2025-02-08T19:11:37.867141-06:00"

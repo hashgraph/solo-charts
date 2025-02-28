@@ -19,6 +19,12 @@
         "chartPath": "./charts/solo-deployment"
       }
     ],
+    [
+      "semantic-release-helm3",
+      {
+        "chartPath": "./charts/solo-cert-manager"
+      }
+    ],
     "@semantic-release/git",
     "@semantic-release/github"
   ],
@@ -42,11 +48,18 @@
       }
     ],
     [
+      "semantic-release-helm3",
+      {
+        "chartPath": "./charts/solo-cert-manager"
+      }
+    ],
+    [
       "@semantic-release/git",
       {
         "assets": [
           "charts/solo-deployment/Chart.yaml",
-          "charts/solo-cluster-setup/Chart.yaml"
+          "charts/solo-cluster-setup/Chart.yaml",
+          "charts/solo-cert-manager/Chart.yaml",
         ]
       }
     ]
@@ -62,11 +75,19 @@
     ],
     [
       "@semantic-release/exec",
+      { "cmd": "helm dependency update charts/solo-cert-manager" }
+    ],
+    [
+      "@semantic-release/exec",
       { "cmd": "helm package charts/solo-cluster-setup" }
     ],
     [
       "@semantic-release/exec",
       { "cmd": "helm package charts/solo-deployment" }
+    ],
+    [
+      "@semantic-release/exec",
+      { "cmd": "helm package charts/solo-cert-manager" }
     ],
     [
       "@semantic-release/exec",
@@ -77,6 +98,10 @@
       { "cmd": "helm push solo-deployment-${nextRelease.version}.tgz oci://ghcr.io/hashgraph/solo-charts" }
     ],
     [
+      "@semantic-release/exec",
+      { "cmd": "helm push solo-cert-manager-${nextRelease.version}.tgz oci://ghcr.io/hashgraph/solo-charts" }
+    ],
+    [
       "@semantic-release/github",
       {
         "assets": [
@@ -85,6 +110,9 @@
           },
           {
             "path": "solo-cluster-setup-*.tgz"
+          },
+          {
+            "path": "solo-cert-manager-*.tgz"
           }
         ]
       }
