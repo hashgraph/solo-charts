@@ -122,13 +122,6 @@ spec:
                 path: application.env
         - name: network-node-etc
           emptyDir: {}
-        - name: network-node-hapi-app-config-txt
-          configMap:
-            name: network-node-hapi-app-cm
-            optional: true
-            items:
-              - key: config.txt
-                path: config.txt
         {{- if $hapiAppSecrets }}
         - name: network-node-hapi-app-hedera-crt
           secret:
@@ -159,20 +152,6 @@ spec:
             items:
               - key: genesis-network.json
                 path: genesis-network.json
-        - name: network-node-hapi-app-log4j2-xml
-          configMap:
-            name: network-node-hapi-app-cm
-            optional: true
-            items:
-              - key: log4j2.xml
-                path: log4j2.xml
-        - name: network-node-hapi-app-settings-txt
-          configMap:
-            name: network-node-hapi-app-cm
-            optional: true
-            items:
-              - key: settings.txt
-                path: settings.txt
         - name: network-node-hapi-app-api-permissions-properties
           configMap:
             name: network-node-data-config-cm
@@ -900,8 +879,7 @@ spec:
               mountPath: /config
             - name: dst-hapi-app-volume
               mountPath: /data
-          command: ["sh", "-c", "cp -r /config/* /data/"]
-
+          command: ["sh", "-c", "cp -rL /config/* /data/ && ls -l /data"]
       {{- end }}
       {{- if gt $initContainersLength 0 }}
         {{- toYaml $.Values.hedera.initContainers | nindent 8 }}
