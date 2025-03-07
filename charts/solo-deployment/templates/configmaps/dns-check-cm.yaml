@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dns-validation-script
+  namespace: {{ default $.Release.Namespace $.Values.global.namespaceOverride }}
+data:
+  dns-validation.sh: |-
+    loop=1
+    while [ "$loop" -ne 0 ]; do
+      loop=0;
+      {{- range $index, $node := $.Values.hedera.nodes }}
+      nslookup network-{{ $node.name }}-0.network-{{ $node.name }}.{{ default $.Release.Namespace $.Values.global.namespaceOverride }}.svc.cluster.local;
+      rc=$?;
+      if [ "$loop" -eq 0 -a "$rc" -eq 0 ]; then
+        loop=0;
+      else
+        loop=1;
+      fi
+      {{- end }}
+      sleep 5;
+    done
+    return 0

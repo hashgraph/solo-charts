@@ -194,6 +194,15 @@ spec:
             items:
               - key: bootstrap.properties
                 path: bootstrap.properties
+        - name: script-volume
+          configMap:
+            name: dns-validation-script
+            defaultMode: 0755
+        - name: hapi-app-volume
+          configMap:
+            name: network-node-hapi-app-cm
+        - name: dst-hapi-app-volume
+          emptyDir: {}
         {{- if $networkNodeKeySecrets }}
         - name: network-node-keys
           secret:
@@ -229,11 +238,9 @@ spec:
             mountPath: /opt/hgcapp/recordStreams
           - name: hgcapp-record-streams-sidecar
             mountPath: /opt/hgcapp/recordStreams/sidecar
-          {{- if $.Values.hedera.configMaps.configTxt }}
-          - name: network-node-hapi-app-config-txt
-            mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/config.txt
-            subPath: config.txt
-          {{- end }}
+          - name: dst-hapi-app-volume
+            mountPath: /opt/hgcapp/services-hedera/HapiApp2.0
+
           {{- if $hapiAppSecrets }}
           - name: network-node-hapi-app-hedera-crt
             mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/hedera.crt
@@ -241,16 +248,6 @@ spec:
           - name: network-node-hapi-app-hedera-key
             mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/hedera.key
             subPath: hedera.key
-          {{- end }}
-          {{- if $.Values.hedera.configMaps.log4j2Xml }}
-          - name: network-node-hapi-app-log4j2-xml
-            mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/log4j2.xml
-            subPath: log4j2.xml
-          {{- end }}
-          {{- if $.Values.hedera.configMaps.settingsTxt }}
-          - name: network-node-hapi-app-settings-txt
-            mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/settings.txt
-            subPath: settings.txt
           {{- end }}
           {{- if $.Values.hedera.configMaps.apiPermissionsProperties }}
           - name: network-node-hapi-app-api-permissions-properties
@@ -892,25 +889,19 @@ spec:
         {{- if $.Values.deployment.init.enableDnsValidation }}
         - name: init-hedera
           image: curlimages/curl:8.9.1
-          command:
-            - "sh"
-            - "-c"
-            - |
-              loop=1
-              while [ "$loop" -ne 0 ]; do
-                loop=0;
-                {{- range $index, $node := $.Values.hedera.nodes }}
-                nslookup network-{{ $node.name }}-0.network-{{ $node.name }}.{{ default $.Release.Namespace $.Values.global.namespaceOverride }}.svc.cluster.local;
-                rc=$?;
-                if [ "$loop" -eq 0 -a "$rc" -eq 0 ]; then
-                  loop=0;
-                else
-                  loop=1;
-                fi
-                {{- end }}
-                sleep 5;
-              done
-              return 0
+          command: ["/bin/sh", "-c", "/script/dns-validation.sh"]
+          volumeMounts:
+            - name: script-volume
+              mountPath: /script
+        - name: configmap-copier
+          image: busybox:1.36.1
+          volumeMounts:
+            - name: hapi-app-volume
+              mountPath: /config
+            - name: dst-hapi-app-volume
+              mountPath: /data
+          command: ["sh", "-c", "cp -r /config/* /data/"]
+
       {{- end }}
       {{- if gt $initContainersLength 0 }}
         {{- toYaml $.Values.hedera.initContainers | nindent 8 }}
