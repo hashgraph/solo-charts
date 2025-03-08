@@ -180,8 +180,6 @@ spec:
         - name: hapi-app-volume
           configMap:
             name: network-node-hapi-app-cm
-        - name: dst-hapi-app-volume
-          emptyDir: {}
         - name: shared-hapiapp
           emptyDir: {}
         {{- if $networkNodeKeySecrets }}
