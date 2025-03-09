@@ -138,41 +138,6 @@ spec:
               - key: hedera-{{ $node.name }}.key
                 path: hedera.key
         {{- end }}
-        - name: network-node-genesis-throttles-json
-          configMap:
-            name: network-node-data-config-cm
-            optional: true
-            items:
-              - key: genesis-throttles.json
-                path: genesis-throttles.json
-        - name: network-node-genesis-network-json
-          configMap:
-            name: network-node-data-config-cm
-            optional: true
-            items:
-              - key: genesis-network.json
-                path: genesis-network.json
-        - name: network-node-hapi-app-api-permissions-properties
-          configMap:
-            name: network-node-data-config-cm
-            optional: true
-            items:
-              - key: api-permission.properties
-                path: api-permission.properties
-        - name: network-node-hapi-app-application-properties
-          configMap:
-            name: network-node-data-config-cm
-            optional: true
-            items:
-              - key: application.properties
-                path: application.properties
-        - name: network-node-hapi-app-bootstrap-properties
-          configMap:
-            name: network-node-data-config-cm
-            optional: true
-            items:
-              - key: bootstrap.properties
-                path: bootstrap.properties
         - name: script-volume
           configMap:
             name: dns-validation-script
@@ -227,21 +192,6 @@ spec:
           - name: network-node-hapi-app-hedera-key
             mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/hedera.key
             subPath: hedera.key
-          {{- end }}
-          {{- if $.Values.hedera.configMaps.apiPermissionsProperties }}
-          - name: network-node-hapi-app-api-permissions-properties
-            mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/config/api-permission.properties
-            subPath: api-permission.properties
-          {{- end }}
-          {{- if $.Values.hedera.configMaps.applicationProperties }}
-          - name: network-node-hapi-app-application-properties
-            mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/config/application.properties
-            subPath: application.properties
-          {{- end }}
-          {{- if $.Values.hedera.configMaps.bootstrapProperties }}
-          - name: network-node-hapi-app-bootstrap-properties
-            mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/config/bootstrap.properties
-            subPath: bootstrap.properties
           {{- end }}
           - name: hgcapp-data-onboard
             mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/onboard
@@ -787,39 +737,6 @@ spec:
               mountPath: /opt/hgcapp/keys
         {{- end }}
 
-        {{- if $.Values.hedera.configMaps.genesisNetworkJson }}
-        - name: init-data-config-directories
-          image: busybox:1.36.1
-          command:
-            - "/bin/sh"
-            - "-c"
-            - |
-              cp /opt/hgcapp/genesis-network/genesis-network.json /opt/hgcapp/services-hedera/HapiApp2.0/data/config
-              chmod 755 -R /opt/hgcapp/services-hedera/HapiApp2.0/data/config
-          volumeMounts:
-            - name: hgcapp-data-config
-              mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/config
-            - name: network-node-genesis-network-json
-              mountPath: /opt/hgcapp/genesis-network/genesis-network.json
-              subPath: genesis-network.json
-        {{- end }}
-
-        {{- if $.Values.hedera.configMaps.genesisThrottlesJson }}
-        - name: init-genesis-throttles
-          image: busybox:1.36.1
-          command:
-            - "/bin/sh"
-            - "-c"
-            - |
-              cp /opt/hgcapp/genesis-throttles/genesis-throttles.json /opt/hgcapp/services-hedera/HapiApp2.0/data/config
-              chmod 755 -R /opt/hgcapp/services-hedera/HapiApp2.0/data/config
-          volumeMounts:
-            - name: hgcapp-data-config
-              mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/config
-            - name: network-node-genesis-throttles-json
-              mountPath: /opt/hgcapp/genesis-throttles/genesis-throttles.json
-              subPath: genesis-throttles.json
-        {{- end }}
 
         - name: init-streams-directories
           image: busybox:1.36.1
@@ -882,7 +799,23 @@ spec:
               # Add the new file
               cp -rL /config/* /shared-hapiapp/ &&
               ls -la /shared-hapiapp
+
+              cp -rL /data/config/* /opt/hgcapp/services-hedera/HapiApp2.0/data/config
+
+              if [ -f /data/config/genesis-network.json ]; then
+                cp -L /data/config/genesis-network.json /opt/hgcapp/services-hedera/HapiApp2.0/data/config
+              fi
+              if [ -f /data/config/genesis-throttles.json ]; then
+                cp -L /data/config/genesis-throttles.json /opt/hgcapp/services-hedera/HapiApp2.0/data/config
+              fi
+
+              chmod 755 -R /opt/hgcapp/services-hedera/HapiApp2.0/data/config
+              ls -la /opt/hgcapp/services-hedera/HapiApp2.0/data/config
           volumeMounts:
+            - name: network-node-data-config
+              mountPath: /data/config
+            - name: hgcapp-data-config
+              mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/config
             - mountPath: /shared-hapiapp
               name: shared-hapiapp
             - mountPath: /config
