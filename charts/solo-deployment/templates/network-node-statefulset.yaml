@@ -109,10 +109,12 @@ spec:
               - key: sa.json
                 path: sa.json
         {{- end }}
+        {{- if $hapiAppSecrets }}
         - name: network-node-hapi-app-secrets-volume
           secret:
             secretName: network-node-hapi-app-secrets
             optional: true
+        {{- end }}
         - name: network-node-data-config
           configMap:
             name: network-node-data-config-cm
@@ -126,15 +128,15 @@ spec:
                 path: application.env
         - name: network-node-etc
           emptyDir: {}
-        - name: script-volume
-          configMap:
-            name: dns-validation-script
-            defaultMode: 0755
         - name: hapi-app-volume
           configMap:
             name: network-node-hapi-app-cm
         - name: shared-hapiapp
           emptyDir: {}
+        - name: script-volume
+          configMap:
+            name: dns-validation-script
+            defaultMode: 0755
         {{- if $networkNodeKeySecrets }}
         - name: network-node-keys
           secret:
@@ -723,13 +725,6 @@ spec:
               mountPath: /opt/hgcapp/eventStreams
               subPath: events_{{ $node.accountId }}
 
-        {{- if $.Values.deployment.init.enableDnsValidation }}
-        - name: init-hedera
-          image: curlimages/curl:8.9.1
-          command: ["/bin/sh", "-c", "/script/dns-validation.sh"]
-          volumeMounts:
-            - name: script-volume
-              mountPath: /script
         - name: init-copier
           image: ghcr.io/hashgraph/solo-containers/ubi8-init-java21:0.33.2
           command: ["sh", "-c"]
@@ -739,13 +734,11 @@ spec:
               cp -r /opt/hgcapp/services-hedera/HapiApp2.0/* /shared-hapiapp/ &&
               # Add the new file
               cp -rL /config/* /shared-hapiapp/ &&
-              ls -la /shared-hapiapp
 
-              # copy hedera-$node.name.crt and hedera-$node.name.key to /shared-hapiapp
+              {{- if $hapiAppSecrets }}
               cp -L /data/secret/hedera-{{ $node.name }}.crt /shared-hapiapp/hedera.crt
               cp -L /data/secret/hedera-{{ $node.name }}.key /shared-hapiapp/hedera.key
-              ls -la /shared-hapiapp
-
+              {{- end }}
 
               cp -rL /data/config/* /opt/hgcapp/services-hedera/HapiApp2.0/data/config
 
@@ -777,8 +770,10 @@ spec:
               mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/keys
             - name: network-node-keys
               mountPath: /opt/hgcapp/keys
+            {{- if $hapiAppSecrets }}
             - name: network-node-hapi-app-secrets-volume
               mountPath: /data/secret
+            {{- end }}
             - name: network-node-data-config
               mountPath: /data/config
             - name: hgcapp-data-config
@@ -791,7 +786,14 @@ spec:
               mountPath: /etc/network-node-temp/
             - name: network-node-etc
               mountPath: /etc/network-node/
-      {{- end }}
+        {{- if $.Values.deployment.init.enableDnsValidation }}
+        - name: init-hedera
+          image: curlimages/curl:8.9.1
+          command: ["/bin/sh", "-c", "/script/dns-validation.sh"]
+          volumeMounts:
+            - name: script-volume
+              mountPath: /script
+        {{- end }}
       {{- if gt $initContainersLength 0 }}
         {{- toYaml $.Values.hedera.initContainers | nindent 8 }}
       {{- end }}
