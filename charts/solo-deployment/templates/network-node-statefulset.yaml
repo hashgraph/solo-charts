@@ -723,27 +723,6 @@ spec:
               mountPath: /opt/hgcapp/eventStreams
               subPath: events_{{ $node.accountId }}
 
-        # copy in the application.env to supply the environment variables to the application, will need
-        # CONSENSUS_NODE_ID set to the unique Node ID with hedera platform v0.59+
-        - name: init-etc-network-node-directories
-          image: busybox:1.36.1
-          command:
-            - "/bin/sh"
-            - "-c"
-            - |
-              {{- if $.Values.hedera.configMaps.applicationEnv }}
-              cp /etc/network-node-temp/* /etc/network-node
-              {{- else }}
-              touch /etc/network-node/application.env
-              {{- end }}
-              chmod -R 755 /etc/network-node
-              chown -R 2000:2000 /etc/network-node
-          volumeMounts:
-            - name: network-node-etc-init
-              mountPath: /etc/network-node-temp/
-            - name: network-node-etc
-              mountPath: /etc/network-node/
-
         {{- if $.Values.deployment.init.enableDnsValidation }}
         - name: init-hedera
           image: curlimages/curl:8.9.1
@@ -751,7 +730,7 @@ spec:
           volumeMounts:
             - name: script-volume
               mountPath: /script
-        - name: configmap-copier
+        - name: init-copier
           image: ghcr.io/hashgraph/solo-containers/ubi8-init-java21:0.33.2
           command: ["sh", "-c"]
           args:
@@ -784,6 +763,15 @@ spec:
               chmod 755 -R /opt/hgcapp/services-hedera/HapiApp2.0/data/keys
               ls -la /opt/hgcapp/services-hedera/HapiApp2.0/data/keys
 
+              # copy in the application.env to supply the environment variables to the application, will need
+              # CONSENSUS_NODE_ID set to the unique Node ID with hedera platform v0.59+
+              {{- if $.Values.hedera.configMaps.applicationEnv }}
+              cp /etc/network-node-temp/* /etc/network-node
+              {{- else }}
+              touch /etc/network-node/application.env
+              {{- end }}
+              chmod -R 755 /etc/network-node
+              chown -R 2000:2000 /etc/network-node
           volumeMounts:
             - name: hgcapp-data-keys
               mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/keys
@@ -799,6 +787,10 @@ spec:
               name: shared-hapiapp
             - mountPath: /config
               name: hapi-app-volume
+            - name: network-node-etc-init
+              mountPath: /etc/network-node-temp/
+            - name: network-node-etc
+              mountPath: /etc/network-node/
       {{- end }}
       {{- if gt $initContainersLength 0 }}
         {{- toYaml $.Values.hedera.initContainers | nindent 8 }}
