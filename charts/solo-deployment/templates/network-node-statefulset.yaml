@@ -109,6 +109,10 @@ spec:
               - key: sa.json
                 path: sa.json
         {{- end }}
+        - name: network-node-hapi-app-secrets-volume
+          secret:
+            secretName: network-node-hapi-app-secrets
+            optional: true
         - name: network-node-data-config
           configMap:
             name: network-node-data-config-cm
@@ -122,22 +126,6 @@ spec:
                 path: application.env
         - name: network-node-etc
           emptyDir: {}
-        {{- if $hapiAppSecrets }}
-        - name: network-node-hapi-app-hedera-crt
-          secret:
-            secretName: network-node-hapi-app-secrets
-            optional: true
-            items:
-              - key: hedera-{{ $node.name }}.crt
-                path: hedera.crt
-        - name: network-node-hapi-app-hedera-key
-          secret:
-            secretName: network-node-hapi-app-secrets
-            optional: true
-            items:
-              - key: hedera-{{ $node.name }}.key
-                path: hedera.key
-        {{- end }}
         - name: script-volume
           configMap:
             name: dns-validation-script
@@ -184,15 +172,6 @@ spec:
             mountPath: /opt/hgcapp/recordStreams/sidecar
           - name: shared-hapiapp
             mountPath: /opt/hgcapp/services-hedera/HapiApp2.0
-
-          {{- if $hapiAppSecrets }}
-          - name: network-node-hapi-app-hedera-crt
-            mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/hedera.crt
-            subPath: hedera.crt
-          - name: network-node-hapi-app-hedera-key
-            mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/hedera.key
-            subPath: hedera.key
-          {{- end }}
           - name: hgcapp-data-onboard
             mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/onboard
           - name: hgcapp-data-saved
@@ -721,23 +700,6 @@ spec:
               mountPath: /mnt
         {{- end }}
 
-        {{- if $networkNodeKeySecrets }}
-        - name: init-data-keys-directories
-          image: busybox:1.36.1
-          command:
-            - "/bin/sh"
-            - "-c"
-            - |
-              cp /opt/hgcapp/keys/* /opt/hgcapp/services-hedera/HapiApp2.0/data/keys
-              chmod 755 -R /opt/hgcapp/services-hedera/HapiApp2.0/data/keys
-          volumeMounts:
-            - name: hgcapp-data-keys
-              mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/keys
-            - name: network-node-keys
-              mountPath: /opt/hgcapp/keys
-        {{- end }}
-
-
         - name: init-streams-directories
           image: busybox:1.36.1
           command:
@@ -800,6 +762,12 @@ spec:
               cp -rL /config/* /shared-hapiapp/ &&
               ls -la /shared-hapiapp
 
+              # copy hedera-$node.name.crt and hedera-$node.name.key to /shared-hapiapp
+              cp -L /data/secret/hedera-{{ $node.name }}.crt /shared-hapiapp/hedera.crt
+              cp -L /data/secret/hedera-{{ $node.name }}.key /shared-hapiapp/hedera.key
+              ls -la /shared-hapiapp
+
+
               cp -rL /data/config/* /opt/hgcapp/services-hedera/HapiApp2.0/data/config
 
               if [ -f /data/config/genesis-network.json ]; then
@@ -811,7 +779,18 @@ spec:
 
               chmod 755 -R /opt/hgcapp/services-hedera/HapiApp2.0/data/config
               ls -la /opt/hgcapp/services-hedera/HapiApp2.0/data/config
+
+              cp /opt/hgcapp/keys/* /opt/hgcapp/services-hedera/HapiApp2.0/data/keys
+              chmod 755 -R /opt/hgcapp/services-hedera/HapiApp2.0/data/keys
+              ls -la /opt/hgcapp/services-hedera/HapiApp2.0/data/keys
+
           volumeMounts:
+            - name: hgcapp-data-keys
+              mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/keys
+            - name: network-node-keys
+              mountPath: /opt/hgcapp/keys
+            - name: network-node-hapi-app-secrets-volume
+              mountPath: /data/secret
             - name: network-node-data-config
               mountPath: /data/config
             - name: hgcapp-data-config
