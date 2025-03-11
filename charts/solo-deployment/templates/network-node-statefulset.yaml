@@ -198,11 +198,6 @@ spec:
           configMap:
             name: dns-validation-script
             defaultMode: 0755
-        - name: hapi-app-volume
-          configMap:
-            name: network-node-hapi-app-cm
-        - name: dst-hapi-app-volume
-          emptyDir: {}
         {{- if $networkNodeKeySecrets }}
         - name: network-node-keys
           secret:
@@ -238,9 +233,11 @@ spec:
             mountPath: /opt/hgcapp/recordStreams
           - name: hgcapp-record-streams-sidecar
             mountPath: /opt/hgcapp/recordStreams/sidecar
-          - name: dst-hapi-app-volume
-            mountPath: /opt/hgcapp/services-hedera/HapiApp2.0
-
+          {{- if $.Values.hedera.configMaps.configTxt }}
+          - name: network-node-hapi-app-config-txt
+            mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/config.txt
+            subPath: config.txt
+          {{- end }}
           {{- if $hapiAppSecrets }}
           - name: network-node-hapi-app-hedera-crt
             mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/hedera.crt
@@ -248,6 +245,16 @@ spec:
           - name: network-node-hapi-app-hedera-key
             mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/hedera.key
             subPath: hedera.key
+          {{- end }}
+          {{- if $.Values.hedera.configMaps.log4j2Xml }}
+          - name: network-node-hapi-app-log4j2-xml
+            mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/log4j2.xml
+            subPath: log4j2.xml
+          {{- end }}
+          {{- if $.Values.hedera.configMaps.settingsTxt }}
+          - name: network-node-hapi-app-settings-txt
+            mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/settings.txt
+            subPath: settings.txt
           {{- end }}
           {{- if $.Values.hedera.configMaps.apiPermissionsProperties }}
           - name: network-node-hapi-app-api-permissions-properties
@@ -893,15 +900,6 @@ spec:
           volumeMounts:
             - name: script-volume
               mountPath: /script
-        - name: configmap-copier
-          image: busybox:1.36.1
-          volumeMounts:
-            - name: hapi-app-volume
-              mountPath: /config
-            - name: dst-hapi-app-volume
-              mountPath: /data
-          command: ["sh", "-c", "cp -r /config/* /data/"]
-
       {{- end }}
       {{- if gt $initContainersLength 0 }}
         {{- toYaml $.Values.hedera.initContainers | nindent 8 }}
