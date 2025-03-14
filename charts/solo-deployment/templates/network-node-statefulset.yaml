@@ -128,7 +128,7 @@ spec:
                 path: application.env
         - name: network-node-etc
           emptyDir: {}
-        - name: hapi-app-volume
+        - name: hapi-app-config-volume
           configMap:
             name: network-node-hapi-app-cm
             optional: true
@@ -173,6 +173,8 @@ spec:
             mountPath: /opt/hgcapp/recordStreams
           - name: hgcapp-record-streams-sidecar
             mountPath: /opt/hgcapp/recordStreams/sidecar
+          - name: hapi-app-config-volume
+            mountPath: /hapi-app-config
           - name: shared-hapiapp
             mountPath: /opt/hgcapp/services-hedera/HapiApp2.0
           - name: hgcapp-data-onboard
@@ -727,15 +729,10 @@ spec:
               subPath: events_{{ $node.accountId }}
 
         - name: init-copier
-          image: ghcr.io/hashgraph/solo-containers/ubi8-init-java21:0.33.2
+          image: busybox:1.36.1
           command: ["sh", "-c"]
           args:
             - |
-              # Copy original contents to shared volume
-              cp -r /opt/hgcapp/services-hedera/HapiApp2.0/* /shared-hapiapp/ &&
-              # Add the new file
-              cp -rL /config/* /shared-hapiapp/ &&
-
               {{- if $hapiAppSecrets }}
               cp -L /data/secret/hedera-{{ $node.name }}.crt /shared-hapiapp/hedera.crt
               cp -L /data/secret/hedera-{{ $node.name }}.key /shared-hapiapp/hedera.key
@@ -790,8 +787,6 @@ spec:
               mountPath: /etc/network-node/
             - name: shared-hapiapp
               mountPath: /shared-hapiapp
-            - name: hapi-app-volume
-              mountPath: /config
         {{- if $.Values.deployment.init.enableDnsValidation }}
         - name: init-hedera
           image: curlimages/curl:8.9.1
