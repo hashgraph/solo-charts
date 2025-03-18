@@ -109,6 +109,12 @@ spec:
               - key: sa.json
                 path: sa.json
         {{- end }}
+        {{- if $hapiAppSecrets }}
+        - name: network-node-hapi-app-secrets-volume
+          secret:
+            secretName: network-node-hapi-app-secrets
+            optional: true
+        {{- end }}
         - name: network-node-data-config
           configMap:
             name: network-node-data-config-cm
@@ -122,78 +128,16 @@ spec:
                 path: application.env
         - name: network-node-etc
           emptyDir: {}
-        - name: network-node-hapi-app-config-txt
+        - name: hapi-app-config-volume
           configMap:
             name: network-node-hapi-app-cm
             optional: true
-            items:
-              - key: config.txt
-                path: config.txt
-        {{- if $hapiAppSecrets }}
-        - name: network-node-hapi-app-hedera-crt
-          secret:
-            secretName: network-node-hapi-app-secrets
-            optional: true
-            items:
-              - key: hedera-{{ $node.name }}.crt
-                path: hedera.crt
-        - name: network-node-hapi-app-hedera-key
-          secret:
-            secretName: network-node-hapi-app-secrets
-            optional: true
-            items:
-              - key: hedera-{{ $node.name }}.key
-                path: hedera.key
-        {{- end }}
-        - name: network-node-genesis-throttles-json
+        - name: shared-hapiapp
+          emptyDir: {}
+        - name: script-volume
           configMap:
-            name: network-node-data-config-cm
-            optional: true
-            items:
-              - key: genesis-throttles.json
-                path: genesis-throttles.json
-        - name: network-node-genesis-network-json
-          configMap:
-            name: network-node-data-config-cm
-            optional: true
-            items:
-              - key: genesis-network.json
-                path: genesis-network.json
-        - name: network-node-hapi-app-log4j2-xml
-          configMap:
-            name: network-node-hapi-app-cm
-            optional: true
-            items:
-              - key: log4j2.xml
-                path: log4j2.xml
-        - name: network-node-hapi-app-settings-txt
-          configMap:
-            name: network-node-hapi-app-cm
-            optional: true
-            items:
-              - key: settings.txt
-                path: settings.txt
-        - name: network-node-hapi-app-api-permissions-properties
-          configMap:
-            name: network-node-data-config-cm
-            optional: true
-            items:
-              - key: api-permission.properties
-                path: api-permission.properties
-        - name: network-node-hapi-app-application-properties
-          configMap:
-            name: network-node-data-config-cm
-            optional: true
-            items:
-              - key: application.properties
-                path: application.properties
-        - name: network-node-hapi-app-bootstrap-properties
-          configMap:
-            name: network-node-data-config-cm
-            optional: true
-            items:
-              - key: bootstrap.properties
-                path: bootstrap.properties
+            name: dns-validation-script
+            defaultMode: 0755
         {{- if $networkNodeKeySecrets }}
         - name: network-node-keys
           secret:
@@ -217,8 +161,12 @@ spec:
             mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/VERSION
             subPath: VERSION
           {{- end }}
+          {{- if $.Values.hedera.configMaps.applicationEnv }}
           - name: network-node-etc
             mountPath: /etc/network-node/
+          {{- end }}
+          - name: shared-hapiapp
+            mountPath: /shared-hapiapp
           - name: hgcapp-account-balances
             mountPath: /opt/hgcapp/accountBalances
           - name: hgcapp-blockstream
@@ -229,44 +177,8 @@ spec:
             mountPath: /opt/hgcapp/recordStreams
           - name: hgcapp-record-streams-sidecar
             mountPath: /opt/hgcapp/recordStreams/sidecar
-          {{- if $.Values.hedera.configMaps.configTxt }}
-          - name: network-node-hapi-app-config-txt
-            mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/config.txt
-            subPath: config.txt
-          {{- end }}
-          {{- if $hapiAppSecrets }}
-          - name: network-node-hapi-app-hedera-crt
-            mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/hedera.crt
-            subPath: hedera.crt
-          - name: network-node-hapi-app-hedera-key
-            mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/hedera.key
-            subPath: hedera.key
-          {{- end }}
-          {{- if $.Values.hedera.configMaps.log4j2Xml }}
-          - name: network-node-hapi-app-log4j2-xml
-            mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/log4j2.xml
-            subPath: log4j2.xml
-          {{- end }}
-          {{- if $.Values.hedera.configMaps.settingsTxt }}
-          - name: network-node-hapi-app-settings-txt
-            mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/settings.txt
-            subPath: settings.txt
-          {{- end }}
-          {{- if $.Values.hedera.configMaps.apiPermissionsProperties }}
-          - name: network-node-hapi-app-api-permissions-properties
-            mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/config/api-permission.properties
-            subPath: api-permission.properties
-          {{- end }}
-          {{- if $.Values.hedera.configMaps.applicationProperties }}
-          - name: network-node-hapi-app-application-properties
-            mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/config/application.properties
-            subPath: application.properties
-          {{- end }}
-          {{- if $.Values.hedera.configMaps.bootstrapProperties }}
-          - name: network-node-hapi-app-bootstrap-properties
-            mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/config/bootstrap.properties
-            subPath: bootstrap.properties
-          {{- end }}
+          - name: hapi-app-config-volume
+            mountPath: /etc/network-node/config
           - name: hgcapp-data-onboard
             mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/onboard
           - name: hgcapp-data-saved
@@ -795,56 +707,6 @@ spec:
               mountPath: /mnt
         {{- end }}
 
-        {{- if $networkNodeKeySecrets }}
-        - name: init-data-keys-directories
-          image: busybox:1.36.1
-          command:
-            - "/bin/sh"
-            - "-c"
-            - |
-              cp /opt/hgcapp/keys/* /opt/hgcapp/services-hedera/HapiApp2.0/data/keys
-              chmod 755 -R /opt/hgcapp/services-hedera/HapiApp2.0/data/keys
-          volumeMounts:
-            - name: hgcapp-data-keys
-              mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/keys
-            - name: network-node-keys
-              mountPath: /opt/hgcapp/keys
-        {{- end }}
-
-        {{- if $.Values.hedera.configMaps.genesisNetworkJson }}
-        - name: init-data-config-directories
-          image: busybox:1.36.1
-          command:
-            - "/bin/sh"
-            - "-c"
-            - |
-              cp /opt/hgcapp/genesis-network/genesis-network.json /opt/hgcapp/services-hedera/HapiApp2.0/data/config
-              chmod 755 -R /opt/hgcapp/services-hedera/HapiApp2.0/data/config
-          volumeMounts:
-            - name: hgcapp-data-config
-              mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/config
-            - name: network-node-genesis-network-json
-              mountPath: /opt/hgcapp/genesis-network/genesis-network.json
-              subPath: genesis-network.json
-        {{- end }}
-
-        {{- if $.Values.hedera.configMaps.genesisThrottlesJson }}
-        - name: init-genesis-throttles
-          image: busybox:1.36.1
-          command:
-            - "/bin/sh"
-            - "-c"
-            - |
-              cp /opt/hgcapp/genesis-throttles/genesis-throttles.json /opt/hgcapp/services-hedera/HapiApp2.0/data/config
-              chmod 755 -R /opt/hgcapp/services-hedera/HapiApp2.0/data/config
-          volumeMounts:
-            - name: hgcapp-data-config
-              mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/config
-            - name: network-node-genesis-throttles-json
-              mountPath: /opt/hgcapp/genesis-throttles/genesis-throttles.json
-              subPath: genesis-throttles.json
-        {{- end }}
-
         - name: init-streams-directories
           image: busybox:1.36.1
           command:
@@ -868,50 +730,74 @@ spec:
               mountPath: /opt/hgcapp/eventStreams
               subPath: events_{{ $node.accountId }}
 
-        # copy in the application.env to supply the environment variables to the application, will need
-        # CONSENSUS_NODE_ID set to the unique Node ID with hedera platform v0.59+
-        - name: init-etc-network-node-directories
+        - name: init-copier
           image: busybox:1.36.1
-          command:
-            - "/bin/sh"
-            - "-c"
+          command: ["sh", "-c"]
+          args:
             - |
-              {{- if $.Values.hedera.configMaps.applicationEnv }}
-              cp /etc/network-node-temp/* /etc/network-node
-              {{- else }}
-              touch /etc/network-node/application.env
+              {{- if $hapiAppSecrets }}
+              cp -L /data/secret/hedera-{{ $node.name }}.crt /shared-hapiapp/hedera.crt
+              cp -L /data/secret/hedera-{{ $node.name }}.key /shared-hapiapp/hedera.key
+              ls -la /shared-hapiapp
               {{- end }}
+
+              cp -rL /data/config/* /opt/hgcapp/services-hedera/HapiApp2.0/data/config
+
+              if [ -f /data/config/genesis-network.json ]; then
+                cp -L /data/config/genesis-network.json /opt/hgcapp/services-hedera/HapiApp2.0/data/config
+              fi
+              if [ -f /data/config/genesis-throttles.json ]; then
+                cp -L /data/config/genesis-throttles.json /opt/hgcapp/services-hedera/HapiApp2.0/data/config
+              fi
+
+              chmod 755 -R /opt/hgcapp/services-hedera/HapiApp2.0/data/config
+              ls -la /opt/hgcapp/services-hedera/HapiApp2.0/data/config
+
+              {{- if $networkNodeKeySecrets }}
+              cp /opt/hgcapp/keys/* /opt/hgcapp/services-hedera/HapiApp2.0/data/keys
+              chmod 755 -R /opt/hgcapp/services-hedera/HapiApp2.0/data/keys
+              ls -la /opt/hgcapp/services-hedera/HapiApp2.0/data/keys
+              {{- end }}
+
+              {{- if $.Values.hedera.configMaps.applicationEnv }}
+              # copy in the application.env to supply the environment variables to the application, will need
+              # CONSENSUS_NODE_ID set to the unique Node ID with hedera platform v0.59+
+              cp /etc/network-node-temp/* /etc/network-node
               chmod -R 755 /etc/network-node
               chown -R 2000:2000 /etc/network-node
+              touch /etc/network-node/application.env
+              {{- end }}
           volumeMounts:
+            {{- if $networkNodeKeySecrets }}
+            - name: hgcapp-data-keys
+              mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/keys
+            - name: network-node-keys
+              mountPath: /opt/hgcapp/keys
+            {{- end }}
+            {{- if $hapiAppSecrets }}
+            - name: network-node-hapi-app-secrets-volume
+              mountPath: /data/secret
+            {{- end }}
+            - name: network-node-data-config
+              mountPath: /data/config
+            - name: hgcapp-data-config
+              mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/config
+            {{- if $.Values.hedera.configMaps.applicationEnv }}
             - name: network-node-etc-init
               mountPath: /etc/network-node-temp/
             - name: network-node-etc
               mountPath: /etc/network-node/
-
+            {{- end }}
+            - name: shared-hapiapp
+              mountPath: /shared-hapiapp
         {{- if $.Values.deployment.init.enableDnsValidation }}
         - name: init-hedera
           image: curlimages/curl:8.9.1
-          command:
-            - "sh"
-            - "-c"
-            - |
-              loop=1
-              while [ "$loop" -ne 0 ]; do
-                loop=0;
-                {{- range $index, $node := $.Values.hedera.nodes }}
-                nslookup network-{{ $node.name }}-0.network-{{ $node.name }}.{{ default $.Release.Namespace $.Values.global.namespaceOverride }}.svc.cluster.local;
-                rc=$?;
-                if [ "$loop" -eq 0 -a "$rc" -eq 0 ]; then
-                  loop=0;
-                else
-                  loop=1;
-                fi
-                {{- end }}
-                sleep 5;
-              done
-              return 0
-      {{- end }}
+          command: ["/bin/sh", "-c", "/script/dns-validation.sh"]
+          volumeMounts:
+            - name: script-volume
+              mountPath: /script
+        {{- end }}
       {{- if gt $initContainersLength 0 }}
         {{- toYaml $.Values.hedera.initContainers | nindent 8 }}
       {{- end }}
