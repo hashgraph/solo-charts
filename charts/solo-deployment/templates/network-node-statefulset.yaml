@@ -161,8 +161,12 @@ spec:
             mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/VERSION
             subPath: VERSION
           {{- end }}
+          {{- if $.Values.hedera.configMaps.applicationEnv }}
           - name: network-node-etc
             mountPath: /etc/network-node/
+          {{- end }}
+          - name: shared-hapiapp
+            mountPath: /shared-hapiapp
           - name: hgcapp-account-balances
             mountPath: /opt/hgcapp/accountBalances
           - name: hgcapp-blockstream
@@ -174,9 +178,7 @@ spec:
           - name: hgcapp-record-streams-sidecar
             mountPath: /opt/hgcapp/recordStreams/sidecar
           - name: hapi-app-config-volume
-            mountPath: /hapi-app-config
-          - name: shared-hapiapp
-            mountPath: /opt/hgcapp/services-hedera/HapiApp2.0
+            mountPath: /etc/network-node/config
           - name: hgcapp-data-onboard
             mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/onboard
           - name: hgcapp-data-saved
@@ -757,15 +759,14 @@ spec:
               ls -la /opt/hgcapp/services-hedera/HapiApp2.0/data/keys
               {{- end }}
 
+              {{- if $.Values.hedera.configMaps.applicationEnv }}
               # copy in the application.env to supply the environment variables to the application, will need
               # CONSENSUS_NODE_ID set to the unique Node ID with hedera platform v0.59+
-              {{- if $.Values.hedera.configMaps.applicationEnv }}
               cp /etc/network-node-temp/* /etc/network-node
-              {{- else }}
-              touch /etc/network-node/application.env
-              {{- end }}
               chmod -R 755 /etc/network-node
               chown -R 2000:2000 /etc/network-node
+              touch /etc/network-node/application.env
+              {{- end }}
           volumeMounts:
             {{- if $networkNodeKeySecrets }}
             - name: hgcapp-data-keys
@@ -781,10 +782,12 @@ spec:
               mountPath: /data/config
             - name: hgcapp-data-config
               mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/config
+            {{- if $.Values.hedera.configMaps.applicationEnv }}
             - name: network-node-etc-init
               mountPath: /etc/network-node-temp/
             - name: network-node-etc
               mountPath: /etc/network-node/
+            {{- end }}
             - name: shared-hapiapp
               mountPath: /shared-hapiapp
         {{- if $.Values.deployment.init.enableDnsValidation }}
