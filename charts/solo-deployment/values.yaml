@@ -59,7 +59,7 @@ defaults:
     image:
       registry: "ghcr.io"
       repository: "hashgraph/solo-containers/ubi8-init-java21"
-      tag: "0.34.1"
+      tag: "0.34.2"
       pullPolicy: "IfNotPresent"
     resources: {}
     extraEnv: []
