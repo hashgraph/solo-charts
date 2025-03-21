@@ -23,20 +23,20 @@ spec:
         solo.hedera.com/account-id: {{ $node.accountId }}
         {{- include "solo.testLabels" $ | nindent 8 }}
     spec:
-      {{- if or $.Values.envoyDeployment.nodeSelector $.Values.deployment.nodeSelector }}
+      {{- if or $.Values.envoyDeployment.nodeSelector (or $.Values.deployment.nodeSelector $node.nodeSelector) }}
       nodeSelector:
-        {{- default $.Values.deployment.nodeSelector $.Values.envoyDeployment.nodeSelector | toYaml | nindent 8 }}
+        {{- default $node.nodeSelector (default $.Values.deployment.nodeSelector $.Values.envoyDeployment.nodeSelector) | toYaml | nindent 8 }}
       {{- end }}
-      {{- if or $.Values.envoyDeployment.tolerations $.Values.deployment.tolerations }}
+      {{- if or $.Values.envoyDeployment.tolerations (or $.Values.deployment.tolerations $node.tolerations) }}
       tolerations:
-        {{- default $.Values.deployment.tolerations $.Values.envoyDeployment.tolerations | toYaml | nindent 8 }}
+        {{- default $node.tolerations (default $.Values.deployment.tolerations $.Values.envoyDeployment.tolerations) | toYaml | nindent 8 }}
       {{- end }}
-      {{- if or $.Values.envoyDeployment.affinity $.Values.deployment.affinity }}
+      {{- if or $.Values.envoyDeployment.affinity (or $.Values.deployment.affinity $node.affinity) }}
       affinity:
-        {{- default $.Values.deployment.affinity $.Values.envoyDeployment.affinity | toYaml | nindent 8 }}
+        {{- default $node.affinity (default $.Values.deployment.affinity $.Values.envoyDeployment.affinity) | toYaml | nindent 8 }}
       {{- end }}
-      {{- if or $.Values.envoyDeployment.priorityClassName $.Values.deployment.priorityClassName }}
-      priorityClassName: {{ default $.Values.deployment.priorityClassName $.Values.envoyDeployment.priorityClassName }}
+      {{- if or $.Values.envoyDeployment.priorityClassName (or $.Values.deployment.priorityClassName $node.priorityClassName) }}
+      priorityClassName: {{ default $node.priorityClassName (default $.Values.deployment.priorityClassName $.Values.envoyDeployment.priorityClassName) }}
       {{- end }}
       terminationGracePeriodSeconds: {{ $.Values.terminationGracePeriodSeconds }}
       volumes:

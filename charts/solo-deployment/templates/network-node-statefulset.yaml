@@ -64,20 +64,20 @@ spec:
         solo.hedera.com/account-id: {{ $node.accountId }}
         {{- include "solo.testLabels" $ | nindent 8 }}
     spec:
-      {{- if $.Values.deployment.nodeSelector }}
+      {{- if or $.Values.deployment.nodeSelector $node.nodeSelector }}
       nodeSelector:
-      {{- $.Values.deployment.nodeSelector | toYaml | nindent 8 }}
+      {{- default $node.nodeSelector $.Values.deployment.nodeSelector | toYaml | nindent 8 }}
       {{- end }}
-      {{- if $.Values.deployment.tolerations }}
+      {{- if or $.Values.deployment.tolerations $node.tolerations }}
       tolerations:
-      {{- $.Values.deployment.tolerations | toYaml | nindent 8 }}
+      {{- default $node.tolerations $.Values.deployment.tolerations | toYaml | nindent 8 }}
       {{- end }}
-      {{- if $.Values.deployment.affinity }}
+      {{- if or $.Values.deployment.affinity $node.affinity }}
       affinity:
-      {{- $.Values.deployment.affinity | toYaml | nindent 8 }}
+      {{- default $node.affinity $.Values.deployment.affinity | toYaml | nindent 8 }}
       {{- end }}
-      {{- if $.Values.deployment.priorityClassName }}
-      priorityClassName: {{ $.Values.deployment.priorityClassName }}
+      {{- if or $.Values.deployment.priorityClassName $node.priorityClassName }}
+      priorityClassName: {{ default $node.priorityClassName $.Values.deployment.priorityClassName }}
       {{- end }}
       terminationGracePeriodSeconds: {{ $.Values.terminationGracePeriodSeconds }}
       volumes:
