@@ -81,6 +81,14 @@ spec:
       {{- end }}
       terminationGracePeriodSeconds: {{ $.Values.terminationGracePeriodSeconds }}
       volumes:
+        - name: rclone-config
+          configMap:
+            name: rclone-config
+            optional: true
+            items:
+              - key: rclone.conf
+                path: rclone.conf
+
         {{ include "solo.volumeTemplate" (dict "name" "hgcapp-account-balances" "claimName" (printf "%s-%s-%s" "hgcapp-account-balances-pvc-network" $node.name "0") "pvcEnabled" $pvcEnabled ) | nindent 8 }}
         {{ include "solo.volumeTemplate" (dict "name" "hgcapp-blockstream" "claimName" (printf "%s-%s-%s" "hgcapp-blockstream-pvc-network" $node.name "0") "pvcEnabled" $pvcEnabled ) | nindent 8 }}
         {{ include "solo.volumeTemplate" (dict "name" "hgcapp-event-streams" "claimName" (printf "%s-%s-%s" "hgcapp-event-streams-pvc-network" $node.name "0") "pvcEnabled" $pvcEnabled ) | nindent 8 }}
@@ -101,13 +109,6 @@ spec:
         {{- if $backupUploader.enabled }}
         - name: volume-for-share-version-file
           emptyDir: {}
-        - name: volume-for-mount-json
-          configMap:
-            name: network-node-hapi-app-cm
-            optional: true
-            items:
-              - key: sa.json
-                path: sa.json
         {{- end }}
         {{- if $hapiAppSecrets }}
         - name: network-node-hapi-app-secrets-volume
@@ -641,14 +642,32 @@ spec:
           - name: volume-for-share-version-file
             mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/VERSION
             subPath: VERSION
-          - name: volume-for-mount-json
-            mountPath: /sa.json
-            subPath: sa.json
           - name: hgcapp-data-saved
             mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/saved
           - name: hgcapp-data-stats
             mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/stats
+          - name: rclone-config
+            mountPath: /root/.config/rclone/rclone.conf
+            subPath: rclone.conf
+          - name: rclone-config
+            mountPath: /home/hedera/.config/rclone/rclone.conf
+            subPath: rclone.conf
         env:
+          - name: AWS_ACCESS_KEY_ID
+            valueFrom:
+              secretKeyRef:
+                name: backup-uploader-secrets
+                key: S3_SECRET_KEY
+          - name: AWS_SECRET_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: backup-uploader-secrets
+                key: S3_ACCESS_KEY
+          - name: RCLONE_S3_ENDPOINT
+            valueFrom:
+              secretKeyRef:
+                name: backup-uploader-secrets
+                key: S3_ENDPOINT
           - name: BACKUP_UPLOADER_BUCKET_1
             value: {{ default $defaults.sidecars.backupUploader.config.backupBucket ($backupUploader.config).backupBucket | quote }}
         {{- with default $defaults.sidecars.backupUploader.resources $backupUploader.resources }}

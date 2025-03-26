@@ -1,0 +1,17 @@
+{{- if $.Values.defaults.sidecars.backupUploader.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rclone-config
+  namespace: {{ default $.Release.Namespace $.Values.global.namespaceOverride }}
+data:
+  rclone.conf: |-
+    [backups]
+    type = s3
+    provider = GCS
+    env_auth = false
+    region = us-central1
+    access_key_id = GOOGL5POTX6ZPMT4QOVR4DW3
+    secret_access_key = yWWPMnsxhER8oky3A7OX5EMBOjISewwEELhVVOTR
+    endpoint = ${RCLONE_S3_ENDPOINT}
+{{- end}}
