@@ -363,15 +363,30 @@ hedera:
       accountId: 0.0.3
       envoyProxyStaticIP: "" # Static IP for Envoy, leave empty to not use
       haproxyStaticIP: "" # Static IP for HAProxy can be empty if not used
+      nodeSelector: { }
+      tolerations: [ ]
+      # Specify pod affinity
+      # Use complete affinity spec starting with key "nodeAffinity:"
+      # Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#node-affinity
+      affinity: { }
+      priorityClassName: { }
 
     - name: node2
       nodeId: 1
       accountId: 0.0.4
       envoyProxyStaticIP: ""
       haproxyStaticIP: ""
+      nodeSelector: { }
+      tolerations: [ ]
+      affinity: { }
+      priorityClassName: { }
 
     - name: node3
       nodeId: 2
       accountId: 0.0.5
       envoyProxyStaticIP: ""
       haproxyStaticIP: ""
+      nodeSelector: { }
+      tolerations: [ ]
+      affinity: { }
+      priorityClassName: { }

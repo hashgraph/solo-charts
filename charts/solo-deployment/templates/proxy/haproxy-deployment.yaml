@@ -23,20 +23,20 @@ spec:
         solo.hedera.com/account-id: {{ $node.accountId }}
         {{- include "solo.testLabels" $ | nindent 8 }}
     spec:
-      {{- if or $.Values.haproxyDeployment.nodeSelector $.Values.deployment.nodeSelector }}
+      {{- if or $.Values.haproxyDeployment.nodeSelector (or $.Values.deployment.nodeSelector $node.nodeSelector) }}
       nodeSelector:
-        {{- default $.Values.deployment.nodeSelector $.Values.haproxyDeployment.nodeSelector | toYaml | nindent 8 }}
+        {{- default $node.nodeSelector (default $.Values.deployment.nodeSelector $.Values.haproxyDeployment.nodeSelector) | toYaml | nindent 8 }}
       {{- end }}
-      {{- if or $.Values.haproxyDeployment.tolerations $.Values.deployment.tolerations }}
+      {{- if or $.Values.haproxyDeployment.tolerations (or $.Values.deployment.tolerations $node.tolerations) }}
       tolerations:
-        {{- default $.Values.deployment.tolerations $.Values.haproxyDeployment.tolerations | toYaml | nindent 8 }}
+        {{- default $node.tolerations (default $.Values.deployment.tolerations $.Values.haproxyDeployment.tolerations) | toYaml | nindent 8 }}
       {{- end }}
-      {{- if or $.Values.haproxyDeployment.affinity $.Values.deployment.affinity }}
+      {{- if or $.Values.haproxyDeployment.affinity (or $.Values.deployment.affinity $node.affinity) }}
       affinity:
-        {{- default $.Values.deployment.affinity $.Values.haproxyDeployment.affinity | toYaml | nindent 8 }}
+        {{- default $node.affinity (default $.Values.deployment.affinity $.Values.haproxyDeployment.affinity) | toYaml | nindent 8 }}
       {{- end }}
-      {{- if or $.Values.haproxyDeployment.priorityClassName $.Values.deployment.priorityClassName }}
-      priorityClassName: {{ default $.Values.deployment.priorityClassName $.Values.haproxyDeployment.priorityClassName }}
+      {{- if or $.Values.haproxyDeployment.priorityClassName (or $.Values.deployment.priorityClassName $node.priorityClassName) }}
+      priorityClassName: {{ default $node.priorityClassName (default $.Values.deployment.priorityClassName $.Values.haproxyDeployment.priorityClassName) }}
       {{- end }}
       terminationGracePeriodSeconds: {{ $.Values.terminationGracePeriodSeconds }}
       volumes:
