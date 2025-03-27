@@ -53,6 +53,8 @@ spec:
     {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-output-pvc" "storage" $nodeStorage.output "storageClassName" $defaults.volumeClaims.storageClassName) | nindent 4 }}
     {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-data-config-pvc" "storage" $nodeStorage.config "storageClassName" $defaults.volumeClaims.storageClassName) | nindent 4 }}
     {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-data-keys-pvc" "storage" $nodeStorage.keys "storageClassName" $defaults.volumeClaims.storageClassName) | nindent 4 }}
+    {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-data-libs-pvc" "storage" $nodeStorage.dataLibs "storageClassName" $defaults.volumeClaims.storageClassName) | nindent 4 }}
+    {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-data-apps-pvc" "storage" $nodeStorage.dataApps "storageClassName" $defaults.volumeClaims.storageClassName) | nindent 4 }}
   {{- end }}
   template:
     metadata:
@@ -93,6 +95,8 @@ spec:
         {{ include "solo.volumeTemplate" (dict "name" "hgcapp-output" "claimName" (printf "%s-%s-%s" "hgcapp-output-pvc-network" $node.name "0") "pvcEnabled" $pvcEnabled ) | nindent 8 }}
         {{ include "solo.volumeTemplate" (dict "name" "hgcapp-data-config" "claimName" (printf "%s-%s-%s" "hgcapp-data-config-pvc-network" $node.name "0") "pvcEnabled" $pvcEnabled ) | nindent 8 }}
         {{ include "solo.volumeTemplate" (dict "name" "hgcapp-data-keys" "claimName" (printf "%s-%s-%s" "hgcapp-data-keys-pvc-network" $node.name "0") "pvcEnabled" $pvcEnabled ) | nindent 8 }}
+        {{ include "solo.volumeTemplate" (dict "name" "hgcapp-data-libs" "claimName" (printf "%s-%s-%s" "hgcapp-data-libs-pvc-network" $node.name "0") "pvcEnabled" $pvcEnabled ) | nindent 8 }}
+        {{ include "solo.volumeTemplate" (dict "name" "hgcapp-data-apps" "claimName" (printf "%s-%s-%s" "hgcapp-data-apps-pvc-network" $node.name "0") "pvcEnabled" $pvcEnabled ) | nindent 8 }}
         {{- if $otelCollector.enabled }}
         - name: otel-collector-volume
           configMap:
@@ -193,6 +197,10 @@ spec:
             mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/config
           - name: hgcapp-data-keys
             mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/keys
+          - name: hgcapp-data-libs
+            mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/lib
+          - name: hgcapp-data-apps
+            mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/apps
         env:
           # these only get used as root, to set them for hedera user ID they need to be populated in the
           # /etc/network-node/application.env, if you want the docker container to use them they need to also be in
@@ -790,6 +798,10 @@ spec:
             {{- end }}
             - name: shared-hapiapp
               mountPath: /shared-hapiapp
+            - name: hgcapp-data-libs
+              mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/lib
+            - name: hgcapp-data-apps
+              mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/apps
         {{- if $.Values.deployment.init.enableDnsValidation }}
         - name: init-hedera
           image: curlimages/curl:8.9.1
