@@ -9,9 +9,7 @@ data:
     [backups]
     type = s3
     provider = GCS
-    env_auth = false
-    region = us-central1
-    access_key_id = GOOGL5POTX6ZPMT4QOVR4DW3
-    secret_access_key = yWWPMnsxhER8oky3A7OX5EMBOjISewwEELhVVOTR
+    env_auth = true
+    region = ${RCLONE_REGION}
     endpoint = ${RCLONE_S3_ENDPOINT}
 {{- end}}
