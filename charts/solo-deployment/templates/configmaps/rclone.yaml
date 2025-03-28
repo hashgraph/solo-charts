@@ -7,9 +7,9 @@ metadata:
 data:
   rclone.conf: |-
     [backups]
-    type = s3
+    type = ${RCLONE_CONFIG_BACKUPS_TYPE}
     provider = ${RCLONE_CONFIG_BACKUPS_PROVIDER}
     env_auth = true
-    region = ${RCLONE_S3_REGION}
-    endpoint = ${RCLONE_S3_ENDPOINT}
+    region = ${RCLONE_CONFIG_BACKUPS_REGION}
+    endpoint = ${RCLONE_CONFIG_BACKUPS_ENDPOINT}
 {{- end}}

@@ -657,27 +657,27 @@ spec:
             valueFrom:
               secretKeyRef:
                 name: backup-uploader-secrets
-                key: S3_ACCESS_KEY
+                key: AWS_ACCESS_KEY_ID
           - name: AWS_SECRET_ACCESS_KEY
             valueFrom:
               secretKeyRef:
                 name: backup-uploader-secrets
-                key: S3_SECRET_KEY
-          - name: RCLONE_S3_ENDPOINT
+                key: AWS_SECRET_ACCESS_KEY
+          - name: RCLONE_CONFIG_BACKUPS_ENDPOINT
             valueFrom:
               secretKeyRef:
                 name: backup-uploader-secrets
-                key: S3_ENDPOINT
-          - name: RCLONE_S3_REGION
+                key: RCLONE_CONFIG_BACKUPS_ENDPOINT
+          - name: RCLONE_CONFIG_BACKUPS_REGION
             valueFrom:
               secretKeyRef:
                 name: backup-uploader-secrets
-                key: S3_REGION
-          - name: RCLONE_TYPE
+                key: RCLONE_CONFIG_BACKUPS_REGION
+          - name: RCLONE_CONFIG_BACKUPS_TYPE
             valueFrom:
               secretKeyRef:
                 name: backup-uploader-secrets
-                key: RCLONE_TYPE
+                key: RCLONE_CONFIG_BACKUPS_TYPE
           - name: RCLONE_CONFIG_BACKUPS_PROVIDER
             valueFrom:
               secretKeyRef:
