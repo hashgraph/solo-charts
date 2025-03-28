@@ -8,8 +8,8 @@ data:
   rclone.conf: |-
     [backups]
     type = s3
-    provider = GCS
+    provider = ${RCLONE_CONFIG_BACKUPS_PROVIDER}
     env_auth = true
-    region = ${RCLONE_REGION}
+    region = ${RCLONE_S3_REGION}
     endpoint = ${RCLONE_S3_ENDPOINT}
 {{- end}}
