@@ -668,11 +668,21 @@ spec:
               secretKeyRef:
                 name: backup-uploader-secrets
                 key: S3_ENDPOINT
-          - name: RCLONE_REGION
+          - name: RCLONE_S3_REGION
             valueFrom:
               secretKeyRef:
                 name: backup-uploader-secrets
                 key: S3_REGION
+          - name: RCLONE_TYPE
+            valueFrom:
+              secretKeyRef:
+                name: backup-uploader-secrets
+                key: RCLONE_TYPE
+          - name: RCLONE_PROVIDER
+            valueFrom:
+              secretKeyRef:
+                name: backup-uploader-secrets
+                key: RCLONE_PROVIDER
           - name: BACKUP_UPLOADER_BUCKET_1
             value: {{ default $defaults.sidecars.backupUploader.config.backupBucket ($backupUploader.config).backupBucket | quote }}
         {{- with default $defaults.sidecars.backupUploader.resources $backupUploader.resources }}

@@ -202,6 +202,8 @@ defaults:
       resources: { }
     backupUploader:
       enabled: false
+      type: "s3"
+      provider: "GCS"
       nameOverride: "backup-uploader"
       image:
         registry: "ghcr.io"
