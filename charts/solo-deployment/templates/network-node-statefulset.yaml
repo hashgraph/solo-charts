@@ -81,14 +81,6 @@ spec:
       {{- end }}
       terminationGracePeriodSeconds: {{ $.Values.terminationGracePeriodSeconds }}
       volumes:
-        - name: rclone-config
-          configMap:
-            name: rclone-config
-            optional: true
-            items:
-              - key: rclone.conf
-                path: rclone.conf
-
         {{ include "solo.volumeTemplate" (dict "name" "hgcapp-account-balances" "claimName" (printf "%s-%s-%s" "hgcapp-account-balances-pvc-network" $node.name "0") "pvcEnabled" $pvcEnabled ) | nindent 8 }}
         {{ include "solo.volumeTemplate" (dict "name" "hgcapp-blockstream" "claimName" (printf "%s-%s-%s" "hgcapp-blockstream-pvc-network" $node.name "0") "pvcEnabled" $pvcEnabled ) | nindent 8 }}
         {{ include "solo.volumeTemplate" (dict "name" "hgcapp-event-streams" "claimName" (printf "%s-%s-%s" "hgcapp-event-streams-pvc-network" $node.name "0") "pvcEnabled" $pvcEnabled ) | nindent 8 }}
@@ -646,12 +638,6 @@ spec:
             mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/saved
           - name: hgcapp-data-stats
             mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/stats
-          - name: rclone-config
-            mountPath: /root/.config/rclone/rclone.conf
-            subPath: rclone.conf
-          - name: rclone-config
-            mountPath: /home/hedera/.config/rclone/rclone.conf
-            subPath: rclone.conf
         env:
           - name: AWS_ACCESS_KEY_ID
             valueFrom:
