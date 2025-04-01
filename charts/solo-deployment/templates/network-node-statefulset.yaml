@@ -101,13 +101,6 @@ spec:
         {{- if $backupUploader.enabled }}
         - name: volume-for-share-version-file
           emptyDir: {}
-        - name: volume-for-mount-json
-          configMap:
-            name: network-node-hapi-app-cm
-            optional: true
-            items:
-              - key: sa.json
-                path: sa.json
         {{- end }}
         {{- if $hapiAppSecrets }}
         - name: network-node-hapi-app-secrets-volume
@@ -641,14 +634,41 @@ spec:
           - name: volume-for-share-version-file
             mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/VERSION
             subPath: VERSION
-          - name: volume-for-mount-json
-            mountPath: /sa.json
-            subPath: sa.json
           - name: hgcapp-data-saved
             mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/saved
           - name: hgcapp-data-stats
             mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/stats
         env:
+          - name: AWS_ACCESS_KEY_ID
+            valueFrom:
+              secretKeyRef:
+                name: backup-uploader-secrets
+                key: AWS_ACCESS_KEY_ID
+          - name: AWS_SECRET_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: backup-uploader-secrets
+                key: AWS_SECRET_ACCESS_KEY
+          - name: RCLONE_CONFIG_BACKUPS_ENDPOINT
+            valueFrom:
+              secretKeyRef:
+                name: backup-uploader-secrets
+                key: RCLONE_CONFIG_BACKUPS_ENDPOINT
+          - name: RCLONE_CONFIG_BACKUPS_REGION
+            valueFrom:
+              secretKeyRef:
+                name: backup-uploader-secrets
+                key: RCLONE_CONFIG_BACKUPS_REGION
+          - name: RCLONE_CONFIG_BACKUPS_TYPE
+            valueFrom:
+              secretKeyRef:
+                name: backup-uploader-secrets
+                key: RCLONE_CONFIG_BACKUPS_TYPE
+          - name: RCLONE_CONFIG_BACKUPS_PROVIDER
+            valueFrom:
+              secretKeyRef:
+                name: backup-uploader-secrets
+                key: RCLONE_CONFIG_BACKUPS_PROVIDER
           - name: BACKUP_UPLOADER_BUCKET_1
             value: {{ default $defaults.sidecars.backupUploader.config.backupBucket ($backupUploader.config).backupBucket | quote }}
         {{- with default $defaults.sidecars.backupUploader.resources $backupUploader.resources }}

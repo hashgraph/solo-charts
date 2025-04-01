@@ -16,8 +16,4 @@ data:
 {{- if $.Values.hedera.configMaps.settingsTxt }}
   settings.txt: {{ toYaml .Values.hedera.configMaps.settingsTxt  | indent 4 }}
 {{- end }}
-{{- if $.Values.defaults.sidecars.backupUploader.enabled }}
-  # populate the credentials for the backup uploader from secret
-  sa.json: {{ toYaml ((index (lookup "v1" "Secret" .Release.Namespace "backup-uploader-secrets").data "saJson" | b64dec) | default "1234abcd")  | indent 4 }}
-{{- end }}
 {{- end }}

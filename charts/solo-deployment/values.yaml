@@ -32,7 +32,7 @@ tester:
   image:
     registry: "ghcr.io"
     repository: "hashgraph/solo-containers/kubectl-bats"
-    tag: "0.36.1"
+    tag: "0.37.0"
     pullPolicy: "IfNotPresent"
   resources: {}
 
@@ -59,7 +59,7 @@ defaults:
     image:
       registry: "ghcr.io"
       repository: "hashgraph/solo-containers/ubi8-init-java21"
-      tag: "0.36.1"
+      tag: "0.37.0"
       pullPolicy: "IfNotPresent"
     resources: {}
     extraEnv: []
@@ -202,11 +202,13 @@ defaults:
       resources: { }
     backupUploader:
       enabled: false
+      type: "s3"
+      provider: "GCS"
       nameOverride: "backup-uploader"
       image:
-        registry: "gcr.io"
-        repository: "hedera-registry/hedera-backups"
-        tag: "0.6.0"
+        registry: "ghcr.io"
+        repository: "hashgraph/solo-containers/backup-uploader"
+        tag: "0.37.0"
         pullPolicy: "IfNotPresent"
       config:
         backupBucket: "backup"
