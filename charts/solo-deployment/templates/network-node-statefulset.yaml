@@ -26,9 +26,6 @@ metadata:
   namespace: {{ default $.Release.Namespace $.Values.global.namespaceOverride }}
   labels:
     app: network-{{ $node.name }}
-  {{- if $.Values.deployment.podLabels }}
-    {{- $.Values.deployment.podLabels | toYaml | nindent 4 }}
-  {{- end }}
   {{- if $.Values.deployment.podAnnotations }}
   annotations:
     {{- $.Values.deployment.podAnnotations | toYaml | nindent 4 }}
@@ -78,6 +75,9 @@ spec:
       {{- end }}
       {{- if or $.Values.deployment.priorityClassName $node.priorityClassName }}
       priorityClassName: {{ default $node.priorityClassName $.Values.deployment.priorityClassName }}
+      {{- end }}
+      {{- if $.Values.deployment.podLabels }}
+        {{- $.Values.deployment.podLabels | toYaml | nindent 4 }}
       {{- end }}
       terminationGracePeriodSeconds: {{ $.Values.terminationGracePeriodSeconds }}
       volumes:
