@@ -26,9 +26,6 @@ metadata:
   namespace: {{ default $.Release.Namespace $.Values.global.namespaceOverride }}
   labels:
     app: network-{{ $node.name }}
-  {{- if $.Values.deployment.podLabels }}
-    {{- $.Values.deployment.podLabels | toYaml | nindent 4 }}
-  {{- end }}
   {{- if $.Values.deployment.podAnnotations }}
   annotations:
     {{- $.Values.deployment.podAnnotations | toYaml | nindent 4 }}
@@ -62,6 +59,9 @@ spec:
         solo.hedera.com/node-name: {{ $node.name }}
         solo.hedera.com/node-id: "{{ $node.nodeId }}"
         solo.hedera.com/account-id: {{ $node.accountId }}
+        {{- if $.Values.deployment.podLabels }}
+        {{- $.Values.deployment.podLabels | toYaml | nindent 8 }}
+        {{- end }}
         {{- include "solo.testLabels" $ | nindent 8 }}
     spec:
       {{- if or $.Values.deployment.nodeSelector $node.nodeSelector }}
