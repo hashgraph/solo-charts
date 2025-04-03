@@ -59,6 +59,9 @@ spec:
         solo.hedera.com/node-name: {{ $node.name }}
         solo.hedera.com/node-id: "{{ $node.nodeId }}"
         solo.hedera.com/account-id: {{ $node.accountId }}
+        {{- if $.Values.deployment.podLabels }}
+        {{- $.Values.deployment.podLabels | toYaml | nindent 8 }}
+        {{- end }}
         {{- include "solo.testLabels" $ | nindent 8 }}
     spec:
       {{- if or $.Values.deployment.nodeSelector $node.nodeSelector }}
@@ -75,9 +78,6 @@ spec:
       {{- end }}
       {{- if or $.Values.deployment.priorityClassName $node.priorityClassName }}
       priorityClassName: {{ default $node.priorityClassName $.Values.deployment.priorityClassName }}
-      {{- end }}
-      {{- if $.Values.deployment.podLabels }}
-        {{- $.Values.deployment.podLabels | toYaml | nindent 4 }}
       {{- end }}
       terminationGracePeriodSeconds: {{ $.Values.terminationGracePeriodSeconds }}
       volumes:
