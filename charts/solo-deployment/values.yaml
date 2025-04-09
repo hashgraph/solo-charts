@@ -208,7 +208,7 @@ defaults:
       image:
         registry: "ghcr.io"
         repository: "hashgraph/solo-containers/backup-uploader"
-        tag: "0.37.0"
+        tag: "0.37.1"
         pullPolicy: "IfNotPresent"
       config:
         backupBucket: "backup"
