@@ -1,4 +1,4 @@
-{{- if or $.Values.hedera.configMaps.apiPermissionsProperties $.Values.hedera.configMaps.applicationProperties $.Values.hedera.configMaps.bootstrapProperties $.Values.hedera.configMaps.genesisNetworkJson }}
+{{- if or $.Values.hedera.configMaps.apiPermissionsProperties $.Values.hedera.configMaps.applicationProperties $.Values.hedera.configMaps.bootstrapProperties $.Values.hedera.configMaps.genesisNetworkJson $.Values.hedera.configMaps.blockNodesJson}}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -21,5 +21,8 @@ data:
 {{- end }}
 {{- if $.Values.hedera.configMaps.genesisThrottlesJson }}
   genesis-throttles.json: {{ toYaml .Values.hedera.configMaps.genesisThrottlesJson | indent 4 }}
+{{- end }}
+{{- if $.Values.hedera.configMaps.blockNodesJson }}
+  block-nodes.json: {{ toYaml .Values.hedera.configMaps.blockNodesJson | indent 4 }}
 {{- end }}
 {{- end }}

@@ -769,6 +769,9 @@ spec:
               if [ -f /data/config/genesis-throttles.json ]; then
                 cp -L /data/config/genesis-throttles.json /opt/hgcapp/services-hedera/HapiApp2.0/data/config
               fi
+              if [ -f /data/config/block-nodes.json ]; then
+                cp -L /data/config/block-nodes.json /opt/hgcapp/services-hedera/HapiApp2.0/data/config
+              fi
 
               chmod 755 -R /opt/hgcapp/services-hedera/HapiApp2.0/data/config
               ls -la /opt/hgcapp/services-hedera/HapiApp2.0/data/config
