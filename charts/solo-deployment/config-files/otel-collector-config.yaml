@@ -4,15 +4,6 @@ receivers:
       grpc:
       http:
 
-  # Collect node metrics
-  prometheus:
-    config:
-      scrape_configs:
-        - job_name: 'node-metrics-scraper' # network-node metrics
-          scrape_interval: {{ .otelDefaults.receivers.prometheus.scrapeInterval }}
-          static_configs:
-            - targets: {{ .otelDefaults.receivers.prometheus.scrapeTargets }}
-
 processors:
   batch:
   # Add standard label sets to both logs and metrics.
