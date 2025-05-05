@@ -201,6 +201,10 @@ defaults:
         tag: "0.72.0"
         pullPolicy: "IfNotPresent"
       resources: {}
+      receivers:
+        prometheus:
+          scrapeTargets: [ 0.0.0.0:9999 ]  # hedera node metrics are exposed at port 9999
+          scrapeInterval: 5s
       exporters:
         otlp:
           endpoint: tempo:4317
