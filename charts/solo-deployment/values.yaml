@@ -32,7 +32,7 @@ tester:
   image:
     registry: "ghcr.io"
     repository: "hashgraph/solo-containers/kubectl-bats"
-    tag: "0.37.0"
+    tag: "0.38.0"
     pullPolicy: "IfNotPresent"
   resources: {}
 
@@ -59,7 +59,7 @@ defaults:
     image:
       registry: "ghcr.io"
       repository: "hashgraph/solo-containers/ubi8-init-java21"
-      tag: "0.37.0"
+      tag: "0.38.0"
       pullPolicy: "IfNotPresent"
     resources: {}
     extraEnv: []
@@ -208,7 +208,7 @@ defaults:
       image:
         registry: "ghcr.io"
         repository: "hashgraph/solo-containers/backup-uploader"
-        tag: "0.37.1"
+        tag: "0.38.0"
         pullPolicy: "IfNotPresent"
       config:
         backupBucket: "backup"
