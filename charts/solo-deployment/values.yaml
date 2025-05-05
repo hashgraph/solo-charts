@@ -43,7 +43,6 @@ defaults:
     enabled: false
     storageClassName: ""
     node:
-      accountBalances: "100Gi"
       eventStreams: "100Gi"
       recordStreams: "100Gi"
       blockStreams: "100Gi"
@@ -147,26 +146,6 @@ defaults:
         registry: "gcr.io"
         repository: "hedera-registry/uploader-mirror"
         tag: "1.3.0"
-        pullPolicy: "IfNotPresent"
-      config:
-        debug: true
-        compression: true
-        reaper:
-          enabled: true
-          minKeep: 1
-          interval: 1
-          defaultBackoff: 1
-        signature:
-          require: true
-          prioritize: true
-      resources: {}
-    accountBalanceUploader:
-      enabled: false
-      nameOverride: "account-balance-uploader"
-      image:
-        registry: gcr.io
-        repository: hedera-registry/uploader-mirror
-        tag: "1.3.0"  # Defaults to the chart's app version if empty
         pullPolicy: "IfNotPresent"
       config:
         debug: true
