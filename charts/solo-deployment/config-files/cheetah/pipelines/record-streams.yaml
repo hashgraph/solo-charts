@@ -1,0 +1,31 @@
+- name: record-streams-uploader
+  stopOnError: "{{ .cheetah.stopOnError }}" # stop the pipeline if any error occurs
+  scanner:
+    directory: /opt/hgcapp/recordStreams
+    pattern: ".rcd_sig"
+    interval: 100ms
+    batchSize: 1000 # max number of files per scanned items batch
+  processor:
+    maxProcessors: 10
+    fileExtensions: [ ".rcd.gz", ".rcd_sig" ]
+    retry:
+      limit: 5 # retry limit for each file to upload to a remote storage
+    storage: # each processor uploads to multiple storages concurrently
+      s3:
+        enabled: true # by default, S3 is enabled, it can be overridden using S3_ENABLED env variable
+        bucket: S3_BUCKET_NAME # use this env variable
+        prefix: S3_BUCKET_PREFIX # use this env variable if available
+        endpoint: S3_ENDPOINT # use this env variable if available
+        region: S3_BUCKET_REGION # use this env variable
+        accessKey: S3_ACCESS_KEY # use this env variable
+        secretKey: S3_SECRET_KEY # use this env variable
+        useSsl: true # it can be overridden using S3_USE_SSL env variable
+      gcs:
+        enabled: false # by default, GCS is disabled, it can be overridden using GCS_ENABLED env variable
+        bucket: GCS_BUCKET_NAME # use this env variable
+        prefix: GCS_BUCKET_PREFIX # use this env variable if available
+        endpoint: GCS_ENDPOINT # use this env variable if available
+        region: GCS_BUCKET_REGION # use this env variable
+        accessKey: GCS_ACCESS_KEY # use this env variable
+        secretKey: GCS_SECRET_KEY # use this env variable
+        useSsl: true # it can be overridden using GCS_USE_SSL env variable

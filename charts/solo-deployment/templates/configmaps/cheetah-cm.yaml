@@ -1,0 +1,31 @@
+# Configmaps for cheetah one for each network node
+{{- range $index, $node := ($.Values.hedera.nodes) }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cheetah-cm-{{ $node.name }}
+  namespace: {{ default $.Release.Namespace $.Values.global.namespaceOverride }}
+  labels:
+    {{- include "solo.testLabels" $ | nindent 4 }}
+data:
+  {{ if $.Values.cheetah.multiple }}
+  cheetah-record-streams.yaml: |-
+    log:
+    {{- tpl ($.Files.Get "config-files/cheetah/logging.yaml") (dict "cheetah" $.Values.cheetah ) | nindent 6 }}
+    pipelines:
+    {{- tpl ($.Files.Get "config-files/cheetah/pipelines/record-streams.yaml") (dict "cheetah" $.Values.cheetah) | nindent 6 }}
+  cheetah-events-streams.yaml: |-
+    log:
+    {{- tpl ($.Files.Get "config-files/cheetah/logging.yaml") (dict "cheetah" $.Values.cheetah ) | nindent 6 }}
+    pipelines:
+    {{- tpl ($.Files.Get "config-files/cheetah/pipelines/events-streams.yaml") (dict "cheetah" $.Values.cheetah) | nindent 6 }}
+  {{ else }}
+  cheetah-all-pipelines.yaml: |- # when a single instance of cheetah is used, this file is used as the config
+    log:
+    {{- tpl ($.Files.Get "config-files/cheetah/logging.yaml") (dict "cheetah" $.Values.cheetah ) | nindent 6 }}
+    pipelines:
+    {{- tpl ($.Files.Get "config-files/cheetah/pipelines/record-streams.yaml") (dict "cheetah" $.Values.cheetah) | nindent 6 }}
+    {{- tpl ($.Files.Get "config-files/cheetah/pipelines/events-streams.yaml") (dict "cheetah" $.Values.cheetah) | nindent 6 }}
+  {{ end }}
+---
+{{ end }}

@@ -1,0 +1,7 @@
+fileLogging: true
+level: Info
+directory: /app/logs
+fileName: cheetah.log
+maxSize: 1
+maxBackups: 10
+maxAge: 30
