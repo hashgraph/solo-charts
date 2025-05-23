@@ -138,9 +138,9 @@ defaults:
       enabled: true
       nameOverride: "blockstream-uploader"
       image:
-        registry: gcr.io
-        repository: hedera-registry/uploader-mirror
-        tag: "2.0.0"  # Defaults to the chart's app version if empty
+        registry: "ghcr.io"
+        repository: "hashgraph/solo-cheetah/cheetah"
+        tag: "0.2.0-20250522"
         pullPolicy: "IfNotPresent"
       resources: { }
     backupUploader:

@@ -209,67 +209,66 @@ spec:
         securityContext:
           {{- include "solo.hedera.security.context" . | nindent 10 }}
         command:
-          - /bin/sh
-          - -c
-          - |
-            /usr/bin/env python3.7 /app/application.py \
-              --linux \
-              --watch-directory /opt/hgcapp/blockStreams/block-{{ $node.accountId }} \
-              {{- if $.Values.cloud.minio.enabled }}
-              --s3-endpoint http://{{ $minioserver.tenant.name }}-hl:9000 \
-              {{- else if $.Values.cloud.s3.enabled }}
-              --s3-endpoint $S3_ENDPOINT \
-              {{- end}}
-              {{- if $.Values.cloud.gcs.enabled }}
-              --gcs-endpoint $GCS_ENDPOINT
-              {{- end }}
+          - /app/bin/cheetah
+          - upload
+          - --config
+          - /app/config/cheetah.yaml
         volumeMounts:
           - name: hgcapp-blockstream
-            mountPath: /opt/hgcapp/blockStreams
+            mountPath: /app/data
+            subPath: block-{{ $node.accountId }}
+          - name: solo-cheetah-config
+            subPath: cheetah-block-streams.yaml
+            mountPath: /app/config/cheetah.yaml
+            readOnly: true
         env:
-          - name: DEBUG
-            value: {{ default $defaults.sidecars.blockstreamUploader.config.debug ($blockstreamUploader.config).debug | quote }}
-          - name: REAPER_ENABLE
-            value: {{ default $defaults.sidecars.blockstreamUploader.config.reaper.enabled (($blockstreamUploader.config).reaper).enabled | quote  }}
-          - name: REAPER_MIN_KEEP
-            value: {{ default $defaults.sidecars.blockstreamUploader.config.reaper.minKeep (($blockstreamUploader.config).reaper).minKeep | quote }}
-          - name: REAPER_INTERVAL
-            value: {{ default $defaults.sidecars.blockstreamUploader.config.reaper.interval (($blockstreamUploader.config).reaper).interval  | quote }}
-          - name: REAPER_DEFAULT_BACKOFF
-            value: {{ default $defaults.sidecars.blockstreamUploader.config.reaper.defaultBackoff (($blockstreamUploader.config).reaper).defaultBackoff | quote }}
-          - name: STREAM_FILE_EXTENSION
-            value: "blk.gz"
-          - name: STREAM_EXTENSION
-            value: {{ default $defaults.sidecars.blockstreamUploader.config.compression ($blockstreamUploader.config).compression | ternary "blk.gz" "blk" | quote }}
-          - name: SIG_REQUIRE
-            value: {{ default $defaults.sidecars.blockstreamUploader.config.signature.require (($blockstreamUploader.config).signature).require | quote }}
-          - name: SIG_PRIORITIZE
-            value: {{ default $defaults.sidecars.blockstreamUploader.config.signature.prioritize (($blockstreamUploader.config).signature).prioritize | quote }}
-          - name: BUCKET_PATH
-            {{- if $cloud.buckets.streamBucketPrefix }}
-            value: "{{ $cloud.buckets.streamBucketPrefix }}/blockStreams/block-{{ $node.accountId }}"
-            {{- else }}
-            value: "blockStreams/block-{{ $node.accountId }}"
-            {{- end }}
-          - name: BUCKET_NAME
+          {{ $bucketPrefix := printf "%s/blockStreams/block-%s" $cloud.buckets.streamBucketPrefix $node.accountId }}
+          {{- if $.Values.cloud.minio.enabled }}
+          - name: S3_ENABLED
+            value: "true"
+          - name: S3_BUCKET_NAME
             value: {{ $cloud.buckets.streamBucket | quote }}
-          - name: S3_ENABLE
-            value: {{- if or $.Values.cloud.minio.enabled $.Values.cloud.s3.enabled }} "true" {{- else }} "false" {{- end }}
-          - name: GCS_ENABLE
-            value: {{ $.Values.cloud.gcs.enabled | quote }}
+          - name: S3_BUCKET_REGION
+            value: {{ $cloud.buckets.streamBucketRegion | quote }}
+          - name: S3_BUCKET_PREFIX
+            value: {{ $bucketPrefix | quote }}
+          - name: S3_ENDPOINT
+            value: "{{ $minioserver.tenant.name }}-hl:9000" # do not use http:// here instead use useSsl=false
+          - name: S3_USE_SSL
+            value: "false"
+          {{- else if $.Values.cloud.s3.enabled }}
+          - name: S3_ENABLED
+            value: "true"
+          - name: S3_BUCKET_NAME
+            value: {{ $cloud.buckets.streamBucket | quote }}
+          - name: S3_BUCKET_REGION
+            value: {{ $cloud.buckets.streamBucketRegion | quote }}
+          - name: S3_BUCKET_PREFIX
+            value: {{ $bucketPrefix | quote }}
+          - name: S3_ENDPOINT
+            valueFrom:
+              secretKeyRef:
+                name: uploader-mirror-secrets
+                key: S3_ENDPOINT # do not use https:// here instead use useSsl=true
+          - name: S3_USE_SSL
+            value: "true"
+          {{- end }}
           {{- if $.Values.cloud.gcs.enabled }}
+          - name: GCS_ENABLED
+            value: "true"
+          - name: GCS_BUCKET_NAME
+            value: {{ $cloud.buckets.streamBucket | quote }}
+          - name: GCS_BUCKET_REGION
+            value: {{ $cloud.buckets.streamBucketRegion | quote }}
+          - name: GCS_BUCKET_PREFIX
+            value: {{ $bucketPrefix | quote }}
           - name: GCS_ENDPOINT
             valueFrom:
               secretKeyRef:
                 name: uploader-mirror-secrets
                 key: GCS_ENDPOINT
-          {{- end }}
-          {{- if $.Values.cloud.s3.enabled }}
-          - name: S3_ENDPOINT
-            valueFrom:
-              secretKeyRef:
-                name: uploader-mirror-secrets
-                key: S3_ENDPOINT
+          - name: GCS_USE_SSL
+            value: "true"
           {{- end }}
         envFrom:
           - secretRef:
@@ -301,7 +300,7 @@ spec:
             mountPath: /app/config/cheetah.yaml
             readOnly: true
         env:
-          {{ $bucketPrefix := printf "%s/recordstreams/record-%s" $cloud.buckets.streamBucketPrefix $node.accountId }}
+          {{ $bucketPrefix := printf "%s/recordstreams/record%s" $cloud.buckets.streamBucketPrefix $node.accountId }}
           {{- if $.Values.cloud.minio.enabled }}
           - name: S3_ENABLED
             value: "true"
@@ -377,7 +376,7 @@ spec:
             mountPath: /app/config/cheetah.yaml
             readOnly: true
         env:
-          {{ $bucketPrefix := printf "%s/recordstreams/record-%s/sidecar" $cloud.buckets.streamBucketPrefix $node.accountId }}
+          {{ $bucketPrefix := printf "%s/recordstreams/record%s/sidecar" $cloud.buckets.streamBucketPrefix $node.accountId }}
           {{- if $.Values.cloud.minio.enabled }}
           - name: S3_ENABLED
             value: "true"

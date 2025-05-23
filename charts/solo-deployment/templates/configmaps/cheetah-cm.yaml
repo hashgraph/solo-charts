@@ -24,6 +24,11 @@ data:
     {{- tpl ($.Files.Get "config-files/cheetah/logging.yaml") (dict "cheetah" $.Values.cheetah ) | nindent 6 }}
     pipelines:
     {{- tpl ($.Files.Get "config-files/cheetah/pipelines/events-streams.yaml") (dict "cheetah" $.Values.cheetah "node" $node) | nindent 6 }}
+  cheetah-block-streams.yaml: |-
+    log:
+    {{- tpl ($.Files.Get "config-files/cheetah/logging.yaml") (dict "cheetah" $.Values.cheetah ) | nindent 6 }}
+    pipelines:
+    {{- tpl ($.Files.Get "config-files/cheetah/pipelines/block-streams.yaml") (dict "cheetah" $.Values.cheetah "node" $node) | nindent 6 }}
   {{ else }}
   cheetah-all-pipelines.yaml: |- # when a single instance of cheetah is used, this file is used as the config
     log:
@@ -32,6 +37,7 @@ data:
     {{- tpl ($.Files.Get "config-files/cheetah/pipelines/record-streams.yaml") (dict "cheetah" $.Values.cheetah "node" $node) | nindent 6 }}
     {{- tpl ($.Files.Get "config-files/cheetah/pipelines/record-streams-sidecar.yaml") (dict "cheetah" $.Values.cheetah "node" $node) | nindent 6 }}
     {{- tpl ($.Files.Get "config-files/cheetah/pipelines/events-streams.yaml") (dict "cheetah" $.Values.cheetah "node" $node ) | nindent 6 }}
+    {{- tpl ($.Files.Get "config-files/cheetah/pipelines/block-streams.yaml") (dict "cheetah" $.Values.cheetah "node" $node ) | nindent 6 }}
   {{ end }}
 ---
 {{ end }}
