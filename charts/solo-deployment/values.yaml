@@ -19,12 +19,20 @@ cloud:
     enabled: false
 
 cheetah:
-  # if true, multiple instances of cheetah will be deployed for all streams files; otherwise, a single instance
-  # will be deployed
-  multiple: true
+  image:
+    registry: "ghcr.io"
+    repository: "hashgraph/solo-cheetah/cheetah"
+    tag: "0.2.0-20250522"
+    pullPolicy: "IfNotPresent"
   # whether it should stop the pipelines if any error occurs; if false, it will continue with the expectation that the
   # error may get fixed in the next run
   stopOnError: false
+  deployment:
+    # if true, a single instance of cheetah will be deployed for all stream files (i.e. record-streams, events-streams, block-streams etc.)
+    # WARNING: Other steams files uploader sidecar configuration will be ignored
+    single: false
+    nameOverride: "cheetah-stream-uploader"
+    resources: {}
 
 # telemetry configurations
 telemetry:
@@ -110,38 +118,18 @@ defaults:
     recordStreamUploader:
       enabled: true
       nameOverride: "record-stream-uploader"
-      image:
-        registry: "ghcr.io"
-        repository: "hashgraph/solo-cheetah/cheetah"
-        tag: "0.2.0-20250522"
-        pullPolicy: "IfNotPresent"
       resources: {}
     recordStreamSidecarUploader:
       enabled: true
       nameOverride: "record-stream-sidecar-uploader"
-      image:
-        registry: "ghcr.io"
-        repository: "hashgraph/solo-cheetah/cheetah"
-        tag: "0.2.0-20250522"
-        pullPolicy: "IfNotPresent"
       resources: {}
     eventStreamUploader:
       enabled: true
       nameOverride: "event-stream-uploader"
-      image:
-        registry: "ghcr.io"
-        repository: "hashgraph/solo-cheetah/cheetah"
-        tag: "0.2.0-20250522"
-        pullPolicy: "IfNotPresent"
       resources: {}
     blockstreamUploader:
       enabled: true
       nameOverride: "blockstream-uploader"
-      image:
-        registry: "ghcr.io"
-        repository: "hashgraph/solo-cheetah/cheetah"
-        tag: "0.2.0-20250522"
-        pullPolicy: "IfNotPresent"
       resources: {}
     backupUploader:
       enabled: false

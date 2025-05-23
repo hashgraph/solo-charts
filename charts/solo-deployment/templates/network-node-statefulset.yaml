@@ -17,6 +17,11 @@
 {{- $nodeStorage := $.Values.defaults.volumeClaims.node }}
 {{- $pvcEnabled := $.Values.defaults.volumeClaims.enabled }}
 {{- $initContainersLength := len $.Values.hedera.initContainers}}
+{{- $cheetah := $.Values.cheetah -}}
+{{ $blockStreamBucketPrefix := printf "%s/blockStreams/block-%s" $cloud.buckets.streamBucketPrefix $node.accountId }}
+{{ $recordStreamBucketPrefix := printf "%s/recordstreams/record%s" $cloud.buckets.streamBucketPrefix $node.accountId }}
+{{ $recordStreamSidecarBucketPrefix := printf "%s/recordstreams/record%s/sidecar" $cloud.buckets.streamBucketPrefix $node.accountId }}
+{{ $eventStreamsBucketPrefix := printf "%s/eventsStreams/events_%s" $cloud.buckets.streamBucketPrefix $node.accountId }}
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -200,12 +205,11 @@ spec:
           {{- with $rootExtraEnv }}
             {{- toYaml . | nindent 10 }}
           {{- end }}
-
-      {{- if $blockstreamUploader.enabled }}
-      # Sidecar: {{ $node.name }}-blockstream-uploader
-      - name: {{ default "blockstream-uploader" $blockstreamUploader.nameOverride }}
-        image: {{ include "solo.container.image" (dict "image" $blockstreamUploader.image "Chart" $.Chart "defaults" $defaults.sidecars.blockstreamUploader ) }}
-        imagePullPolicy: {{ include "solo.images.pullPolicy" (dict "image" $blockstreamUploader.image "defaults" $defaults.sidecars.blockstreamUploader ) }}
+    {{- if $cheetah.deployment.single }}
+      # Sidecar: {{ $node.name }}-cheetah-stream-uploader
+      - name: {{ default "cheetahstream-uploader" $cheetah.deployment.nameOverride }}
+        image: {{ include "solo.container.image" (dict "image" $cheetah.image "Chart" $.Chart ) }}
+        imagePullPolicy: {{ include "solo.images.pullPolicy" (dict "image" $cheetah.image ) }}
         securityContext:
           {{- include "solo.hedera.security.context" . | nindent 10 }}
         command:
@@ -215,14 +219,21 @@ spec:
           - /app/config/cheetah.yaml
         volumeMounts:
           - name: hgcapp-blockstream
-            mountPath: /app/data
+            mountPath: /opt/hgcapp/blockStreams/block-{{ $node.accountId }}
             subPath: block-{{ $node.accountId }}
+          - name: hgcapp-record-streams
+            mountPath: /opt/hgcapp/recordStreams/record{{ $node.accountId }}
+            subPath: record{{ $node.accountId }}
+          - name: hgcapp-record-streams-sidecar
+            mountPath: /opt/hgcapp/recordStreams/sidecar
+          - name: hgcapp-event-streams
+            mountPath: /opt/hgcapp/eventsStreams/events_{{ $node.accountId }}
+            subPath: events_{{ $node.accountId }}
           - name: solo-cheetah-config
-            subPath: cheetah-block-streams.yaml
+            subPath: cheetah.yaml
             mountPath: /app/config/cheetah.yaml
             readOnly: true
         env:
-          {{ $bucketPrefix := printf "%s/blockStreams/block-%s" $cloud.buckets.streamBucketPrefix $node.accountId }}
           {{- if $.Values.cloud.minio.enabled }}
           - name: S3_ENABLED
             value: "true"
@@ -230,8 +241,14 @@ spec:
             value: {{ $cloud.buckets.streamBucket | quote }}
           - name: S3_BUCKET_REGION
             value: {{ $cloud.buckets.streamBucketRegion | quote }}
-          - name: S3_BUCKET_PREFIX
-            value: {{ $bucketPrefix | quote }}
+          - name: S3_BLOCK_STREAMS_BUCKET_PREFIX
+            value: {{ $blockStreamBucketPrefix | quote }}
+          - name: S3_RECORD_STREAMS_BUCKET_PREFIX
+            value: {{ $recordStreamBucketPrefix | quote }}
+          - name: S3_RECORD_STREAMS_SIDECAR_BUCKET_PREFIX
+            value: {{ $recordStreamSidecarBucketPrefix | quote }}
+          - name: S3_EVENTS_STREAMS_BUCKET_PREFIX
+            value: {{ $eventStreamsBucketPrefix | quote }}
           - name: S3_ENDPOINT
             value: "{{ $minioserver.tenant.name }}-hl:9000" # do not use http:// here instead use useSsl=false
           - name: S3_USE_SSL
@@ -243,8 +260,14 @@ spec:
             value: {{ $cloud.buckets.streamBucket | quote }}
           - name: S3_BUCKET_REGION
             value: {{ $cloud.buckets.streamBucketRegion | quote }}
-          - name: S3_BUCKET_PREFIX
-            value: {{ $bucketPrefix | quote }}
+          - name: S3_BLOCK_STREAMS_BUCKET_PREFIX
+            value: {{ $blockStreamBucketPrefix | quote }}
+          - name: S3_RECORD_STREAMS_BUCKET_PREFIX
+            value: {{ $recordStreamBucketPrefix | quote }}
+          - name: S3_RECORD_STREAMS_SIDECAR_BUCKET_PREFIX
+            value: {{ $recordStreamSidecarBucketPrefix | quote }}
+          - name: S3_EVENTS_STREAMS_BUCKET_PREFIX
+            value: {{ $eventStreamsBucketPrefix | quote }}
           - name: S3_ENDPOINT
             valueFrom:
               secretKeyRef:
@@ -260,8 +283,90 @@ spec:
             value: {{ $cloud.buckets.streamBucket | quote }}
           - name: GCS_BUCKET_REGION
             value: {{ $cloud.buckets.streamBucketRegion | quote }}
-          - name: GCS_BUCKET_PREFIX
-            value: {{ $bucketPrefix | quote }}
+          - name: GCS_BLOCK_STREAMS_BUCKET_PREFIX
+            value: {{ $blockStreamBucketPrefix | quote }}
+          - name: GCS_RECORD_STREAMS_BUCKET_PREFIX
+            value: {{ $recordStreamBucketPrefix | quote }}
+          - name: GCS_RECORD_STREAMS_SIDECAR_BUCKET_PREFIX
+            value: {{ $recordStreamSidecarBucketPrefix | quote }}
+          - name: GCS_EVENTS_STREAMS_BUCKET_PREFIX
+            value: {{ $eventStreamsBucketPrefix | quote }}
+          - name: GCS_ENDPOINT
+            valueFrom:
+              secretKeyRef:
+                name: uploader-mirror-secrets
+                key: GCS_ENDPOINT
+          - name: GCS_USE_SSL
+            value: "true"
+          {{- end }}
+        envFrom:
+          - secretRef:
+              name: uploader-mirror-secrets
+          {{- with default $defaults.sidecars.blockstreamUploader.resources $blockstreamUploader.resources }}
+        resources:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+    {{- else }}
+      {{- if $blockstreamUploader.enabled }}
+      # Sidecar: {{ $node.name }}-blockstream-uploader
+      - name: {{ default "blockstream-uploader" $blockstreamUploader.nameOverride }}
+        image: {{ include "solo.container.image" (dict "image" $cheetah.image "Chart" $.Chart ) }}
+        imagePullPolicy: {{ include "solo.images.pullPolicy" (dict "image" $cheetah.image ) }}
+        securityContext:
+          {{- include "solo.hedera.security.context" . | nindent 10 }}
+        command:
+          - /app/bin/cheetah
+          - upload
+          - --config
+          - /app/config/cheetah.yaml
+        volumeMounts:
+          - name: hgcapp-blockstream
+            mountPath: /opt/hgcapp/blockStreams/block-{{ $node.accountId }}
+            subPath: block-{{ $node.accountId }}
+          - name: solo-cheetah-config
+            subPath: cheetah-block-streams.yaml
+            mountPath: /app/config/cheetah.yaml
+            readOnly: true
+        env:
+          {{- if $.Values.cloud.minio.enabled }}
+          - name: S3_ENABLED
+            value: "true"
+          - name: S3_BUCKET_NAME
+            value: {{ $cloud.buckets.streamBucket | quote }}
+          - name: S3_BUCKET_REGION
+            value: {{ $cloud.buckets.streamBucketRegion | quote }}
+          - name: S3_BLOCK_STREAMS_BUCKET_PREFIX
+            value: {{ $blockStreamBucketPrefix | quote }}
+          - name: S3_ENDPOINT
+            value: "{{ $minioserver.tenant.name }}-hl:9000" # do not use http:// here instead use useSsl=false
+          - name: S3_USE_SSL
+            value: "false"
+          {{- else if $.Values.cloud.s3.enabled }}
+          - name: S3_ENABLED
+            value: "true"
+          - name: S3_BUCKET_NAME
+            value: {{ $cloud.buckets.streamBucket | quote }}
+          - name: S3_BUCKET_REGION
+            value: {{ $cloud.buckets.streamBucketRegion | quote }}
+          - name: S3_BLOCK_STREAMS_BUCKET_PREFIX
+            value: {{ $blockStreamBucketPrefix | quote }}
+          - name: S3_ENDPOINT
+            valueFrom:
+              secretKeyRef:
+                name: uploader-mirror-secrets
+                key: S3_ENDPOINT # do not use https:// here instead use useSsl=true
+          - name: S3_USE_SSL
+            value: "true"
+          {{- end }}
+          {{- if $.Values.cloud.gcs.enabled }}
+          - name: GCS_ENABLED
+            value: "true"
+          - name: GCS_BUCKET_NAME
+            value: {{ $cloud.buckets.streamBucket | quote }}
+          - name: GCS_BUCKET_REGION
+            value: {{ $cloud.buckets.streamBucketRegion | quote }}
+          - name: GCS_BLOCK_STREAMS_BUCKET_PREFIX
+            value: {{ $blockStreamBucketPrefix | quote }}
           - name: GCS_ENDPOINT
             valueFrom:
               secretKeyRef:
@@ -282,8 +387,8 @@ spec:
       {{- if $recordStream.enabled }}
       # Sidecar: {{ $node.name }}-record-stream-uploader
       - name: {{ default "record-stream-uploader" $recordStream.nameOverride }}
-        image: {{ include "solo.container.image" (dict "image" $recordStream.image "Chart" $.Chart "defaults" $defaults.sidecars.recordStreamUploader) }}
-        imagePullPolicy: {{ include "solo.images.pullPolicy" (dict "image" $recordStream.image "defaults" $defaults.sidecars.recordStreamUploader) }}
+        image: {{ include "solo.container.image" (dict "image" $cheetah.image "Chart" $.Chart ) }}
+        imagePullPolicy: {{ include "solo.images.pullPolicy" (dict "image" $cheetah.image ) }}
         securityContext:
           {{- include "solo.hedera.security.context" . | nindent 10 }}
         command:
@@ -293,7 +398,7 @@ spec:
           - /app/config/cheetah.yaml
         volumeMounts:
           - name: hgcapp-record-streams
-            mountPath: /app/data
+            mountPath: /opt/hgcapp/recordStreams/record{{ $node.accountId }}
             subPath: record{{ $node.accountId }}
           - name: solo-cheetah-config
             subPath: cheetah-record-streams.yaml
@@ -308,8 +413,8 @@ spec:
             value: {{ $cloud.buckets.streamBucket | quote }}
           - name: S3_BUCKET_REGION
             value: {{ $cloud.buckets.streamBucketRegion | quote }}
-          - name: S3_BUCKET_PREFIX
-            value: {{ $bucketPrefix | quote }}
+          - name: S3_RECORD_STREAMS_BUCKET_PREFIX
+            value: {{ $recordStreamBucketPrefix | quote }}
           - name: S3_ENDPOINT
             value: "{{ $minioserver.tenant.name }}-hl:9000" # do not use http:// here instead use useSsl=false
           - name: S3_USE_SSL
@@ -321,8 +426,8 @@ spec:
             value: {{ $cloud.buckets.streamBucket | quote }}
           - name: S3_BUCKET_REGION
             value: {{ $cloud.buckets.streamBucketRegion | quote }}
-          - name: S3_BUCKET_PREFIX
-            value: {{ $bucketPrefix | quote }}
+          - name: S3_RECORD_STREAMS_BUCKET_PREFIX
+            value: {{ $recordStreamBucketPrefix | quote }}
           - name: S3_ENDPOINT
             valueFrom:
               secretKeyRef:
@@ -338,8 +443,8 @@ spec:
             value: {{ $cloud.buckets.streamBucket | quote }}
           - name: GCS_BUCKET_REGION
             value: {{ $cloud.buckets.streamBucketRegion | quote }}
-          - name: GCS_BUCKET_PREFIX
-            value: {{ $bucketPrefix | quote }}
+          - name: GCS_RECORD_STREAMS_BUCKET_PREFIX
+            value: {{ $recordStreamBucketPrefix | quote }}
           - name: GCS_ENDPOINT
             valueFrom:
               secretKeyRef:
@@ -356,10 +461,12 @@ spec:
           {{- toYaml . | nindent 10 }}
         {{- end }}
       {{- end }}
+
       {{- if $recordStreamSidecar.enabled }}
+      # Sidecar: {{ $node.name }}-record-stream-sidecar-uploader
       - name: {{ default "record-stream-sidecar-uploader" $recordStreamSidecar.nameOverride }}
-        image: {{ include "solo.container.image" (dict "image" $recordStreamSidecar.image "Chart" $.Chart "defaults" $defaults.sidecars.recordStreamSidecarUploader) }}
-        imagePullPolicy: {{ include "solo.images.pullPolicy" (dict "image" $recordStreamSidecar.image "defaults" $defaults.sidecars.recordStreamSidecarUploader) }}
+        image: {{ include "solo.container.image" (dict "image" $cheetah.image "Chart" $.Chart ) }}
+        imagePullPolicy: {{ include "solo.images.pullPolicy" (dict "image" $cheetah.image ) }}
         securityContext:
           {{- include "solo.hedera.security.context" . | nindent 10 }}
         command:
@@ -369,13 +476,12 @@ spec:
           - /app/config/cheetah.yaml
         volumeMounts:
           - name: hgcapp-record-streams-sidecar
-            mountPath: /app/data
+            mountPath: /opt/hgcapp/recordStreams/sidecar
           - name: solo-cheetah-config
             subPath: cheetah-record-streams-sidecar.yaml
             mountPath: /app/config/cheetah.yaml
             readOnly: true
         env:
-          {{ $bucketPrefix := printf "%s/recordstreams/record%s/sidecar" $cloud.buckets.streamBucketPrefix $node.accountId }}
           {{- if $.Values.cloud.minio.enabled }}
           - name: S3_ENABLED
             value: "true"
@@ -383,8 +489,8 @@ spec:
             value: {{ $cloud.buckets.streamBucket | quote }}
           - name: S3_BUCKET_REGION
             value: {{ $cloud.buckets.streamBucketRegion | quote }}
-          - name: S3_BUCKET_PREFIX
-            value: {{ $bucketPrefix | quote }}
+          - name: S3_RECORD_STREAMS_SIDECAR_BUCKET_PREFIX
+            value: {{ $recordStreamSidecarBucketPrefix | quote }}
           - name: S3_ENDPOINT
             value: "{{ $minioserver.tenant.name }}-hl:9000" # do not use http:// here instead use useSsl=false
           - name: S3_USE_SSL
@@ -396,8 +502,8 @@ spec:
             value: {{ $cloud.buckets.streamBucket | quote }}
           - name: S3_BUCKET_REGION
             value: {{ $cloud.buckets.streamBucketRegion | quote }}
-          - name: S3_BUCKET_PREFIX
-            value: {{ $bucketPrefix | quote }}
+          - name: S3_RECORD_STREAMS_SIDECAR_BUCKET_PREFIX
+            value: {{ $recordStreamSidecarBucketPrefix | quote }}
           - name: S3_ENDPOINT
             valueFrom:
               secretKeyRef:
@@ -413,8 +519,8 @@ spec:
             value: {{ $cloud.buckets.streamBucket | quote }}
           - name: GCS_BUCKET_REGION
             value: {{ $cloud.buckets.streamBucketRegion | quote }}
-          - name: GCS_BUCKET_PREFIX
-            value: {{ $bucketPrefix | quote }}
+          - name: GCS_RECORD_STREAMS_SIDECAR_BUCKET_PREFIX
+            value: {{ $recordStreamSidecarBucketPrefix | quote }}
           - name: GCS_ENDPOINT
             valueFrom:
               secretKeyRef:
@@ -431,11 +537,12 @@ spec:
           {{- toYaml . | nindent 10 }}
         {{- end }}
       {{- end }}
+
       {{- if $eventStream.enabled }}
-      # Sidecar: {{ $node.name }}-event-stream-uploader
+        # Sidecar: {{ $node.name }}-event-stream-uploader
       - name: {{ default "event-stream-uploader" $eventStream.nameOverride }}
-        image: {{ include "solo.container.image" (dict "image" $eventStream.image "Chart" $.Chart "defaults" $defaults.sidecars.eventStreamUploader) }}
-        imagePullPolicy: {{ include "solo.images.pullPolicy" (dict "image" $eventStream.image "defaults" $defaults.sidecars.eventStreamUploader) }}
+        image: {{ include "solo.container.image" (dict "image" $cheetah.image "Chart" $.Chart ) }}
+        imagePullPolicy: {{ include "solo.images.pullPolicy" (dict "image" $cheetah.image ) }}
         securityContext:
           {{- include "solo.hedera.security.context" . | nindent 10 }}
         command:
@@ -445,14 +552,13 @@ spec:
           - /app/config/cheetah.yaml
         volumeMounts:
           - name: hgcapp-event-streams
-            mountPath: /app/data
+            mountPath: /opt/hgcapp/eventsStreams/events_{{ $node.accountId }}
             subPath: events_{{ $node.accountId }}
           - name: solo-cheetah-config
             subPath: cheetah-events-streams.yaml
             mountPath: /app/config/cheetah.yaml
             readOnly: true
         env:
-          {{ $bucketPrefix := printf "%s/eventsStreams/events_%s" $cloud.buckets.streamBucketPrefix $node.accountId }}
           {{- if $.Values.cloud.minio.enabled }}
           - name: S3_ENABLED
             value: "true"
@@ -460,8 +566,8 @@ spec:
             value: {{ $cloud.buckets.streamBucket | quote }}
           - name: S3_BUCKET_REGION
             value: {{ $cloud.buckets.streamBucketRegion | quote }}
-          - name: S3_BUCKET_PREFIX
-            value: {{ $bucketPrefix | quote }}
+          - name: S3_EVENTS_STREAMS_BUCKET_PREFIX
+            value: {{ $eventStreamsBucketPrefix | quote }}
           - name: S3_ENDPOINT
             value: "{{ $minioserver.tenant.name }}-hl:9000" # do not use http:// here instead use useSsl=false
           - name: S3_USE_SSL
@@ -473,8 +579,8 @@ spec:
             value: {{ $cloud.buckets.streamBucket | quote }}
           - name: S3_BUCKET_REGION
             value: {{ $cloud.buckets.streamBucketRegion | quote }}
-          - name: S3_BUCKET_PREFIX
-            value: {{ $bucketPrefix | quote }}
+          - name: S3_EVENTS_STREAMS_BUCKET_PREFIX
+            value: {{ $eventStreamsBucketPrefix | quote }}
           - name: S3_ENDPOINT
             valueFrom:
               secretKeyRef:
@@ -490,8 +596,8 @@ spec:
             value: {{ $cloud.buckets.streamBucket | quote }}
           - name: GCS_BUCKET_REGION
             value: {{ $cloud.buckets.streamBucketRegion | quote }}
-          - name: GCS_BUCKET_PREFIX
-            value: {{ $bucketPrefix | quote }}
+          - name: GCS_EVENTS_STREAMS_BUCKET_PREFIX
+            value: {{ $eventStreamsBucketPrefix | quote }}
           - name: GCS_ENDPOINT
             valueFrom:
               secretKeyRef:
@@ -508,6 +614,9 @@ spec:
           {{- toYaml . | nindent 10 }}
         {{- end }}
       {{- end }}
+
+  {{- end }}
+
       {{- if $backupUploader.enabled }}
       # Sidecar: {{ $node.name }}-backup-uploader
       - name: {{ default "backup-uploader" $backupUploader.nameOverride }}
@@ -561,6 +670,7 @@ spec:
           {{- toYaml . | nindent 10 }}
         {{- end }}
       {{- end }}
+
       {{- if $otelCollector.enabled }}
       # Sidecar: {{ $node.name }}-otel-collector
       - name: {{ default "otel-collector" $otelCollector.nameOverride }}
@@ -599,6 +709,7 @@ spec:
           {{- toYaml . | nindent 10 }}
         {{- end }}
       {{- end }}
+
       initContainers:
         {{- if $backupUploader.enabled }}
         # create empty VERSION file before any volume mounted
@@ -627,7 +738,7 @@ spec:
               chmod -R 777 /opt/hgcapp/blockStreams # cheetah needs write access to delete files after upload
 
               mkdir -p /opt/hgcapp/eventsStreams/events_{{ $node.accountId }}
-              chmod 777 /opt/hgcapp/eventsStreams # cheetah needs write access to delete files after upload
+              chmod -R 777 /opt/hgcapp/eventsStreams # cheetah needs write access to delete files after upload
           volumeMounts:
             - name: hgcapp-record-streams
               mountPath: /opt/hgcapp/recordStreams
