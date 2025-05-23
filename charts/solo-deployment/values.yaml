@@ -115,18 +115,6 @@ defaults:
         repository: "hashgraph/solo-cheetah/cheetah"
         tag: "0.2.0-20250522"
         pullPolicy: "IfNotPresent"
-      config:
-        debug: true
-        compression: true
-        sidecar: true
-        reaper:
-          enabled: true
-          minKeep: 1
-          interval: 1
-          defaultBackoff: 1
-        signature:
-          require: true
-          prioritize: true
       resources: { }
     recordStreamSidecarUploader:
       enabled: true
@@ -136,18 +124,6 @@ defaults:
         repository: "hashgraph/solo-cheetah/cheetah"
         tag: "0.2.0-20250522"
         pullPolicy: "IfNotPresent"
-      config:
-        debug: true
-        compression: true
-        sidecar: true
-        reaper:
-          enabled: true
-          minKeep: 1
-          interval: 1
-          defaultBackoff: 1
-        signature:
-          require: false
-          prioritize: false
       resources: { }
     eventStreamUploader:
       enabled: true
@@ -157,17 +133,6 @@ defaults:
         repository: "hashgraph/solo-cheetah/cheetah"
         tag: "0.2.0-20250522"
         pullPolicy: "IfNotPresent"
-      config:
-        debug: true
-        compression: true
-        reaper:
-          enabled: true
-          minKeep: 1
-          interval: 1
-          defaultBackoff: 1
-        signature:
-          require: true
-          prioritize: true
       resources: { }
     blockstreamUploader:
       enabled: true
@@ -177,17 +142,6 @@ defaults:
         repository: hedera-registry/uploader-mirror
         tag: "2.0.0"  # Defaults to the chart's app version if empty
         pullPolicy: "IfNotPresent"
-      config:
-        debug: true
-        compression: true
-        reaper:
-          enabled: true
-          minKeep: 1
-          interval: 1
-          defaultBackoff: 1
-        signature:
-          require: false
-          prioritize: false
       resources: { }
     backupUploader:
       enabled: false
