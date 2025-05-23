@@ -2,12 +2,12 @@
   stopOnError: "{{ .cheetah.stopOnError }}" # stop the pipeline if any error occurs
   scanner:
     directory: /app/data
-    pattern: ".rcd.gz"
+    pattern: ".gz" # file extension only, it doesn't support .rcd.gz
     interval: 100ms
     batchSize: 1000 # max number of files per scanned items batch
   processor:
     maxProcessors: 10
-    fileExtensions: [ ".rcd.gz" ]
+    fileExtensions: [ ".gz" ] # file extension only, it doesn't support .rcd.gz
     retry:
       limit: 5 # retry limit for each file to upload to a remote storage
     storage: # each processor uploads to multiple storages concurrently

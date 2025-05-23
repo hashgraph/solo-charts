@@ -368,9 +368,8 @@ spec:
           - --config
           - /app/config/cheetah.yaml
         volumeMounts:
-          - name: hgcapp-record-streams
+          - name: hgcapp-record-streams-sidecar
             mountPath: /app/data
-            subPath: sidecar
           - name: solo-cheetah-config
             subPath: cheetah-record-streams-sidecar.yaml
             mountPath: /app/config/cheetah.yaml
@@ -621,14 +620,19 @@ spec:
             - |
               mkdir -p /opt/hgcapp/recordStreams/sidecar
               mkdir -p /opt/hgcapp/recordStreams/record{{ $node.accountId }}/uploader-stats
-              chmod -R 777 /opt/hgcapp/recordStreams
+              chmod -R 777 /opt/hgcapp/recordStreams # cheetah needs write access to delete files after upload
+
               mkdir -p /opt/hgcapp/blockStreams/block-{{ $node.accountId }}
               chmod 777 /opt/hgcapp/blockStreams
+              chmod -R 777 /opt/hgcapp/blockStreams # cheetah needs write access to delete files after upload
+
               mkdir -p /opt/hgcapp/eventsStreams/events_{{ $node.accountId }}
-              chmod 777 /opt/hgcapp/eventsStreams
+              chmod 777 /opt/hgcapp/eventsStreams # cheetah needs write access to delete files after upload
           volumeMounts:
             - name: hgcapp-record-streams
               mountPath: /opt/hgcapp/recordStreams
+            - name: hgcapp-record-streams-sidecar
+              mountPath: /opt/hgcapp/recordStreams/sidecar
             - name: hgcapp-blockstream
               mountPath: /opt/hgcapp/blockStreams
             - name: hgcapp-event-streams
