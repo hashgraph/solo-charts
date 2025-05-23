@@ -1,13 +1,13 @@
-- name: record-streams-uploader
+- name: record-streams-sidecar-uploader
   stopOnError: "{{ .cheetah.stopOnError }}" # stop the pipeline if any error occurs
   scanner:
     directory: /app/data
-    pattern: ".rcd_sig"
+    pattern: ".rcd.gz"
     interval: 100ms
     batchSize: 1000 # max number of files per scanned items batch
   processor:
     maxProcessors: 10
-    fileExtensions: [ ".rcd.gz", ".rcd_sig" ]
+    fileExtensions: [ ".rcd.gz" ]
     retry:
       limit: 5 # retry limit for each file to upload to a remote storage
     storage: # each processor uploads to multiple storages concurrently

@@ -294,7 +294,7 @@ spec:
           - /app/config/cheetah.yaml
         volumeMounts:
           - name: hgcapp-record-streams
-            mountPath: /opt/hgcapp/recordStreams
+            mountPath: /app/data
             subPath: record{{ $node.accountId }}
           - name: solo-cheetah-config
             subPath: cheetah-record-streams.yaml
@@ -364,77 +364,66 @@ spec:
         securityContext:
           {{- include "solo.hedera.security.context" . | nindent 10 }}
         command:
-          - /bin/sh
-          - -c
-          - |
-            /usr/bin/env python3.7 /usr/local/bin/mirror.py \
-            --linux \
-            --watch-directory \
-            /opt/hgcapp/recordStreams/sidecar \
-            {{- if $.Values.cloud.minio.enabled }}
-            --s3-endpoint http://{{ $minioserver.tenant.name }}-hl:9000 \
-            {{- else if $.Values.cloud.s3.enabled }}
-            --s3-endpoint $S3_ENDPOINT \
-            {{- end}}
-            {{- if $.Values.cloud.gcs.enabled }}
-            --gcs-endpoint $GCS_ENDPOINT
-            {{- end }}
+          - /app/bin/cheetah
+          - upload
+          - --config
+          - /app/config/cheetah.yaml
         volumeMounts:
           - name: hgcapp-record-streams
-            mountPath: /opt/hgcapp/recordStreams
-            subPath: record{{ $node.accountId }}
+            mountPath: /app/data
+            subPath: sidecar
+          - name: solo-cheetah-config
+            subPath: cheetah-record-streams-sidecar.yaml
+            mountPath: /app/config/cheetah.yaml
+            readOnly: true
         env:
-          - name: DEBUG
-            value: {{ default $defaults.sidecars.recordStreamSidecarUploader.config.debug ($recordStreamSidecar.config).debug | quote }}
-          - name: REAPER_ENABLE
-            value: {{ default $defaults.sidecars.recordStreamSidecarUploader.config.reaper.enabled (($recordStreamSidecar.config).reaper).enabled | quote }}
-          - name: REAPER_MIN_KEEP
-            value: {{ default $defaults.sidecars.recordStreamSidecarUploader.config.reaper.minKeep (($recordStreamSidecar.config).reaper).minKeep | quote }}
-          - name: REAPER_INTERVAL
-            value: {{ default $defaults.sidecars.recordStreamSidecarUploader.config.reaper.interval (($recordStreamSidecar.config).reaper).interval | quote }}
-          - name: REAPER_DEFAULT_BACKOFF
-            value: {{ default $defaults.sidecars.recordStreamSidecarUploader.config.reaper.defaultBackoff (($recordStreamSidecar.config).reaper).defaultBackoff | quote }}
-          - name: STREAM_FILE_EXTENSION
-            value: "rcd"
-          - name: STREAM_SIG_EXTENSION
-            value: "rcd_sig"
-          - name: STREAM_EXTENSION
-            value: {{ default $defaults.sidecars.recordStreamSidecarUploader.config.compression ($recordStreamSidecar.config).compression | ternary "rcd.gz" "rcd" | quote }}
-          - name: SIG_EXTENSION
-            value: "rcd_sig"
-          - name: RECORD_STREAM_COMPRESSION
-            value: {{ default $defaults.sidecars.recordStreamSidecarUploader.config.compression ($recordStreamSidecar.config).compression | quote }}
-          - name: RECORD_STREAM_SIDECAR
-            value: {{ default $defaults.sidecars.recordStreamSidecarUploader.config.sidecar ($recordStreamSidecar.config).sidecar | quote }}
-          - name: SIG_REQUIRE
-            value: {{ default $defaults.sidecars.recordStreamSidecarUploader.config.signature.require (($recordStreamSidecar.config).signature).require | quote }}
-          - name: SIG_PRIORITIZE
-            value: {{ default $defaults.sidecars.recordStreamSidecarUploader.config.signature.prioritize (($recordStreamSidecar.config).signature).prioritize | quote }}
-          - name: BUCKET_PATH
-            {{- if $cloud.buckets.streamBucketPrefix }}
-            value: "{{ $cloud.buckets.streamBucketPrefix }}/recordstreams/record{{ $node.accountId }}/sidecar"
-            {{- else }}
-            value: "recordstreams/record{{ $node.accountId }}/sidecar"
-            {{- end }}
-          - name: BUCKET_NAME
+          {{ $bucketPrefix := printf "%s/recordstreams/record-%s/sidecar" $cloud.buckets.streamBucketPrefix $node.accountId }}
+          {{- if $.Values.cloud.minio.enabled }}
+          - name: S3_ENABLED
+            value: "true"
+          - name: S3_BUCKET_NAME
             value: {{ $cloud.buckets.streamBucket | quote }}
-          - name: S3_ENABLE
-            value: {{- if or $.Values.cloud.minio.enabled $.Values.cloud.s3.enabled }} "true" {{- else }} "false" {{- end }}
-          - name: GCS_ENABLE
-            value: {{ $.Values.cloud.gcs.enabled | quote }}
+          - name: S3_BUCKET_REGION
+            value: {{ $cloud.buckets.streamBucketRegion | quote }}
+          - name: S3_BUCKET_PREFIX
+            value: {{ $bucketPrefix | quote }}
+          - name: S3_ENDPOINT
+            value: "{{ $minioserver.tenant.name }}-hl:9000" # do not use http:// here instead use useSsl=false
+          - name: S3_USE_SSL
+            value: "false"
+          {{- else if $.Values.cloud.s3.enabled }}
+          - name: S3_ENABLED
+            value: "true"
+          - name: S3_BUCKET_NAME
+            value: {{ $cloud.buckets.streamBucket | quote }}
+          - name: S3_BUCKET_REGION
+            value: {{ $cloud.buckets.streamBucketRegion | quote }}
+          - name: S3_BUCKET_PREFIX
+            value: {{ $bucketPrefix | quote }}
+          - name: S3_ENDPOINT
+            valueFrom:
+              secretKeyRef:
+                name: uploader-mirror-secrets
+                key: S3_ENDPOINT # do not use https:// here instead use useSsl=true
+          - name: S3_USE_SSL
+            value: "true"
+          {{- end }}
           {{- if $.Values.cloud.gcs.enabled }}
+          - name: GCS_ENABLED
+            value: "true"
+          - name: GCS_BUCKET_NAME
+            value: {{ $cloud.buckets.streamBucket | quote }}
+          - name: GCS_BUCKET_REGION
+            value: {{ $cloud.buckets.streamBucketRegion | quote }}
+          - name: GCS_BUCKET_PREFIX
+            value: {{ $bucketPrefix | quote }}
           - name: GCS_ENDPOINT
             valueFrom:
               secretKeyRef:
                 name: uploader-mirror-secrets
                 key: GCS_ENDPOINT
-          {{- end }}
-          {{- if $.Values.cloud.s3.enabled }}
-          - name: S3_ENDPOINT
-            valueFrom:
-              secretKeyRef:
-                name: uploader-mirror-secrets
-                key: S3_ENDPOINT
+          - name: GCS_USE_SSL
+            value: "true"
           {{- end }}
         envFrom:
           - secretRef:
@@ -458,7 +447,7 @@ spec:
           - /app/config/cheetah.yaml
         volumeMounts:
           - name: hgcapp-event-streams
-            mountPath: /opt/hgcapp/eventsStreams
+            mountPath: /app/data
             subPath: events_{{ $node.accountId }}
           - name: solo-cheetah-config
             subPath: cheetah-events-streams.yaml
@@ -632,7 +621,6 @@ spec:
             - "-c"
             - |
               mkdir -p /opt/hgcapp/recordStreams/sidecar
-              mkdir -p /opt/hgcapp/recordStreams/record{{ $node.accountId }}/sidecar
               mkdir -p /opt/hgcapp/recordStreams/record{{ $node.accountId }}/uploader-stats
               chmod -R 777 /opt/hgcapp/recordStreams
               mkdir -p /opt/hgcapp/blockStreams/block-{{ $node.accountId }}

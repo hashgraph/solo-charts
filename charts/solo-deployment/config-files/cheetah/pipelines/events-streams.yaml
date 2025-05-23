@@ -1,7 +1,7 @@
 - name: events-streams-uploader
   stopOnError: "{{ .cheetah.stopOnError }}" # stop the pipeline if any error occurs
   scanner:
-    directory: /opt/hgcapp/eventsStreams
+    directory: /app/data
     pattern: ".evts_sig"
     interval: 100ms
     batchSize: 1000 # max number of files per scanned items batch
