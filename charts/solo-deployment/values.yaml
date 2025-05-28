@@ -54,6 +54,8 @@ defaults:
       output: "5Gi"
       config: "1Gi"
       keys: "1Gi"
+      dataLibs: "1Gi"
+      dataApps: "1Gi"
   root: # root container
     image:
       registry: "ghcr.io"
