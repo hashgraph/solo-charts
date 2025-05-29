@@ -52,6 +52,11 @@ jobs:
         # nmt-install.sh uses ubi8-init-dind image
         scriptName: [ direct-install.sh, nmt-install.sh ]
     steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@0634a2670c59f64b4a01f0f96f84700a4088b9f0 # v2.12.0
+        with:
+          egress-policy: audit
+
       - name: Install Task
         uses: arduino/setup-task@b91d5d2c96a56797b48ac1e0e89220bf64044611 # v2.0.0
         with:
