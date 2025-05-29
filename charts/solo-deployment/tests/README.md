@@ -49,7 +49,7 @@ Context: kind-solo-charts-test                    <0> all                <a>    
 
 - Open a separate terminal and run the following commands from the project root
 ```bash 
-  git submodule update --init # install [bats](https://github.com/bats-core) for tests. 
+  git submodule update --init --force # install [bats](https://github.com/bats-core) for tests. 
   cd charts/solo-deployment/tests
   cp .env.template .env # create .env file with defaults
   ./run.sh # run the tests and it will create a log file under `logs` directory
