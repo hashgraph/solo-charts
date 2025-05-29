@@ -15,6 +15,7 @@ SCRIPTS_DIR=scripts
 
 echo "-----------------------------------------------------------------------------------------------------"
 echo "Creating cluster and namespace"
+kind delete cluster -n "${CLUSTER_NAME}" || true
 kind create cluster -n "${CLUSTER_NAME}" --config=dev-cluster.yaml
 
 kubectl create ns "${NAMESPACE}"
