@@ -514,3 +514,5 @@ charts/deleteme.yaml
 node_modules
 dev/resources/nmt/version.properties
 
+charts/solo-deployment/tests/.env
+.github/workflows/support/temp

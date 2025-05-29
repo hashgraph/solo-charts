@@ -1,6 +1,44 @@
 #!/usr/bin/env bash
 start_time=$(date +%s)
 
+function unset_env_vars() {
+    # unset all variables to avoid conflicts later
+    unset CHART_DIR
+    unset CLUSTER_NAME
+    unset CLUSTER_SETUP_VALUES_FILE
+    unset CUR_DIR
+    unset KCTL
+    unset NAMESPACE
+    unset NMT_VERSION
+    unset NODE_NAMES
+    unset PLATFORM_VERSION
+    unset POD_MONITOR_ROLE
+    unset RELEASE_NAME
+    unset SCRIPT_DIR
+    unset SETUP_CHART_DIR
+    unset TELEMETRY_DIR
+    unset TMP_DIR
+    unset USER
+    unset EX_OK
+    unset EX_ERR
+    unset MAX_ATTEMPTS
+    unset HGCAPP_DIR
+    unset NMT_DIR
+    unset HAPI_PATH
+    unset HEDERA_HOME_DIR
+    unset NMT_RELEASE_URL
+    unset NMT_INSTALLER
+    unset NMT_INSTALLER_DIR
+    unset NMT_INSTALLER_PATH
+    unset NMT_PROFILE
+    unset MINOR_VERSION
+    unset PLATFORM_INSTALLER
+    unset PLATFORM_INSTALLER_DIR
+    unset PLATFORM_INSTALLER_PATH
+    unset PLATFORM_INSTALLER_URL
+    unset OPENJDK_VERSION
+}
+
 # -------------------- Helper Functions --------------------------------------------------
 function setup_kubectl_context() {
   load_env_file
@@ -74,31 +112,25 @@ function prepare_platform_software_URL() {
     echo "${platform_url}"
 }
 
-
 # ----------------------------- Setup ENV Variables -------------------------------------------------------------
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
-readonly TMP_DIR="${SCRIPT_DIR}/../temp"
-readonly CLUSTER_SETUP_VALUES_FILE="${TMP_DIR}/cluster-values.yaml"
+TMP_DIR="${SCRIPT_DIR}/../temp"
+CLUSTER_SETUP_VALUES_FILE="${TMP_DIR}/cluster-setup-values.yaml"
 mkdir -p "$TMP_DIR"
 
-USER="${USER:-changeme}"
-CLUSTER_NAME="${CLUSTER_NAME:-solo}"
-NAMESPACE="${NAMESPACE:-solo-${USER}}"
-RELEASE_NAME="${RELEASE_NAME:-solo}"
+USER="${USER:-solo-charts-user}"
+CLUSTER_NAME="${CLUSTER_NAME:-solo-charts-test}"
+NAMESPACE="${NAMESPACE:-solo-charts-test}"
+RELEASE_NAME="${RELEASE_NAME:-solo-charts}"
 NMT_VERSION=v1.2.4
 PLATFORM_VERSION=v0.54.0-alpha.4
-
 POD_MONITOR_ROLE="${POD_MONITOR_ROLE:-pod-monitor-role}"
-
-#NODE_NAMES=(node1 node2 node3 node4)
 NODE_NAMES=(node1 node2 node3)
-
 POD_MONITOR_ROLE="${POD_MONITOR_ROLE:-pod-monitor-role}"
-
-readonly SETUP_CHART_DIR="../../../charts/solo-cluster-setup"
-readonly CHART_DIR="../../../charts/solo-deployment"
-
+SETUP_CHART_DIR="../../../charts/solo-cluster-setup"
+CHART_DIR="../../../charts/solo-deployment"
 # telemetry related env variables
-readonly TELEMETRY_DIR="${SCRIPT_DIR}/../telemetry"
+TELEMETRY_DIR="${SCRIPT_DIR}/../telemetry"
 
 show_env_vars
+

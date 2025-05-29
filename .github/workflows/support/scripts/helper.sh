@@ -3,32 +3,31 @@ CUR_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 source "${CUR_DIR}/env.sh"
 
 KCTL="$(command -v kubectl)"
-readonly KCTL
 
-readonly EX_OK=0
-readonly EX_ERR=1
-readonly MAX_ATTEMPTS=60
-readonly HGCAPP_DIR="/opt/hgcapp"
-readonly NMT_DIR="${HGCAPP_DIR}/node-mgmt-tools"
-readonly HAPI_PATH="${HGCAPP_DIR}/services-hedera/HapiApp2.0"
-readonly HEDERA_HOME_DIR="/home/hedera"
-readonly RELEASE_NAME="${RELEASE_NAME:-solo}"
+EX_OK=0
+EX_ERR=1
+MAX_ATTEMPTS=60
+HGCAPP_DIR="/opt/hgcapp"
+NMT_DIR="${HGCAPP_DIR}/node-mgmt-tools"
+HAPI_PATH="${HGCAPP_DIR}/services-hedera/HapiApp2.0"
+HEDERA_HOME_DIR="/home/hedera"
+RELEASE_NAME="${RELEASE_NAME:-solo}"
 
-readonly NMT_VERSION="${NMT_VERSION:-v2.0.0-alpha.0}"
-readonly NMT_RELEASE_URL="https://api.github.com/repos/swirlds/swirlds-docker/releases/tags/${NMT_VERSION}"
-readonly NMT_INSTALLER="node-mgmt-tools-installer-${NMT_VERSION}.run"
-readonly NMT_INSTALLER_DIR="${SCRIPT_DIR}/../resources/nmt"
-readonly NMT_INSTALLER_PATH="${NMT_INSTALLER_DIR}/${NMT_INSTALLER}"
-readonly NMT_PROFILE="jrs" # we only allow jrs profile
+NMT_VERSION="${NMT_VERSION:-v2.0.0-alpha.0}"
+NMT_RELEASE_URL="https://api.github.com/repos/swirlds/swirlds-docker/releases/tags/${NMT_VERSION}"
+NMT_INSTALLER="node-mgmt-tools-installer-${NMT_VERSION}.run"
+NMT_INSTALLER_DIR="${SCRIPT_DIR}/../resources/nmt"
+NMT_INSTALLER_PATH="${NMT_INSTALLER_DIR}/${NMT_INSTALLER}"
+NMT_PROFILE="jrs" # we only allow jrs profile
 
-readonly PLATFORM_VERSION="${PLATFORM_VERSION:-v0.39.1}"
-readonly MINOR_VERSION=$(parse_minor_version "${PLATFORM_VERSION}")
-readonly PLATFORM_INSTALLER="build-${PLATFORM_VERSION}.zip"
-readonly PLATFORM_INSTALLER_DIR="${SCRIPT_DIR}/../resources/platform"
-readonly PLATFORM_INSTALLER_PATH="${PLATFORM_INSTALLER_DIR}/${PLATFORM_INSTALLER}"
-readonly PLATFORM_INSTALLER_URL=$(prepare_platform_software_URL "${PLATFORM_VERSION}")
+PLATFORM_VERSION="${PLATFORM_VERSION:-v0.39.1}"
+MINOR_VERSION=$(parse_minor_version "${PLATFORM_VERSION}")
+PLATFORM_INSTALLER="build-${PLATFORM_VERSION}.zip"
+PLATFORM_INSTALLER_DIR="${SCRIPT_DIR}/../resources/platform"
+PLATFORM_INSTALLER_PATH="${PLATFORM_INSTALLER_DIR}/${PLATFORM_INSTALLER}"
+PLATFORM_INSTALLER_URL=$(prepare_platform_software_URL "${PLATFORM_VERSION}")
 
-readonly OPENJDK_VERSION="${OPENJDK_VERSION:-21.0.1}"
+OPENJDK_VERSION="${OPENJDK_VERSION:-21.0.1}"
 
 function log_time() {
   local end_time duration execution_time

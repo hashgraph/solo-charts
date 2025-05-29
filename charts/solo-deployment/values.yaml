@@ -9,6 +9,7 @@ cloud:
   buckets:
     streamBucket: "solo-streams"
     streamBucketPrefix: ""
+    streamBucketRegion: "us-east-1"
     backupBucket: "solo-backups" # does not need prefix to save to subfolder, just use "bucket/folder"
   minio:
     enabled: true
@@ -16,6 +17,24 @@ cloud:
     enabled: false
   gcs:
     enabled: false
+
+cheetah:
+  image:
+    registry: "ghcr.io"
+    repository: "hashgraph/solo-cheetah/cheetah"
+    tag: "0.2.1-20250529"
+    pullPolicy: "IfNotPresent"
+  maxProcessors: 10 # max number of concurrent processors for each pipeline
+  # whether it should stop the pipelines if any error occurs; if false, it will continue with the expectation that the
+  # error may get fixed in the next run
+  stopOnError: false
+  deployment:
+    # if true, a single instance of cheetah will be deployed for all stream files (i.e. record-streams, events-streams, block-streams etc.)
+    # WARNING: Other steams files uploader sidecar configuration will be ignored
+    single: false
+    nameOverride: "cheetah-stream-uploader"
+    resources: { }
+
 # telemetry configurations
 telemetry:
   prometheus:
@@ -34,7 +53,7 @@ tester:
     repository: "hashgraph/solo-containers/kubectl-bats"
     tag: "0.38.0"
     pullPolicy: "IfNotPresent"
-  resources: {}
+  resources: { }
 
 # default settings for a single node
 # This default configurations can be overridden for each node in the hedera.nodes section.
@@ -62,8 +81,8 @@ defaults:
       repository: "hashgraph/solo-containers/ubi8-init-java21"
       tag: "0.38.0"
       pullPolicy: "IfNotPresent"
-    resources: {}
-    extraEnv: []
+    resources: { }
+    extraEnv: [ ]
   consensus:
     service:
       type: "NodePort"
@@ -78,12 +97,12 @@ defaults:
       repository: "haproxytech/haproxy-alpine"
       tag: "2.4.25"
       pullPolicy: "IfNotPresent"
-    resources: {}
+    resources: { }
     service:
       type: "NodePort"
       externalTrafficPolicy: "Local"
-      annotations: {}
-      labels: {}
+      annotations: { }
+      labels: { }
   envoyProxy:
     enabled: true
     nameOverride: "envoy-proxy"
@@ -92,94 +111,28 @@ defaults:
       repository: "envoyproxy/envoy"
       tag: "v1.21.1"
       pullPolicy: "IfNotPresent"
-    resources: {}
+    resources: { }
     service:
       type: "NodePort"
       externalTrafficPolicy: "Local"
-      annotations: {}
-      labels: {}
+      annotations: { }
+      labels: { }
   sidecars:
     recordStreamUploader:
       enabled: true
       nameOverride: "record-stream-uploader"
-      image:
-        registry: "gcr.io"
-        repository: "hedera-registry/uploader-mirror"
-        tag: "1.3.0"
-        pullPolicy: "IfNotPresent"
-      config:
-        debug: true
-        compression: true
-        sidecar: true
-        reaper:
-          enabled: true
-          minKeep: 1
-          interval: 1
-          defaultBackoff: 1
-        signature:
-          require: true
-          prioritize: true
-      resources: {}
+      resources: { }
     recordStreamSidecarUploader:
       enabled: true
       nameOverride: "record-stream-sidecar-uploader"
-      image:
-        registry: "gcr.io"
-        repository: "hedera-registry/uploader-mirror"
-        tag: "1.3.0"
-        pullPolicy: "IfNotPresent"
-      config:
-        debug: true
-        compression: true
-        sidecar: true
-        reaper:
-          enabled: true
-          minKeep: 1
-          interval: 1
-          defaultBackoff: 1
-        signature:
-          require: false
-          prioritize: false
-      resources: {}
+      resources: { }
     eventStreamUploader:
       enabled: true
       nameOverride: "event-stream-uploader"
-      image:
-        registry: "gcr.io"
-        repository: "hedera-registry/uploader-mirror"
-        tag: "1.3.0"
-        pullPolicy: "IfNotPresent"
-      config:
-        debug: true
-        compression: true
-        reaper:
-          enabled: true
-          minKeep: 1
-          interval: 1
-          defaultBackoff: 1
-        signature:
-          require: true
-          prioritize: true
-      resources: {}
+      resources: { }
     blockstreamUploader:
       enabled: true
       nameOverride: "blockstream-uploader"
-      image:
-        registry: gcr.io
-        repository: hedera-registry/uploader-mirror
-        tag: "2.0.0"  # Defaults to the chart's app version if empty
-        pullPolicy: "IfNotPresent"
-      config:
-        debug: true
-        compression: true
-        reaper:
-          enabled: true
-          minKeep: 1
-          interval: 1
-          defaultBackoff: 1
-        signature:
-          require: false
-          prioritize: false
       resources: { }
     backupUploader:
       enabled: false
@@ -193,7 +146,7 @@ defaults:
         pullPolicy: "IfNotPresent"
       config:
         backupBucket: "backup"
-      resources: {}
+      resources: { }
     otelCollector:
       enabled: true
       nameOverride: ""
@@ -202,7 +155,7 @@ defaults:
         repository: "otel/opentelemetry-collector-contrib"
         tag: "0.72.0"
         pullPolicy: "IfNotPresent"
-      resources: {}
+      resources: { }
       receivers:
         prometheus:
           scrapeTargets: [ 0.0.0.0:9999 ]  # hedera node metrics are exposed at port 9999
@@ -234,7 +187,7 @@ minio-server:
         name: pool-1
         volumesPerServer: 1
         size: 10Gi
-        nodeSelector: {}
+        nodeSelector: { }
         labels:
           solo.hedera.com/testSuiteName: ""
           solo.hedera.com/testName: ""
@@ -263,9 +216,9 @@ minio-server:
 deployment:
   init:
     enableDnsValidation: true
-  podAnnotations: {}
-  podLabels: {}
-  nodeSelector: {}
+  podAnnotations: { }
+  podLabels: { }
+  nodeSelector: { }
   tolerations:
     - key: "solo-scheduling.io/os"
       operator: "Equal"
@@ -278,8 +231,8 @@ deployment:
   # Specify pod affinity
   # Use complete affinity spec starting with key "nodeAffinity:"
   # Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#node-affinity
-  affinity: {}
-  priorityClassName: {}
+  affinity: { }
+  priorityClassName: { }
   ## PodDisruptionBudget for solo testing pods
   ## Default backend Pod Disruption Budget configuration
   ## ref: https://kubernetes.io/docs/tasks/run-application/configure-pdb/
@@ -326,8 +279,8 @@ envoyDeployment:
 
 # hedera node configuration
 hedera:
-  initContainers: []
-
+  initContainers: [ ]
+  
   configMaps:
     apiPermissionsProperties: ""
     applicationEnv: ""
@@ -339,7 +292,7 @@ hedera:
     genesisNetworkJson: ""
     genesisThrottlesJson: ""
     blockNodesJson: ""
-
+  
   # Only the name of the node is required. The rest of the configuration will be inherited from `defaults` section
   nodes:
     - name: node1
@@ -354,7 +307,7 @@ hedera:
       # Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#node-affinity
       affinity: { }
       priorityClassName: { }
-
+    
     - name: node2
       nodeId: 1
       accountId: 0.0.4
@@ -364,7 +317,7 @@ hedera:
       tolerations: [ ]
       affinity: { }
       priorityClassName: { }
-
+    
     - name: node3
       nodeId: 2
       accountId: 0.0.5
