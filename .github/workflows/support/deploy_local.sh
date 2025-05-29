@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -xeo pipefail
+set -xe -o pipefail
 
 echo "-----------------------------------------------------------------------------------------------------"
 echo "Setting up environment variables"
