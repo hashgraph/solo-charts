@@ -6,7 +6,7 @@
     interval: 100ms
     batchSize: 1000 # max number of files per scanned items batch
   processor:
-    maxProcessors: 10
+    maxProcessors: "{{ .cheetah.maxProcessors }}"
     fileExtensions: [ ".evts", ".evts_sig" ]
     retry:
       limit: 5 # retry limit for each file to upload to a remote storage
