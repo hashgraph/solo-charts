@@ -22,7 +22,7 @@ cheetah:
   image:
     registry: "ghcr.io"
     repository: "hashgraph/solo-cheetah/cheetah"
-    tag: "0.2.0-20250522"
+    tag: "0.2.1-20250529"
     pullPolicy: "IfNotPresent"
   # whether it should stop the pipelines if any error occurs; if false, it will continue with the expectation that the
   # error may get fixed in the next run
