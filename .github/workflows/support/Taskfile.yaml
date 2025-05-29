@@ -10,24 +10,24 @@ tasks:
     cmds:
       - export SCRIPT_NAME={{.script_name}}; ./ci_test.sh
 
-  test:direct:
+  "test:direct":
     cmds:
       - ./ci_test.sh
     env:
       SCRIPT_NAME: direct-install.sh
 
-  test:nmt:
+  "test:nmt":
     cmds:
       - ./ci_test.sh
     env:
       SCRIPT_NAME: nmt-install.sh
       
-  deploy:local: # deploy the network for local testing. to clean up run task cleanup:local
+  "deploy:local": # deploy the network for local testing. to clean up run task cleanup:local
     cmds:
       - ./deploy_local.sh
     env:
       SCRIPT_NAME: direct-install.sh
       
-  cleanup:local:
+  "cleanup:local":
     cmds:
       - kind delete cluster --name solo-charts-test
