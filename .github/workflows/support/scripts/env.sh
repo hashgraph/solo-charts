@@ -76,15 +76,16 @@ function prepare_platform_software_URL() {
 
 
 # ----------------------------- Setup ENV Variables -------------------------------------------------------------
+# if variables are not set or is empty, set it
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
-readonly TMP_DIR="${SCRIPT_DIR}/../temp"
-readonly CLUSTER_SETUP_VALUES_FILE="${TMP_DIR}/cluster-values.yaml"
+TMP_DIR="${SCRIPT_DIR}/../temp"
+CLUSTER_SETUP_VALUES_FILE="${TMP_DIR}/cluster-setup-values.yaml"
 mkdir -p "$TMP_DIR"
 
-USER="${USER:-changeme}"
-CLUSTER_NAME="${CLUSTER_NAME:-solo}"
-NAMESPACE="${NAMESPACE:-solo-${USER}}"
-RELEASE_NAME="${RELEASE_NAME:-solo}"
+USER="${USER:-solo-charts-user}"
+CLUSTER_NAME="${CLUSTER_NAME:-solo-charts-test}"
+NAMESPACE="${NAMESPACE:-solo-charts-test}"
+RELEASE_NAME="${RELEASE_NAME:-solo-charts}"
 NMT_VERSION=v1.2.4
 PLATFORM_VERSION=v0.54.0-alpha.4
 

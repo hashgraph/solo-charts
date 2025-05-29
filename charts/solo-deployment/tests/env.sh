@@ -6,13 +6,14 @@
 CUR_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 
 # set global env variables if not set
-BATS_HOME="${BATS_HOME:-${CUR_DIR}/../../../dev/bats}"
+BATS_HOME="${BATS_HOME:-${CUR_DIR}/../dev/bats}"
 TESTS_DIR="${TESTS_DIR:-${CUR_DIR}}"
 
 TOTAL_NODES="${TOTAL_NODES:-3}"
-USER="${USER:-changeme}"
-NAMESPACE="${NAMESPACE:-solo-${USER}}"
-RELEASE_NAME="${RELEASE_NAME:-solo}"
+USER="${USER:-solo-charts-user}"
+CLUSTER_NAME="${CLUSTER_NAME:-solo-charts-test}"
+NAMESPACE="${NAMESPACE:-solo-charts-test}"
+RELEASE_NAME="${RELEASE_NAME:-solo-charts}"
 LOG_DIR="${LOG_DIR:-${CUR_DIR}/logs}"
 LOG_FILE="${LOG_FILE:-helm-test.log}"
 OUTPUT_LOG="${OUTPUT_LOG:-false}"

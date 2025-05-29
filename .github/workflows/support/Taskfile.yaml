@@ -21,3 +21,13 @@ tasks:
       - ./ci_test.sh
     env:
       SCRIPT_NAME: nmt-install.sh
+      
+  deploy:local: # deploy the network for local testing. to clean up run task cleanup:local
+    cmds:
+      - ./deploy_local.sh
+    env:
+      SCRIPT_NAME: direct-install.sh
+      
+  cleanup:local:
+    cmds:
+      - kind delete cluster --name solo-charts-test
