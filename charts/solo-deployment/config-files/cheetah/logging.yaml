@@ -1,4 +1,4 @@
-fileLogging: true
+fileLogging: false
 level: Info
 directory: /app/logs
 fileName: cheetah.log
