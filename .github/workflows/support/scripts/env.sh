@@ -96,10 +96,10 @@ NODE_NAMES=(node1 node2 node3)
 
 POD_MONITOR_ROLE="${POD_MONITOR_ROLE:-pod-monitor-role}"
 
-readonly SETUP_CHART_DIR="../../../charts/solo-cluster-setup"
-readonly CHART_DIR="../../../charts/solo-deployment"
+SETUP_CHART_DIR="../../../charts/solo-cluster-setup"
+CHART_DIR="../../../charts/solo-deployment"
 
 # telemetry related env variables
-readonly TELEMETRY_DIR="${SCRIPT_DIR}/../telemetry"
+TELEMETRY_DIR="${SCRIPT_DIR}/../telemetry"
 
 show_env_vars
