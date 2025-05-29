@@ -6,7 +6,7 @@
 CUR_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 
 # set global env variables if not set
-BATS_HOME="${BATS_HOME:-${CUR_DIR}/../dev/bats}"
+BATS_HOME="${BATS_HOME:-${CUR_DIR}/../../../dev/bats}"
 TESTS_DIR="${TESTS_DIR:-${CUR_DIR}}"
 
 TOTAL_NODES="${TOTAL_NODES:-3}"
