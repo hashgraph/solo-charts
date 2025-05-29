@@ -32,7 +32,7 @@ cheetah:
     # WARNING: Other steams files uploader sidecar configuration will be ignored
     single: false
     nameOverride: "cheetah-stream-uploader"
-    resources: {}
+    resources: { }
 
 # telemetry configurations
 telemetry:
@@ -52,7 +52,7 @@ tester:
     repository: "hashgraph/solo-containers/kubectl-bats"
     tag: "0.38.0"
     pullPolicy: "IfNotPresent"
-  resources: {}
+  resources: { }
 
 # default settings for a single node
 # This default configurations can be overridden for each node in the hedera.nodes section.
@@ -80,8 +80,8 @@ defaults:
       repository: "hashgraph/solo-containers/ubi8-init-java21"
       tag: "0.38.0"
       pullPolicy: "IfNotPresent"
-    resources: {}
-    extraEnv: []
+    resources: { }
+    extraEnv: [ ]
   consensus:
     service:
       type: "NodePort"
@@ -96,12 +96,12 @@ defaults:
       repository: "haproxytech/haproxy-alpine"
       tag: "2.4.25"
       pullPolicy: "IfNotPresent"
-    resources: {}
+    resources: { }
     service:
       type: "NodePort"
       externalTrafficPolicy: "Local"
-      annotations: {}
-      labels: {}
+      annotations: { }
+      labels: { }
   envoyProxy:
     enabled: true
     nameOverride: "envoy-proxy"
@@ -110,29 +110,29 @@ defaults:
       repository: "envoyproxy/envoy"
       tag: "v1.21.1"
       pullPolicy: "IfNotPresent"
-    resources: {}
+    resources: { }
     service:
       type: "NodePort"
       externalTrafficPolicy: "Local"
-      annotations: {}
-      labels: {}
+      annotations: { }
+      labels: { }
   sidecars:
     recordStreamUploader:
       enabled: true
       nameOverride: "record-stream-uploader"
-      resources: {}
+      resources: { }
     recordStreamSidecarUploader:
       enabled: true
       nameOverride: "record-stream-sidecar-uploader"
-      resources: {}
+      resources: { }
     eventStreamUploader:
       enabled: true
       nameOverride: "event-stream-uploader"
-      resources: {}
+      resources: { }
     blockstreamUploader:
       enabled: true
       nameOverride: "blockstream-uploader"
-      resources: {}
+      resources: { }
     backupUploader:
       enabled: false
       type: "s3"
@@ -145,7 +145,7 @@ defaults:
         pullPolicy: "IfNotPresent"
       config:
         backupBucket: "backup"
-      resources: {}
+      resources: { }
     otelCollector:
       enabled: true
       nameOverride: ""
@@ -154,7 +154,7 @@ defaults:
         repository: "otel/opentelemetry-collector-contrib"
         tag: "0.72.0"
         pullPolicy: "IfNotPresent"
-      resources: {}
+      resources: { }
       receivers:
         prometheus:
           scrapeTargets: [ 0.0.0.0:9999 ]  # hedera node metrics are exposed at port 9999
@@ -215,9 +215,9 @@ minio-server:
 deployment:
   init:
     enableDnsValidation: true
-  podAnnotations: {}
-  podLabels: {}
-  nodeSelector: {}
+  podAnnotations: { }
+  podLabels: { }
+  nodeSelector: { }
   tolerations:
     - key: "solo-scheduling.io/os"
       operator: "Equal"
@@ -230,8 +230,8 @@ deployment:
   # Specify pod affinity
   # Use complete affinity spec starting with key "nodeAffinity:"
   # Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#node-affinity
-  affinity: {}
-  priorityClassName: {}
+  affinity: { }
+  priorityClassName: { }
   ## PodDisruptionBudget for solo testing pods
   ## Default backend Pod Disruption Budget configuration
   ## ref: https://kubernetes.io/docs/tasks/run-application/configure-pdb/
@@ -278,8 +278,8 @@ envoyDeployment:
 
 # hedera node configuration
 hedera:
-  initContainers: []
-
+  initContainers: [ ]
+  
   configMaps:
     apiPermissionsProperties: ""
     applicationEnv: ""
@@ -291,7 +291,7 @@ hedera:
     genesisNetworkJson: ""
     genesisThrottlesJson: ""
     blockNodesJson: ""
-
+  
   # Only the name of the node is required. The rest of the configuration will be inherited from `defaults` section
   nodes:
     - name: node1
@@ -306,7 +306,7 @@ hedera:
       # Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#node-affinity
       affinity: { }
       priorityClassName: { }
-
+    
     - name: node2
       nodeId: 1
       accountId: 0.0.4
@@ -316,7 +316,7 @@ hedera:
       tolerations: [ ]
       affinity: { }
       priorityClassName: { }
-
+    
     - name: node3
       nodeId: 2
       accountId: 0.0.5
