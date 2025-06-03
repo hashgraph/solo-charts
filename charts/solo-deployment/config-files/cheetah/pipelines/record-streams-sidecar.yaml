@@ -1,7 +1,7 @@
 - name: record-streams-sidecar-uploader
   stopOnError: "{{ .cheetah.stopOnError }}" # stop the pipeline if any error occurs
   scanner:
-    directory: /opt/hgcapp/recordStreams/sidecar
+    directory: "/opt/hgcapp/recordStreams/record{{ .node.accountId }}/sidecar"
     pattern: ".gz" # file extension only, it doesn't support .rcd.gz
     interval: 100ms
     batchSize: 1000 # max number of files per scanned items batch
