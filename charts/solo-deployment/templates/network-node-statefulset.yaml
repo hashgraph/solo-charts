@@ -198,6 +198,8 @@ spec:
             mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/lib
           - name: hgcapp-data-apps
             mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/apps
+          - name: hgcapp-data-tmp
+            mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/tmp
         env:
           # these only get used as root, to set them for hedera user ID they need to be populated in the
           # /etc/network-node/application.env, if you want the docker container to use them they need to also be in
