@@ -55,7 +55,6 @@ spec:
     {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-data-keys-pvc" "storage" $nodeStorage.keys "storageClassName" $defaults.volumeClaims.storageClassName) | nindent 4 }}
     {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-data-libs-pvc" "storage" $nodeStorage.dataLibs "storageClassName" $defaults.volumeClaims.storageClassName) | nindent 4 }}
     {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-data-apps-pvc" "storage" $nodeStorage.dataApps "storageClassName" $defaults.volumeClaims.storageClassName) | nindent 4 }}
-    {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-data-tmp-pvc" "storage" $nodeStorage.dataApps "storageClassName" $defaults.volumeClaims.storageClassName) | nindent 4 }}
   {{- end }}
   template:
     metadata:
@@ -100,7 +99,6 @@ spec:
         {{ include "solo.volumeTemplate" (dict "name" "hgcapp-data-keys" "claimName" (printf "%s-%s-%s" "hgcapp-data-keys-pvc-network" $node.name "0") "pvcEnabled" $pvcEnabled ) | nindent 8 }}
         {{ include "solo.volumeTemplate" (dict "name" "hgcapp-data-libs" "claimName" (printf "%s-%s-%s" "hgcapp-data-libs-pvc-network" $node.name "0") "pvcEnabled" $pvcEnabled ) | nindent 8 }}
         {{ include "solo.volumeTemplate" (dict "name" "hgcapp-data-apps" "claimName" (printf "%s-%s-%s" "hgcapp-data-apps-pvc-network" $node.name "0") "pvcEnabled" $pvcEnabled ) | nindent 8 }}
-        {{ include "solo.volumeTemplate" (dict "name" "hgcapp-data-tmp" "claimName" (printf "%s-%s-%s" "hgcapp-data-tmp-pvc-network" $node.name "0") "pvcEnabled" $pvcEnabled ) | nindent 8 }}
         {{- if $otelCollector.enabled }}
         - name: otel-collector-volume
           configMap:
@@ -200,8 +198,6 @@ spec:
             mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/lib
           - name: hgcapp-data-apps
             mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/apps
-          - name: hgcapp-data-tmp
-            mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/tmp
         env:
           # these only get used as root, to set them for hedera user ID they need to be populated in the
           # /etc/network-node/application.env, if you want the docker container to use them they need to also be in
@@ -789,6 +785,8 @@ spec:
               chmod 755 -R /opt/hgcapp/services-hedera/HapiApp2.0/data/keys
               ls -la /opt/hgcapp/services-hedera/HapiApp2.0/data/keys
               {{- end }}
+
+              chmod 755 -R /opt/hgcapp/services-hedera/HapiApp2.0/data/keys
 
               {{- if $.Values.hedera.configMaps.applicationEnv }}
               # copy in the application.env to supply the environment variables to the application, will need
