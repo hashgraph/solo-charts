@@ -1,4 +1,5 @@
 - name: events-streams-uploader
+  enabled: true
   stopOnError: "{{ .cheetah.stopOnError }}" # stop the pipeline if any error occurs
   scanner:
     directory: /opt/hgcapp/eventsStreams/events_{{ .node.accountId }}

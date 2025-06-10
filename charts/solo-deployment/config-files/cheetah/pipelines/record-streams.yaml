@@ -1,4 +1,5 @@
 - name: record-streams-uploader
+  enabled: true
   stopOnError: "{{ .cheetah.stopOnError }}" # stop the pipeline if any error occurs
   scanner:
     directory: /opt/hgcapp/recordStreams/record{{ .node.accountId }}
