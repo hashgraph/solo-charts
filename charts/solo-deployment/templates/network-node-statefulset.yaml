@@ -177,7 +177,7 @@ spec:
           - name: hgcapp-record-streams
             mountPath: /opt/hgcapp/recordStreams
           - name: hgcapp-record-streams-sidecar
-            mountPath: /opt/hgcapp/recordStreams/sidecar
+            mountPath: /opt/hgcapp/recordStreams/record{{ $node.accountId }}/sidecar
           - name: hapi-app-config-volume
             mountPath: /etc/network-node/config
           - name: hgcapp-data-onboard
@@ -230,7 +230,7 @@ spec:
             mountPath: /opt/hgcapp/recordStreams/record{{ $node.accountId }}
             subPath: record{{ $node.accountId }}
           - name: hgcapp-record-streams-sidecar
-            mountPath: /opt/hgcapp/recordStreams/sidecar
+            mountPath: /opt/hgcapp/recordStreams/record{{ $node.accountId }}/sidecar
           - name: hgcapp-event-streams
             mountPath: /opt/hgcapp/eventsStreams/events_{{ $node.accountId }}
             subPath: events_{{ $node.accountId }}
@@ -481,7 +481,7 @@ spec:
           - /app/config/cheetah.yaml
         volumeMounts:
           - name: hgcapp-record-streams-sidecar
-            mountPath: /opt/hgcapp/recordStreams/sidecar
+            mountPath: /opt/hgcapp/recordStreams/record{{ $node.accountId }}/sidecar
           - name: solo-cheetah-config
             subPath: cheetah-record-streams-sidecar.yaml
             mountPath: /app/config/cheetah.yaml
@@ -734,8 +734,8 @@ spec:
             - "/bin/sh"
             - "-c"
             - |
-              mkdir -p /opt/hgcapp/recordStreams/sidecar
               mkdir -p /opt/hgcapp/recordStreams/record{{ $node.accountId }}/uploader-stats
+              mkdir -p /opt/hgcapp/recordStreams/record{{ $node.accountId }}/sidecar
               chmod -R 777 /opt/hgcapp/recordStreams # cheetah needs write access to delete files after upload
 
               mkdir -p /opt/hgcapp/blockStreams/block-{{ $node.accountId }}
@@ -748,7 +748,7 @@ spec:
             - name: hgcapp-record-streams
               mountPath: /opt/hgcapp/recordStreams
             - name: hgcapp-record-streams-sidecar
-              mountPath: /opt/hgcapp/recordStreams/sidecar
+              mountPath: /opt/hgcapp/recordStreams/record{{ $node.accountId }}/sidecar
             - name: hgcapp-blockstream
               mountPath: /opt/hgcapp/blockStreams
             - name: hgcapp-event-streams
