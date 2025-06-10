@@ -11,7 +11,7 @@
     flushDelay: 150ms
     markerCheckConfig:
       checkInterval: 100ms
-      minSize: 925 # minimum size of the marker file in KB to consider it valid
+      minSize: 0 # minimum size of the marker file in KB to consider it valid
       maxAttempts: 5
     retry:
       limit: 5 # retry limit for each file to upload to a remote storage
