@@ -24,7 +24,7 @@ cheetah:
     repository: "hashgraph/solo-cheetah/cheetah"
     tag: "0.2.2-20250610"
     pullPolicy: "IfNotPresent"
-  maxProcessors: 10 # max number of concurrent processors for each pipeline
+  maxProcessors: 30 # max number of concurrent processors for each pipeline
   # whether it should stop the pipelines if any error occurs; if false, it will continue with the expectation that the
   # error may get fixed in the next run
   stopOnError: false
