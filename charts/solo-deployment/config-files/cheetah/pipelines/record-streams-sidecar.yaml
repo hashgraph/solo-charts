@@ -11,8 +11,8 @@
     fileExtensions: [ ".gz" ] # file extension only, it doesn't support .rcd.gz
     flushDelay: 150ms
     markerCheckConfig:
-      checkInterval: 100ms
-      minSize: 0 # minimum size of the marker file in KB to consider it valid
+      checkInterval: 200ms
+      minSize: 200 # minimum size of the marker file in KB to consider it valid
       maxAttempts: 5
     retry:
       limit: 5 # retry limit for each file to upload to a remote storage
