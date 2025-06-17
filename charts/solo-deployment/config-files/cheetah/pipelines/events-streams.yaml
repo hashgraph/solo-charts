@@ -8,10 +8,12 @@
     batchSize: 1000 # max number of files per scanned items batch
   processor:
     maxProcessors: "{{ .cheetah.maxProcessors }}"
-    fileExtensions: [ ".evts", ".evts_sig" ]
+    fileMatcherConfigs:
+      - matcherType: basic
+        patterns: [ ".evts", ".evts_sig" ]
     flushDelay: 150ms
     markerCheckConfig:
-      checkInterval: 100ms
+      checkInterval: 150ms
       minSize: 925 # minimum size of the marker file in KB to consider it valid
       maxAttempts: 5
     retry:

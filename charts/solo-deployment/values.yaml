@@ -122,10 +122,6 @@ defaults:
       enabled: true
       nameOverride: "record-stream-uploader"
       resources: { }
-    recordStreamSidecarUploader:
-      enabled: true
-      nameOverride: "record-stream-sidecar-uploader"
-      resources: { }
     eventStreamUploader:
       enabled: true
       nameOverride: "event-stream-uploader"
