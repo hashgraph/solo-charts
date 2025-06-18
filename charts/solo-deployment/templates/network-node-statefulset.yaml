@@ -43,7 +43,6 @@ spec:
     {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-blockstream-pvc" "storage" $nodeStorage.blockStreams "storageClassName" $defaults.volumeClaims.storageClassName) | nindent 4 }}
     {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-event-streams-pvc" "storage" $nodeStorage.eventStreams "storageClassName" $defaults.volumeClaims.storageClassName) | nindent 4 }}
     {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-record-streams-pvc" "storage" $nodeStorage.recordStreams "storageClassName" $defaults.volumeClaims.storageClassName) | nindent 4 }}
-    {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-record-streams-sidecar-pvc" "storage" $nodeStorage.recordStreamsSidecar "storageClassName" $defaults.volumeClaims.storageClassName) | nindent 4 }}
     {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-data-onboard-pvc" "storage" $nodeStorage.dataOnboard "storageClassName" $defaults.volumeClaims.storageClassName) | nindent 4 }}
     {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-data-saved-pvc" "storage" $nodeStorage.dataSaved "storageClassName" $defaults.volumeClaims.storageClassName) | nindent 4 }}
     {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-data-stats-pvc" "storage" $nodeStorage.dataStats "storageClassName" $defaults.volumeClaims.storageClassName) | nindent 4 }}
@@ -87,7 +86,6 @@ spec:
         {{ include "solo.volumeTemplate" (dict "name" "hgcapp-blockstream" "claimName" (printf "%s-%s-%s" "hgcapp-blockstream-pvc-network" $node.name "0") "pvcEnabled" $pvcEnabled ) | nindent 8 }}
         {{ include "solo.volumeTemplate" (dict "name" "hgcapp-event-streams" "claimName" (printf "%s-%s-%s" "hgcapp-event-streams-pvc-network" $node.name "0") "pvcEnabled" $pvcEnabled ) | nindent 8 }}
         {{ include "solo.volumeTemplate" (dict "name" "hgcapp-record-streams" "claimName" (printf "%s-%s-%s" "hgcapp-record-streams-pvc-network" $node.name "0") "pvcEnabled" $pvcEnabled ) | nindent 8 }}
-        {{ include "solo.volumeTemplate" (dict "name" "hgcapp-record-streams-sidecar" "claimName" (printf "%s-%s-%s" "hgcapp-record-streams-sidecar-pvc-network" $node.name "0") "pvcEnabled" $pvcEnabled ) | nindent 8 }}
         {{ include "solo.volumeTemplate" (dict "name" "hgcapp-data-onboard" "claimName" (printf "%s-%s-%s" "hgcapp-data-onboard-pvc-network" $node.name "0") "pvcEnabled" $pvcEnabled ) | nindent 8 }}
         {{ include "solo.volumeTemplate" (dict "name" "hgcapp-data-saved" "claimName" (printf "%s-%s-%s" "hgcapp-data-saved-pvc-network" $node.name "0") "pvcEnabled" $pvcEnabled ) | nindent 8 }}
         {{ include "solo.volumeTemplate" (dict "name" "hgcapp-data-stats" "claimName" (printf "%s-%s-%s" "hgcapp-data-stats-pvc-network" $node.name "0") "pvcEnabled" $pvcEnabled ) | nindent 8 }}
@@ -174,8 +172,6 @@ spec:
             mountPath: /opt/hgcapp/eventsStreams
           - name: hgcapp-record-streams
             mountPath: /opt/hgcapp/recordStreams
-          - name: hgcapp-record-streams-sidecar
-            mountPath: /opt/hgcapp/recordStreams/record{{ $node.accountId }}/sidecar
           - name: hapi-app-config-volume
             mountPath: /etc/network-node/config
           - name: hgcapp-data-onboard
@@ -663,8 +659,6 @@ spec:
           volumeMounts:
             - name: hgcapp-record-streams
               mountPath: /opt/hgcapp/recordStreams
-            - name: hgcapp-record-streams-sidecar
-              mountPath: /opt/hgcapp/recordStreams/record{{ $node.accountId }}/sidecar
             - name: hgcapp-blockstream
               mountPath: /opt/hgcapp/blockStreams
             - name: hgcapp-event-streams
