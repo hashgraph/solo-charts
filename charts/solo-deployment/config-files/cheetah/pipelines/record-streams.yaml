@@ -1,4 +1,5 @@
 - name: record-streams-uploader
+  enabled: true
   stopOnError: "{{ .cheetah.stopOnError }}" # stop the pipeline if any error occurs
   scanner:
     directory: /opt/hgcapp/recordStreams/record{{ .node.accountId }}
@@ -8,6 +9,11 @@
   processor:
     maxProcessors: "{{ .cheetah.maxProcessors }}"
     fileExtensions: [ ".rcd.gz", ".rcd_sig" ]
+    flushDelay: 150ms
+    markerCheckConfig:
+      checkInterval: 100ms
+      minSize: 925 # minimum size of the marker file in KB to consider it valid
+      maxAttempts: 5
     retry:
       limit: 5 # retry limit for each file to upload to a remote storage
     storage: # each processor uploads to multiple storages concurrently

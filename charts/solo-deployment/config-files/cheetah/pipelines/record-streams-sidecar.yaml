@@ -1,13 +1,19 @@
 - name: record-streams-sidecar-uploader
+  enabled: true
   stopOnError: "{{ .cheetah.stopOnError }}" # stop the pipeline if any error occurs
   scanner:
-    directory: /opt/hgcapp/recordStreams/sidecar
+    directory: "/opt/hgcapp/recordStreams/record{{ .node.accountId }}/sidecar"
     pattern: ".gz" # file extension only, it doesn't support .rcd.gz
     interval: 100ms
     batchSize: 1000 # max number of files per scanned items batch
   processor:
     maxProcessors: "{{ .cheetah.maxProcessors }}"
     fileExtensions: [ ".gz" ] # file extension only, it doesn't support .rcd.gz
+    flushDelay: 150ms
+    markerCheckConfig:
+      checkInterval: 100ms
+      minSize: 0 # minimum size of the marker file in KB to consider it valid
+      maxAttempts: 5
     retry:
       limit: 5 # retry limit for each file to upload to a remote storage
     storage: # each processor uploads to multiple storages concurrently
