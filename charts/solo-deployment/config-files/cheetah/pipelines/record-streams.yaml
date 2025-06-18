@@ -12,7 +12,7 @@
       - matcherType: basic
         patterns: [ ".rcd.gz", ".rcd_sig" ]
       - matcherType: sequential
-        patterns: [ "sidecar/{{`{{.markerName}}`}}_##.gz" ] # ensure Helm does not interpret it as template expressions
+        patterns: [ "sidecar/{{`{{.markerName}}`}}_##.rcd.gz" ] # ensure Helm does not interpret it as template expressions
     flushDelay: 150ms
     markerCheckConfig:
       checkInterval: 150ms
