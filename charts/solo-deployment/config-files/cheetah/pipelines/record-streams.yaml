@@ -8,17 +8,21 @@
     batchSize: 1000 # max number of files per scanned items batch
   processor:
     maxProcessors: "{{ .cheetah.maxProcessors }}"
-    fileExtensions: [ ".rcd.gz", ".rcd_sig" ]
+    fileMatcherConfigs:
+      - matcherType: basic
+        patterns: [ ".rcd.gz", ".rcd_sig" ]
+      - matcherType: sequential
+        patterns: [ "sidecar/{{`{{.markerName}}`}}_##.rcd.gz" ] # ensure Helm does not interpret it as template expressions
     flushDelay: 150ms
     markerCheckConfig:
-      checkInterval: 100ms
+      checkInterval: 150ms
       minSize: 925 # minimum size of the marker file in KB to consider it valid
       maxAttempts: 5
     retry:
       limit: 5 # retry limit for each file to upload to a remote storage
     storage: # each processor uploads to multiple storages concurrently
       s3:
-        enabled: true # by default, S3 is enabled, it can be overridden using S3_ENABLED env variable
+        enabled: false # by default, S3 is disabled, it can be overridden using S3_ENABLED env variable
         bucket: S3_BUCKET_NAME # use this env variable
         prefix: S3_RECORD_STREAMS_BUCKET_PREFIX # use this env variable if available
         endpoint: S3_ENDPOINT # use this env variable if available

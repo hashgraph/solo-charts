@@ -22,7 +22,7 @@ cheetah:
   image:
     registry: "ghcr.io"
     repository: "hashgraph/solo-cheetah/cheetah"
-    tag: "0.2.2-20250610"
+    tag: "0.3.0-20250620" # https://github.com/hashgraph/solo-cheetah/pkgs/container/solo-cheetah%2Fcheetah
     pullPolicy: "IfNotPresent"
   maxProcessors: 30 # max number of concurrent processors for each pipeline
   # whether it should stop the pipelines if any error occurs; if false, it will continue with the expectation that the
@@ -121,10 +121,6 @@ defaults:
     recordStreamUploader:
       enabled: true
       nameOverride: "record-stream-uploader"
-      resources: { }
-    recordStreamSidecarUploader:
-      enabled: true
-      nameOverride: "record-stream-sidecar-uploader"
       resources: { }
     eventStreamUploader:
       enabled: true

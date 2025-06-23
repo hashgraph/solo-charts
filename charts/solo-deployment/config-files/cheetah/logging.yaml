@@ -1,5 +1,5 @@
 fileLogging: false
-level: Info
+level: Debug
 directory: /app/logs
 fileName: cheetah.log
 maxSize: 1

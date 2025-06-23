@@ -6,7 +6,6 @@
 {{- $rootExtraEnv := ($root).extraEnv | default $.Values.defaults.root.extraEnv -}}
 {{- $rootImage := ($node.root).image | default $.Values.defaults.root.image -}}
 {{- $recordStream := ($node.sidecars).recordStreamUploader | default $.Values.defaults.sidecars.recordStreamUploader -}}
-{{- $recordStreamSidecar := ($node.sidecars).recordStreamSidecarUploader | default $.Values.defaults.sidecars.recordStreamSidecarUploader -}}
 {{- $eventStream := ($node.sidecars).eventStreamUploader | default $.Values.defaults.sidecars.eventStreamUploader -}}
 {{- $blockstreamUploader := ($node.sidecars).blockstreamUploader | default $.Values.defaults.sidecars.blockstreamUploader -}}
 {{- $backupUploader := ($node.sidecars).backupUploader | default $.Values.defaults.sidecars.backupUploader -}}
@@ -20,7 +19,6 @@
 {{- $cheetah := $.Values.cheetah -}}
 {{ $blockStreamBucketPrefix := printf "%s/blockStreams/block-%s" $cloud.buckets.streamBucketPrefix $node.accountId }}
 {{ $recordStreamBucketPrefix := printf "%s/recordstreams/record%s" $cloud.buckets.streamBucketPrefix $node.accountId }}
-{{ $recordStreamSidecarBucketPrefix := printf "%s/recordstreams/record%s/sidecar" $cloud.buckets.streamBucketPrefix $node.accountId }}
 {{ $eventStreamsBucketPrefix := printf "%s/eventsStreams/events_%s" $cloud.buckets.streamBucketPrefix $node.accountId }}
 ---
 apiVersion: apps/v1
@@ -45,7 +43,6 @@ spec:
     {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-blockstream-pvc" "storage" $nodeStorage.blockStreams "storageClassName" $defaults.volumeClaims.storageClassName) | nindent 4 }}
     {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-event-streams-pvc" "storage" $nodeStorage.eventStreams "storageClassName" $defaults.volumeClaims.storageClassName) | nindent 4 }}
     {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-record-streams-pvc" "storage" $nodeStorage.recordStreams "storageClassName" $defaults.volumeClaims.storageClassName) | nindent 4 }}
-    {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-record-streams-sidecar-pvc" "storage" $nodeStorage.recordStreamsSidecar "storageClassName" $defaults.volumeClaims.storageClassName) | nindent 4 }}
     {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-data-onboard-pvc" "storage" $nodeStorage.dataOnboard "storageClassName" $defaults.volumeClaims.storageClassName) | nindent 4 }}
     {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-data-saved-pvc" "storage" $nodeStorage.dataSaved "storageClassName" $defaults.volumeClaims.storageClassName) | nindent 4 }}
     {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-data-stats-pvc" "storage" $nodeStorage.dataStats "storageClassName" $defaults.volumeClaims.storageClassName) | nindent 4 }}
@@ -89,7 +86,6 @@ spec:
         {{ include "solo.volumeTemplate" (dict "name" "hgcapp-blockstream" "claimName" (printf "%s-%s-%s" "hgcapp-blockstream-pvc-network" $node.name "0") "pvcEnabled" $pvcEnabled ) | nindent 8 }}
         {{ include "solo.volumeTemplate" (dict "name" "hgcapp-event-streams" "claimName" (printf "%s-%s-%s" "hgcapp-event-streams-pvc-network" $node.name "0") "pvcEnabled" $pvcEnabled ) | nindent 8 }}
         {{ include "solo.volumeTemplate" (dict "name" "hgcapp-record-streams" "claimName" (printf "%s-%s-%s" "hgcapp-record-streams-pvc-network" $node.name "0") "pvcEnabled" $pvcEnabled ) | nindent 8 }}
-        {{ include "solo.volumeTemplate" (dict "name" "hgcapp-record-streams-sidecar" "claimName" (printf "%s-%s-%s" "hgcapp-record-streams-sidecar-pvc-network" $node.name "0") "pvcEnabled" $pvcEnabled ) | nindent 8 }}
         {{ include "solo.volumeTemplate" (dict "name" "hgcapp-data-onboard" "claimName" (printf "%s-%s-%s" "hgcapp-data-onboard-pvc-network" $node.name "0") "pvcEnabled" $pvcEnabled ) | nindent 8 }}
         {{ include "solo.volumeTemplate" (dict "name" "hgcapp-data-saved" "claimName" (printf "%s-%s-%s" "hgcapp-data-saved-pvc-network" $node.name "0") "pvcEnabled" $pvcEnabled ) | nindent 8 }}
         {{ include "solo.volumeTemplate" (dict "name" "hgcapp-data-stats" "claimName" (printf "%s-%s-%s" "hgcapp-data-stats-pvc-network" $node.name "0") "pvcEnabled" $pvcEnabled ) | nindent 8 }}
@@ -176,8 +172,6 @@ spec:
             mountPath: /opt/hgcapp/eventsStreams
           - name: hgcapp-record-streams
             mountPath: /opt/hgcapp/recordStreams
-          - name: hgcapp-record-streams-sidecar
-            mountPath: /opt/hgcapp/recordStreams/record{{ $node.accountId }}/sidecar
           - name: hapi-app-config-volume
             mountPath: /etc/network-node/config
           - name: hgcapp-data-onboard
@@ -250,8 +244,6 @@ spec:
             value: {{ $blockStreamBucketPrefix | quote }}
           - name: S3_RECORD_STREAMS_BUCKET_PREFIX
             value: {{ $recordStreamBucketPrefix | quote }}
-          - name: S3_RECORD_STREAMS_SIDECAR_BUCKET_PREFIX
-            value: {{ $recordStreamSidecarBucketPrefix | quote }}
           - name: S3_EVENTS_STREAMS_BUCKET_PREFIX
             value: {{ $eventStreamsBucketPrefix | quote }}
           - name: S3_ENDPOINT
@@ -269,8 +261,6 @@ spec:
             value: {{ $blockStreamBucketPrefix | quote }}
           - name: S3_RECORD_STREAMS_BUCKET_PREFIX
             value: {{ $recordStreamBucketPrefix | quote }}
-          - name: S3_RECORD_STREAMS_SIDECAR_BUCKET_PREFIX
-            value: {{ $recordStreamSidecarBucketPrefix | quote }}
           - name: S3_EVENTS_STREAMS_BUCKET_PREFIX
             value: {{ $eventStreamsBucketPrefix | quote }}
           - name: S3_ENDPOINT
@@ -292,8 +282,6 @@ spec:
             value: {{ $blockStreamBucketPrefix | quote }}
           - name: GCS_RECORD_STREAMS_BUCKET_PREFIX
             value: {{ $recordStreamBucketPrefix | quote }}
-          - name: GCS_RECORD_STREAMS_SIDECAR_BUCKET_PREFIX
-            value: {{ $recordStreamSidecarBucketPrefix | quote }}
           - name: GCS_EVENTS_STREAMS_BUCKET_PREFIX
             value: {{ $eventStreamsBucketPrefix | quote }}
           - name: GCS_ENDPOINT
@@ -462,82 +450,6 @@ spec:
           - secretRef:
               name: uploader-mirror-secrets
         {{- with default $defaults.sidecars.recordStreamUploader.resources $recordStream.resources }}
-        resources:
-          {{- toYaml . | nindent 10 }}
-        {{- end }}
-      {{- end }}
-
-      {{- if $recordStreamSidecar.enabled }}
-      # Sidecar: {{ $node.name }}-record-stream-sidecar-uploader
-      - name: {{ default "record-stream-sidecar-uploader" $recordStreamSidecar.nameOverride }}
-        image: {{ include "solo.container.image" (dict "image" $cheetah.image "Chart" $.Chart ) }}
-        imagePullPolicy: {{ include "solo.images.pullPolicy" (dict "image" $cheetah.image ) }}
-        securityContext:
-          {{- include "solo.hedera.security.context" . | nindent 10 }}
-        command:
-          - /app/bin/cheetah
-          - upload
-          - --config
-          - /app/config/cheetah.yaml
-        volumeMounts:
-          - name: hgcapp-record-streams-sidecar
-            mountPath: /opt/hgcapp/recordStreams/record{{ $node.accountId }}/sidecar
-          - name: solo-cheetah-config
-            subPath: cheetah-record-streams-sidecar.yaml
-            mountPath: /app/config/cheetah.yaml
-            readOnly: true
-        env:
-          {{- if $.Values.cloud.minio.enabled }}
-          - name: S3_ENABLED
-            value: "true"
-          - name: S3_BUCKET_NAME
-            value: {{ $cloud.buckets.streamBucket | quote }}
-          - name: S3_BUCKET_REGION
-            value: {{ $cloud.buckets.streamBucketRegion | quote }}
-          - name: S3_RECORD_STREAMS_SIDECAR_BUCKET_PREFIX
-            value: {{ $recordStreamSidecarBucketPrefix | quote }}
-          - name: S3_ENDPOINT
-            value: "{{ $minioserver.tenant.name }}-hl:9000" # do not use http:// here instead use useSsl=false
-          - name: S3_USE_SSL
-            value: "false"
-          {{- else if $.Values.cloud.s3.enabled }}
-          - name: S3_ENABLED
-            value: "true"
-          - name: S3_BUCKET_NAME
-            value: {{ $cloud.buckets.streamBucket | quote }}
-          - name: S3_BUCKET_REGION
-            value: {{ $cloud.buckets.streamBucketRegion | quote }}
-          - name: S3_RECORD_STREAMS_SIDECAR_BUCKET_PREFIX
-            value: {{ $recordStreamSidecarBucketPrefix | quote }}
-          - name: S3_ENDPOINT
-            valueFrom:
-              secretKeyRef:
-                name: uploader-mirror-secrets
-                key: S3_ENDPOINT # do not use https:// here instead use useSsl=true
-          - name: S3_USE_SSL
-            value: "true"
-          {{- end }}
-          {{- if $.Values.cloud.gcs.enabled }}
-          - name: GCS_ENABLED
-            value: "true"
-          - name: GCS_BUCKET_NAME
-            value: {{ $cloud.buckets.streamBucket | quote }}
-          - name: GCS_BUCKET_REGION
-            value: {{ $cloud.buckets.streamBucketRegion | quote }}
-          - name: GCS_RECORD_STREAMS_SIDECAR_BUCKET_PREFIX
-            value: {{ $recordStreamSidecarBucketPrefix | quote }}
-          - name: GCS_ENDPOINT
-            valueFrom:
-              secretKeyRef:
-                name: uploader-mirror-secrets
-                key: GCS_ENDPOINT
-          - name: GCS_USE_SSL
-            value: "true"
-          {{- end }}
-        envFrom:
-          - secretRef:
-              name: uploader-mirror-secrets
-        {{- with default $defaults.sidecars.recordStreamSidecarUploader.resources $recordStreamSidecar.resources }}
         resources:
           {{- toYaml . | nindent 10 }}
         {{- end }}
@@ -747,8 +659,6 @@ spec:
           volumeMounts:
             - name: hgcapp-record-streams
               mountPath: /opt/hgcapp/recordStreams
-            - name: hgcapp-record-streams-sidecar
-              mountPath: /opt/hgcapp/recordStreams/record{{ $node.accountId }}/sidecar
             - name: hgcapp-blockstream
               mountPath: /opt/hgcapp/blockStreams
             - name: hgcapp-event-streams
