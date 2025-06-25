@@ -17,9 +17,10 @@
 {{- $pvcEnabled := $.Values.defaults.volumeClaims.enabled }}
 {{- $initContainersLength := len $.Values.hedera.initContainers}}
 {{- $cheetah := $.Values.cheetah -}}
-{{ $blockStreamBucketPrefix := printf "%s/blockStreams/block-%s" $cloud.buckets.streamBucketPrefix $node.accountId }}
-{{ $recordStreamBucketPrefix := printf "%s/recordstreams/record%s" $cloud.buckets.streamBucketPrefix $node.accountId }}
-{{ $eventStreamsBucketPrefix := printf "%s/eventsStreams/events_%s" $cloud.buckets.streamBucketPrefix $node.accountId }}
+{{- $bucketPrefix := toString $cloud.buckets.streamBucketPrefix }}
+{{ $blockStreamBucketPrefix := printf "%s/blockStreams/block-%s" $bucketPrefix $node.accountId }}
+{{ $recordStreamBucketPrefix := printf "%s/recordstreams/record%s" $bucketPrefix $node.accountId }}
+{{ $eventStreamsBucketPrefix := printf "%s/eventsStreams/events_%s" $bucketPrefix $node.accountId }}
 ---
 apiVersion: apps/v1
 kind: StatefulSet
