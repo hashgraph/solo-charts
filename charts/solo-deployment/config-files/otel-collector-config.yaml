@@ -4,15 +4,6 @@ receivers:
       grpc:
       http:
 
-  # Collect node metrics
-  prometheus:
-    config:
-      scrape_configs:
-        - job_name: 'node-metrics-scraper' # network-node metrics
-          scrape_interval: {{ .otelDefaults.receivers.prometheus.scrapeInterval }}
-          static_configs:
-            - targets: {{ .otelDefaults.receivers.prometheus.scrapeTargets }}
-
 processors:
   batch:
   # Add standard label sets to both logs and metrics.
@@ -41,21 +32,8 @@ exporters:
     const_labels:
       source: p-{{ default "otel-collector" .otelDefaults.nameOverride }} # PromQL: {source="p-otel-collector"}
 
-  {{- if .otelDefaults.exporters.prometheusRemoteWrite.enabled }}
-  prometheusremotewrite:
-    endpoint: "{{ .otelDefaults.exporters.prometheusRemoteWrite.endpoint }}"
-    tls:
-      {{- .otelDefaults.exporters.prometheusRemoteWrite.tls | toYaml | nindent 6 }}
-    external_labels:
-      source: prw-{{ default "otel-collector" .otelDefaults.nameOverride }} # PromQL: {source="prw-otel-collector"}
-  {{- end }}
-
   otlp:
     endpoint: "{{ .otelDefaults.exporters.otlp.endpoint }}"
-    {{- if .otelDefaults.exporters.otlp.headers }}
-    headers:
-      {{- .otelDefaults.exporters.otlp.headers | toYaml | nindent 6 }}
-    {{- end }}
     tls:
       {{- .otelDefaults.exporters.otlp.tls | toYaml | nindent 6 }}
 
@@ -77,6 +55,3 @@ service:
         - batch
       exporters:
         - prometheus
-        {{- if .otelDefaults.exporters.prometheusRemoteWrite.enabled }}
-        - prometheusremotewrite
-        {{- end }}
