@@ -33,7 +33,7 @@
       gcs:
         enabled: false # by default, GCS is disabled, it can be overridden using GCS_ENABLED env variable
         bucket: GCS_BUCKET_NAME # use this env variable
-        prefix: GCS_BUCKET_PREFIX # use this env variable if available
+        prefix: GCS_RECORD_STREAMS_BUCKET_PREFIX # use this env variable if available
         endpoint: GCS_ENDPOINT # use this env variable if available
         region: GCS_BUCKET_REGION # use this env variable
         accessKey: GCS_ACCESS_KEY # use this env variable
