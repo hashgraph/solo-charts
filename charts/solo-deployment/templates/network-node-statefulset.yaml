@@ -2,25 +2,26 @@
 {{- $hapiAppSecrets := lookup "v1" "Secret" $.Release.Namespace "network-node-hapi-app-secrets" }}
 {{- $networkNodeKeySecretName := (printf "network-%s-keys-secrets" $node.name) }}
 {{- $networkNodeKeySecrets := lookup "v1" "Secret" $.Release.Namespace $networkNodeKeySecretName }}
-{{- $root := $node.root | default $.Values.defaults.root -}}
-{{- $rootExtraEnv := ($root).extraEnv | default $.Values.defaults.root.extraEnv -}}
-{{- $rootImage := ($node.root).image | default $.Values.defaults.root.image -}}
-{{- $recordStream := ($node.sidecars).recordStreamUploader | default $.Values.defaults.sidecars.recordStreamUploader -}}
-{{- $eventStream := ($node.sidecars).eventStreamUploader | default $.Values.defaults.sidecars.eventStreamUploader -}}
-{{- $blockstreamUploader := ($node.sidecars).blockstreamUploader | default $.Values.defaults.sidecars.blockstreamUploader -}}
-{{- $backupUploader := ($node.sidecars).backupUploader | default $.Values.defaults.sidecars.backupUploader -}}
-{{- $otelCollector := ($node.sidecars).otelCollector | default $.Values.defaults.sidecars.otelCollector -}}
+{{- $root := $node.root | default $.Values.defaults.root }}
+{{- $rootExtraEnv := ($root).extraEnv | default $.Values.defaults.root.extraEnv }}
+{{- $rootImage := ($node.root).image | default $.Values.defaults.root.image }}
+{{- $recordStream := ($node.sidecars).recordStreamUploader | default $.Values.defaults.sidecars.recordStreamUploader }}
+{{- $eventStream := ($node.sidecars).eventStreamUploader | default $.Values.defaults.sidecars.eventStreamUploader }}
+{{- $blockstreamUploader := ($node.sidecars).blockstreamUploader | default $.Values.defaults.sidecars.blockstreamUploader }}
+{{- $backupUploader := ($node.sidecars).backupUploader | default $.Values.defaults.sidecars.backupUploader }}
+{{- $otelCollector := ($node.sidecars).otelCollector | default $.Values.defaults.sidecars.otelCollector }}
 {{- $cloud := $.Values.cloud }}
 {{- $defaults := $.Values.defaults }}
 {{- $minioserver := (index $.Values "minio-server") }}
 {{- $nodeStorage := $.Values.defaults.volumeClaims.node }}
 {{- $pvcEnabled := $.Values.defaults.volumeClaims.enabled }}
-{{- $initContainersLength := len $.Values.hedera.initContainers}}
-{{- $cheetah := $.Values.cheetah -}}
-{{- $bucketPrefix := toString $cloud.buckets.streamBucketPrefix }}
-{{ $blockStreamBucketPrefix := printf "%s/blockStreams/block-%s" $bucketPrefix $node.accountId }}
-{{ $recordStreamBucketPrefix := printf "%s/recordstreams/record%s" $bucketPrefix $node.accountId }}
-{{ $eventStreamsBucketPrefix := printf "%s/eventsStreams/events_%s" $bucketPrefix $node.accountId }}
+{{- $initContainersLength := len $.Values.hedera.initContainers }}
+{{- $cheetah := $.Values.cheetah }}
+{{- $bucketPrefixString := toString $cloud.buckets.streamBucketPrefix }}
+{{- $bucketPrefix := empty $bucketPrefixString | ternary "" (printf "%s/" $bucketPrefixString) }}
+{{- $blockStreamBucketPrefix := printf "%sblockStreams/block-%s" $bucketPrefix $node.accountId }}
+{{- $recordStreamBucketPrefix := printf "%srecordstreams/record%s" $bucketPrefix $node.accountId }}
+{{ $eventStreamsBucketPrefix := printf "%seventsStreams/events_%s" $bucketPrefix $node.accountId -}}
 ---
 apiVersion: apps/v1
 kind: StatefulSet
