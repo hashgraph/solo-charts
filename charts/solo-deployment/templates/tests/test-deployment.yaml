@@ -16,6 +16,10 @@ spec:
   tolerations:
     {{- $.Values.deployment.tolerations | toYaml | nindent 8 }}
     {{- end }}
+    {{- if $.Values.deployment.topologySpreadConstraints  }}
+  topologySpreadConstraints:
+    {{- $.Values.deployment.topologySpreadConstraints | toYaml | nindent 8 }}
+    {{- end }}
     {{- if $.Values.deployment.affinity }}
   affinity:
     {{- $.Values.deployment.affinity | toYaml | nindent 8 }}
