@@ -224,6 +224,9 @@ deployment:
       operator: "Equal"
       value: "network"
       effect: "NoSchedule"
+  # Specify pod topology spread
+  # Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints    
+  topologySpreadConstraints: [ ]
   # Specify pod affinity
   # Use complete affinity spec starting with key "nodeAffinity:"
   # Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#node-affinity
@@ -255,6 +258,9 @@ haproxyDeployment:
   podLabels: { }
   nodeSelector: { }
   tolerations: [ ]
+  # Specify pod topology spread
+  # Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints    
+  topologySpreadConstraints: [ ]
   # Specify pod affinity
   # Use complete affinity spec starting with key "nodeAffinity:"
   # Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#node-affinity
@@ -267,6 +273,9 @@ envoyDeployment:
   podLabels: { }
   nodeSelector: { }
   tolerations: [ ]
+  # Specify pod topology spread
+  # Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints    
+  topologySpreadConstraints: [ ]
   # Specify pod affinity
   # Use complete affinity spec starting with key "nodeAffinity:"
   # Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#node-affinity
@@ -298,6 +307,7 @@ hedera:
       haproxyStaticIP: "" # Static IP for HAProxy can be empty if not used
       nodeSelector: { }
       tolerations: [ ]
+      topologySpreadConstraints: [ ]
       # Specify pod affinity
       # Use complete affinity spec starting with key "nodeAffinity:"
       # Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#node-affinity
@@ -311,6 +321,7 @@ hedera:
       haproxyStaticIP: ""
       nodeSelector: { }
       tolerations: [ ]
+      topologySpreadConstraints: [ ]
       affinity: { }
       priorityClassName: { }
     
@@ -321,5 +332,6 @@ hedera:
       haproxyStaticIP: ""
       nodeSelector: { }
       tolerations: [ ]
+      topologySpreadConstraints: [ ]
       affinity: { }
       priorityClassName: { }
