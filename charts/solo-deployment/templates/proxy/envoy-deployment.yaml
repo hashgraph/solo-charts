@@ -31,6 +31,10 @@ spec:
       tolerations:
         {{- default $node.tolerations (default $.Values.deployment.tolerations $.Values.envoyDeployment.tolerations) | toYaml | nindent 8 }}
       {{- end }}
+      {{- if or $.Values.envoyDeployment.topologySpreadConstraints (or $.Values.deployment.topologySpreadConstraints $node.topologySpreadConstraints) }}
+      topologySpreadConstraints:
+        {{- default $node.topologySpreadConstraints (default $.Values.deployment.topologySpreadConstraints $.Values.envoyDeployment.topologySpreadConstraints) | toYaml | nindent 8 }}
+      {{- end }}
       {{- if or $.Values.envoyDeployment.affinity (or $.Values.deployment.affinity $node.affinity) }}
       affinity:
         {{- default $node.affinity (default $.Values.deployment.affinity $.Values.envoyDeployment.affinity) | toYaml | nindent 8 }}
