@@ -1,8 +1,9 @@
 enabled: true
 interval: 5s
-directory: stats
 serverHost: 127.0.0.1
 serverPort: 6060
-maxSize: 100 # in MB
 enablePprofServer: true
 pprofPort: 6061
+fileLogging: false # disable writing stats to file
+directory: stats
+maxSize: 100 # in MB
