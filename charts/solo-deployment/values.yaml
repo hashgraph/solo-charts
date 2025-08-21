@@ -22,9 +22,9 @@ cheetah:
   image:
     registry: "ghcr.io"
     repository: "hashgraph/solo-cheetah/cheetah"
-    tag: "0.3.2" # https://github.com/hashgraph/solo-cheetah/pkgs/container/solo-cheetah%2Fcheetah
+    tag: "0.3.3" # https://github.com/hashgraph/solo-cheetah/pkgs/container/solo-cheetah%2Fcheetah
     pullPolicy: "IfNotPresent"
-  maxProcessors: 30 # max number of concurrent processors for each pipeline
+  maxProcessors: 10 # max number of concurrent processors for each pipeline
   # whether it should stop the pipelines if any error occurs; if false, it will continue with the expectation that the
   # error may get fixed in the next run
   stopOnError: false
