@@ -63,6 +63,9 @@ spec:
         solo.hedera.com/node-name: {{ $node.name }}
         solo.hedera.com/node-id: "{{ $node.nodeId }}"
         solo.hedera.com/account-id: {{ $node.accountId }}
+        {{- if $node.labels }}
+        {{-  $node.labels | toYaml | nindent 8 }}
+        {{- end }}
         {{- if $.Values.deployment.podLabels }}
         {{- $.Values.deployment.podLabels | toYaml | nindent 8 }}
         {{- end }}
