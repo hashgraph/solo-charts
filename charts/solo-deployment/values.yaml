@@ -313,6 +313,7 @@ hedera:
       # Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#node-affinity
       affinity: { }
       priorityClassName: { }
+      labels: {}
     
     - name: node2
       nodeId: 1
@@ -324,6 +325,7 @@ hedera:
       topologySpreadConstraints: [ ]
       affinity: { }
       priorityClassName: { }
+      labels: {}
     
     - name: node3
       nodeId: 2
@@ -335,3 +337,4 @@ hedera:
       topologySpreadConstraints: [ ]
       affinity: { }
       priorityClassName: { }
+      labels: {}
