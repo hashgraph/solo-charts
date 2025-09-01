@@ -41,6 +41,12 @@ telemetry:
     svcMonitor:
       enabled: true
 
+crds:
+  podLog:
+    enabled: false
+  serviceMonitor:
+    enabled: false
+
 # reduce default termination grace period
 terminationGracePeriodSeconds: 10
 

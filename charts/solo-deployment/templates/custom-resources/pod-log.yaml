@@ -1,0 +1,22 @@
+{{- if $.Values.crds.podLog.enabled }}
+apiVersion: monitoring.grafana.com/v1alpha2
+kind: PodLogs
+metadata:
+  name: solo-pod-logs
+  namespace: {{ default $.Release.Namespace $.Values.global.namespaceOverride }}
+  annotations:
+    helm.sh/hook: post-install,post-upgrade
+    helm.sh/hook-weight: "5"
+spec:
+  selector:
+    matchLabels:
+      solo.hedera.com/type: network-node
+  namespaceSelector:
+    matchLabels:
+      solo.hedera.com/type: network-node
+  relabelings:
+    - sourceLabels: [__meta_kubernetes_pod_container_name]
+      targetLabel: container_name
+    - sourceLabels: [__meta_kubernetes_pod_name]
+      targetLabel: pod_name
+{{- end }}
