@@ -35,12 +35,6 @@ cheetah:
     nameOverride: "cheetah-stream-uploader"
     resources: { }
 
-# telemetry configurations
-telemetry:
-  prometheus:
-    svcMonitor:
-      enabled: true
-
 crds:
   podLog:
     enabled: false
