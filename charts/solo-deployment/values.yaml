@@ -22,9 +22,9 @@ cheetah:
   image:
     registry: "ghcr.io"
     repository: "hashgraph/solo-cheetah/cheetah"
-    tag: "0.3.1" # https://github.com/hashgraph/solo-cheetah/pkgs/container/solo-cheetah%2Fcheetah
+    tag: "0.3.4" # https://github.com/hashgraph/solo-cheetah/pkgs/container/solo-cheetah%2Fcheetah
     pullPolicy: "IfNotPresent"
-  maxProcessors: 30 # max number of concurrent processors for each pipeline
+  maxProcessors: 10 # max number of concurrent processors for each pipeline
   # whether it should stop the pipelines if any error occurs; if false, it will continue with the expectation that the
   # error may get fixed in the next run
   stopOnError: false
@@ -225,7 +225,7 @@ deployment:
       value: "network"
       effect: "NoSchedule"
   # Specify pod topology spread
-  # Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints    
+  # Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints
   topologySpreadConstraints: [ ]
   # Specify pod affinity
   # Use complete affinity spec starting with key "nodeAffinity:"
@@ -259,7 +259,7 @@ haproxyDeployment:
   nodeSelector: { }
   tolerations: [ ]
   # Specify pod topology spread
-  # Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints    
+  # Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints
   topologySpreadConstraints: [ ]
   # Specify pod affinity
   # Use complete affinity spec starting with key "nodeAffinity:"
@@ -274,7 +274,7 @@ envoyDeployment:
   nodeSelector: { }
   tolerations: [ ]
   # Specify pod topology spread
-  # Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints    
+  # Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints
   topologySpreadConstraints: [ ]
   # Specify pod affinity
   # Use complete affinity spec starting with key "nodeAffinity:"

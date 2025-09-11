@@ -241,6 +241,13 @@ spec:
             subPath: cheetah.yaml
             mountPath: /app/config/cheetah.yaml
             readOnly: true
+        ports:
+          - name: pprof
+            containerPort: 6061
+            protocol: TCP
+          - name: stats
+            containerPort: 6060
+            protocol: TCP
         env:
           {{- if $.Values.cloud.minio.enabled }}
           - name: S3_ENABLED
@@ -329,6 +336,13 @@ spec:
             subPath: cheetah-block-streams.yaml
             mountPath: /app/config/cheetah.yaml
             readOnly: true
+        ports:
+          - name: pprof
+            containerPort: 6061
+            protocol: TCP
+          - name: stats
+            containerPort: 6060
+            protocol: TCP
         env:
           {{- if $.Values.cloud.minio.enabled }}
           - name: S3_ENABLED
@@ -406,6 +420,13 @@ spec:
             subPath: cheetah-record-streams.yaml
             mountPath: /app/config/cheetah.yaml
             readOnly: true
+        ports:
+          - name: pprof
+            containerPort: 6061
+            protocol: TCP
+          - name: stats
+            containerPort: 6060
+            protocol: TCP
         env:
           {{ $bucketPrefix := printf "%s/recordstreams/record%s" $cloud.buckets.streamBucketPrefix $node.accountId }}
           {{- if $.Values.cloud.minio.enabled }}
@@ -484,6 +505,10 @@ spec:
             subPath: cheetah-events-streams.yaml
             mountPath: /app/config/cheetah.yaml
             readOnly: true
+        ports:
+          - name: pprof
+            containerPort: 6061
+            protocol: TCP
         env:
           {{- if $.Values.cloud.minio.enabled }}
           - name: S3_ENABLED
