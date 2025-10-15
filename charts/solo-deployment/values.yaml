@@ -35,11 +35,11 @@ cheetah:
     nameOverride: "cheetah-stream-uploader"
     resources: { }
 
-# telemetry configurations
-telemetry:
-  prometheus:
-    svcMonitor:
-      enabled: true
+crds:
+  podLog:
+    enabled: false
+  serviceMonitor:
+    enabled: false
 
 # reduce default termination grace period
 terminationGracePeriodSeconds: 10
