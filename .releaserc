@@ -60,7 +60,8 @@
           "charts/solo-deployment/Chart.yaml",
           "charts/solo-cluster-setup/Chart.yaml",
           "charts/solo-cert-manager/Chart.yaml",
-        ]
+        ],
+        "message": "chore(release): ${nextRelease.version} [skip ci]\n\nSigned-off-by: Hedera Automation <hedera-eng-automation@swirldslabs.com>"
       }
     ]
   ],
