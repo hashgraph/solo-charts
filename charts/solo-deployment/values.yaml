@@ -35,6 +35,12 @@ cheetah:
     nameOverride: "cheetah-stream-uploader"
     resources: { }
 
+crds:
+  podLog:
+    enabled: true
+  serviceMonitor:
+    enabled: true
+
 # reduce default termination grace period
 terminationGracePeriodSeconds: 10
 
