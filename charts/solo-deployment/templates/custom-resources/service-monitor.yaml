@@ -1,7 +1,5 @@
-{{- $hasV1a2 := .Capabilities.APIVersions.Has "monitoring.grafana.com/v1alpha2" -}}
-{{- $hasV1a1 := .Capabilities.APIVersions.Has "monitoring.grafana.com/v1alpha1" -}}
-{{- if and $.Values.crds.podLog.enabled (or $hasV1a2 $hasV1a1) }}
-apiVersion: {{- if $hasV1a2 -}}monitoring.grafana.com/v1alpha2{{- else -}}monitoring.grafana.com/v1alpha1{{- end }}
+{{- if $.Values.crds.serviceMonitor.enabled }}
+apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: solo-service-monitor

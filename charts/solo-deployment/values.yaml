@@ -37,9 +37,9 @@ cheetah:
 
 crds:
   podLog:
-    enabled: true
+    enabled: false
   serviceMonitor:
-    enabled: true
+    enabled: false
 
 # reduce default termination grace period
 terminationGracePeriodSeconds: 10
