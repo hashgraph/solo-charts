@@ -1,4 +1,4 @@
-{{- if $.Values.crds.serviceMonitor.enabled }}
+{{- if $.Values.crs.serviceMonitor.enabled }}
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
