@@ -38,6 +38,7 @@ cheetah:
 crs:
   podLog:
     enabled: false
+
   serviceMonitor:
     enabled: false
 
