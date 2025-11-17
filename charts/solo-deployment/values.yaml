@@ -80,7 +80,7 @@ defaults:
     image:
       registry: "ghcr.io"
       repository: "hashgraph/solo-containers/ubi8-init-java21"
-      tag: "0.39.1"
+      tag: "0.40.0"
       pullPolicy: "IfNotPresent"
     resources: { }
     extraEnv: [ ]
@@ -286,7 +286,7 @@ envoyDeployment:
 # hedera node configuration
 hedera:
   initContainers: [ ]
-  
+
   configMaps:
     apiPermissionsProperties: ""
     applicationEnv: ""
@@ -298,7 +298,7 @@ hedera:
     genesisNetworkJson: ""
     genesisThrottlesJson: ""
     blockNodesJson: ""
-  
+
   # Only the name of the node is required. The rest of the configuration will be inherited from `defaults` section
   nodes:
     - name: node1
@@ -315,7 +315,7 @@ hedera:
       affinity: { }
       priorityClassName: { }
       labels: {}
-    
+
     - name: node2
       nodeId: 1
       accountId: 0.0.4
@@ -327,7 +327,7 @@ hedera:
       affinity: { }
       priorityClassName: { }
       labels: {}
-    
+
     - name: node3
       nodeId: 2
       accountId: 0.0.5
