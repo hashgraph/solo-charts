@@ -37,9 +37,9 @@ echo "============================================================="
 readonly test_file=$1
 
 if [[ -z "${test_file}" ]]; then
-  "${BATS_HOME}/bats-core/bin/bats" "${TESTS_DIR}" "--xtrace"
+  "${BATS_HOME}/bats-core/bin/bats" --trace --print-output-on-failure --timing --tap --show-output-of-passing-tests --verbose-run ${TESTS_DIR}
 else
-  "${BATS_HOME}/bats-core/bin/bats" "${TESTS_DIR}/${test_file}" "--xtrace"
+  "${BATS_HOME}/bats-core/bin/bats" --trace --print-output-on-failure --timing --tap --show-output-of-passing-tests --verbose-run ${TESTS_DIR}/${test_file}
 fi
 
 readonly bats_exec_status=$?
