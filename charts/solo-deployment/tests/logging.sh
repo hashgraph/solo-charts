@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-set -x
 
 function clear_log() {
   if [[ -f "${LOG_DIR}/${LOG_FILE}" ]]; then

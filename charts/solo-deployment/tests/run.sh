@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-set -x
 CUR_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 source "${CUR_DIR}/env.sh"
 source "${CUR_DIR}/logging.sh"
