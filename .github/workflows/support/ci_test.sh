@@ -85,8 +85,12 @@ kubectl wait --for=jsonpath='{.status.phase}'=Running pod -l solo.hedera.com/typ
 echo "Running helm chart tests (takes ~5m, timeout 15m)... "
 echo "-----------------------------------------------------------------------------------------------------"
 sleep 10
-helm test "${RELEASE_NAME}" --filter name=network-test --timeout 15m
+helm test "${RELEASE_NAME}" --filter name=network-test --timeout 15m || HELM_TEST_STATUS=$?
 kubectl logs network-test
+if [[ -n "${HELM_TEST_STATUS}" ]]; then
+  echo "Helm test failed with status ${HELM_TEST_STATUS}"
+  exit "${HELM_TEST_STATUS}"
+fi
 
 echo "-----------------------------------------------------------------------------------------------------"
 echo "Setup and start nodes"
