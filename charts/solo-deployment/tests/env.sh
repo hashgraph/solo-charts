@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -x
 # This file initializes the core mandatory env variables
 # Every script must load (source) this in the beginning
 # Warning: avoid making these variables readonly since it can be sourced multiple times

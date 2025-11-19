@@ -1,4 +1,5 @@
 # bats file_tags=deployment-test
+# bats docs: https://bats-core.readthedocs.io/en/stable/
 setup() {
     source "$(dirname "${BATS_TEST_FILENAME}")/env.sh"
     source "${TESTS_DIR}/load.sh"

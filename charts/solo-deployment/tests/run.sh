@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -x
 CUR_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 source "${CUR_DIR}/env.sh"
 source "${CUR_DIR}/logging.sh"
@@ -36,6 +37,7 @@ echo "Running BATS: '${BATS_HOME}/bats-core/bin/bats ${TESTS_DIR}'"
 echo "============================================================="
 readonly test_file=$1
 
+# bats docs: https://bats-core.readthedocs.io/en/stable/
 if [[ -z "${test_file}" ]]; then
   "${BATS_HOME}/bats-core/bin/bats" --trace --print-output-on-failure --timing --tap --show-output-of-passing-tests --verbose-run ${TESTS_DIR}
 else
