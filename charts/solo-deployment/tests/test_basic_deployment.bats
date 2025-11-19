@@ -77,7 +77,6 @@ setup() {
       break # break at first node error
     fi
 
-    set +x
     log_pass "systemctl is running in node ${node}"
   done
 
@@ -89,6 +88,8 @@ setup() {
   log_debug ""
   log_debug "[${test_status}] systemctl is running in all network node containers"
   log_debug ""
+
+  set +x
 
   # assert success
   [[ "${test_status}" = "${PASS}" ]]
