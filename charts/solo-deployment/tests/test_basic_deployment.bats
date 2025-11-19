@@ -36,7 +36,6 @@ setup() {
 }
 
 @test "Check systemctl is running in all root containers" {
-  set -x
   local resp="$(get_pod_list network-node)"
   local nodes=(${resp}) # convert into an array
 
@@ -89,8 +88,6 @@ setup() {
   log_debug ""
   log_debug "[${test_status}] systemctl is running in all network node containers"
   log_debug ""
-
-  set +x
 
   # assert success
   [[ "${test_status}" = "${PASS}" ]]
