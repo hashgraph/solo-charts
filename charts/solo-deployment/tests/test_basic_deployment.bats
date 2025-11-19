@@ -60,10 +60,10 @@ setup() {
 
       kubectl exec "${node}" -c root-container -n "${NAMESPACE}" -- bash -c "curl -s http://localhost:9999/metrics" > status.txt
       #kubectl exec "${node}" -c root-container -n "${NAMESPACE}" -- bash -c "curl -s http://localhost:9999/metrics | grep platform_PlatformStatus | grep -v \# | grep '^platform_PlatformStatus'" > status.txt
-      systemctl_status="$(cat status.txt)"
+      systemctl_status="$(cat /tmp/status.txt)"
       echo "---------------------------"
-      cat status.txt
       echo "systemctl_status=${systemctl_status}"
+      cat /tmp/status.txt
       echo "---------------------------"
       log_debug "Checked systemctl status in ${node} (Attempt #${attempts}/${MAX_ATTEMPTS})... >>>>> status: ${systemctl_status} <<<<<"
       if [[ "${systemctl_status}" -ne "${EX_OK}" ]]; then
