@@ -35,6 +35,7 @@ setup() {
 }
 
 @test "Check systemctl is running in all root containers" {
+  set -x
   local resp="$(get_pod_list network-node)"
   local nodes=(${resp}) # convert into an array
 
@@ -57,7 +58,8 @@ setup() {
     while [[ "${attempts}" -lt "${MAX_ATTEMPTS}" && "${systemctl_status}" -ne "${EX_OK}" ]]; do
       attempts=$((attempts + 1))
 
-      kubectl exec "${node}" -c root-container -n "${NAMESPACE}" -- bash -c "curl -s http://localhost:9999/metrics | grep platform_PlatformStatus | grep -v | grep '^platform_PlatformStatus'" > status.txt
+      kubectl exec "${node}" -c root-container -n "${NAMESPACE}" -- bash -c "curl -s http://localhost:9999/metrics" > status.txt
+      #kubectl exec "${node}" -c root-container -n "${NAMESPACE}" -- bash -c "curl -s http://localhost:9999/metrics | grep platform_PlatformStatus | grep -v \# | grep '^platform_PlatformStatus'" > status.txt
       systemctl_status=$(cat status.txt)"
       echo "---------------------------"
       cat status.txt
@@ -75,6 +77,7 @@ setup() {
       break # break at first node error
     fi
 
+    set +x
     log_pass "systemctl is running in node ${node}"
   done
 
