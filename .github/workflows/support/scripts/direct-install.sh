@@ -25,12 +25,12 @@ function unzip_build() {
 
 function start_service() {
   local pod="${1}"
-  "${KCTL}" exec "${pod}" -c root-container -- bash -c "systemctl restart network-node" || true
+  "${KCTL}" exec "${pod}" -c root-container -- bash -c "/opt/hgcapp/services-hedera/HapiApp2.0/node_state_manager.sh stop || true && /opt/hgcapp/services-hedera/HapiApp2.0/node_state_manager.sh start" || true
 }
 
 function stop_service() {
   local pod="${1}"
-  "${KCTL}" exec "${pod}" -c root-container -- bash -c "systemctl stop network-node" || true
+  "${KCTL}" exec "${pod}" -c root-container -- bash -c "/opt/hgcapp/services-hedera/HapiApp2.0/node_state_manager.sh stop" || true
 }
 
 function setup_node_all() {
