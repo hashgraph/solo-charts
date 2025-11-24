@@ -1,6 +1,6 @@
 dependencies:
 - name: tenant
   repository: https://operator.min.io/
-  version: 5.0.12
-digest: sha256:ef43eb2c35e7e2c1d66d2ff4db979226ef57baa26dd7331c8c24e3b173907f76
-generated: "2025-02-08T08:29:27.225953-06:00"
+  version: 5.0.18
+digest: sha256:fc6b36c2a8a4ba547e68a92aafa658f0eae9b4acab459ff62d5c8caec5fc89aa
+generated: "2025-11-24T20:51:08.360238Z"
