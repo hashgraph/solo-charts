@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-set -xeo pipefail
+set -eo pipefail
 
+echo "Start time: $(date +"%Y-%m-%d %T")"
 echo "-----------------------------------------------------------------------------------------------------"
 echo "Setting up environment variables"
 echo "SCRIPT_NAME: ${SCRIPT_NAME}"
@@ -15,7 +16,9 @@ SCRIPTS_DIR=scripts
 
 echo "-----------------------------------------------------------------------------------------------------"
 echo "Creating cluster and namespace"
+#kind delete cluster -n "${CLUSTER_NAME}" || true
 kind create cluster -n "${CLUSTER_NAME}" --config=dev-cluster.yaml
+#kind load docker-image kubectl-bats:0.40.0 --name solo-charts-test
 
 kubectl create ns "${NAMESPACE}"
 kubectl get ns
@@ -86,6 +89,7 @@ echo "Running helm chart tests (takes ~5m, timeout 8m)... "
 echo "-----------------------------------------------------------------------------------------------------"
 sleep 10
 helm test "${RELEASE_NAME}" --filter name=network-test --timeout 8m || HELM_TEST_STATUS=$?
+echo "Fetching logs from network-test pod..."
 kubectl logs network-test
 if [[ -n "${HELM_TEST_STATUS}" ]]; then
   echo "Helm test failed with status ${HELM_TEST_STATUS}"
@@ -122,4 +126,5 @@ fi
 
 echo "Workflow finished successfully"
 echo "-----------------------------------------------------------------------------------------------------"
+echo "End time: $(date +"%Y-%m-%d %T")"
 unset_env_vars
