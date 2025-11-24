@@ -58,13 +58,8 @@ setup() {
     while [[ "${attempts}" -lt "${MAX_ATTEMPTS}" && "${systemctl_status}" -ne "${EX_OK}" ]]; do
       attempts=$((attempts + 1))
 
-      kubectl exec "${node}" -c root-container -n "${NAMESPACE}" -- bash -c "curl -s http://localhost:9999/metrics" > status.txt
-      #kubectl exec "${node}" -c root-container -n "${NAMESPACE}" -- bash -c "curl -s http://localhost:9999/metrics | grep platform_PlatformStatus | grep -v \# | grep '^platform_PlatformStatus'" > status.txt
-      systemctl_status="$(cat /tmp/status.txt)"
-      echo "---------------------------"
-      echo "systemctl_status=${systemctl_status}"
-      cat /tmp/status.txt
-      echo "---------------------------"
+      kubectl exec "${node}" -c root-container -n "${NAMESPACE}" -- systemctl status --no-pager
+      systemctl_status="${?}"
       log_debug "Checked systemctl status in ${node} (Attempt #${attempts}/${MAX_ATTEMPTS})... >>>>> status: ${systemctl_status} <<<<<"
       if [[ "${systemctl_status}" -ne "${EX_OK}" ]]; then
         log_debug "Sleeping 5s..."
