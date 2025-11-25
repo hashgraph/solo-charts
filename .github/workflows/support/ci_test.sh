@@ -16,10 +16,10 @@ SCRIPTS_DIR=scripts
 
 echo "-----------------------------------------------------------------------------------------------------"
 echo "Creating cluster and namespace"
-#kind delete cluster -n "${CLUSTER_NAME}" || true
+# kind delete cluster -n "${CLUSTER_NAME}" || true
 kind create cluster -n "${CLUSTER_NAME}" --config=dev-cluster.yaml
-#kind load docker-image kubectl-bats:0.40.0 --name solo-charts-test
-#kind load docker-image ubi8-init-java21:0.40.0 --name solo-charts-test
+# kind load docker-image ghcr.io/hashgraph/solo-containers/kubectl-bats:0.40.1 --name solo-charts-test
+# kind load docker-image ghcr.io/hashgraph/solo-containers/ubi8-init-java21:0.40.1 --name solo-charts-test
 
 kubectl create ns "${NAMESPACE}"
 kubectl get ns
