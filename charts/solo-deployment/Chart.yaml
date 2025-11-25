@@ -31,6 +31,6 @@ kubeVersion: ">=1.25.0-0"
 dependencies:
   - name: tenant
     alias: minio-server
-    version: 5.0.12
+    version: 5.0.18
     repository: https://operator.min.io/
     condition: cloud.minio.enabled

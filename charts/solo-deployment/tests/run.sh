@@ -36,10 +36,11 @@ echo "Running BATS: '${BATS_HOME}/bats-core/bin/bats ${TESTS_DIR}'"
 echo "============================================================="
 readonly test_file=$1
 
+# bats docs: https://bats-core.readthedocs.io/en/stable/
 if [[ -z "${test_file}" ]]; then
-  "${BATS_HOME}/bats-core/bin/bats" "${TESTS_DIR}"
+  "${BATS_HOME}/bats-core/bin/bats" --print-output-on-failure --timing --tap ${TESTS_DIR}
 else
-  "${BATS_HOME}/bats-core/bin/bats" "${TESTS_DIR}/${test_file}"
+  "${BATS_HOME}/bats-core/bin/bats" --print-output-on-failure --timing --tap ${TESTS_DIR}/${test_file}
 fi
 
 readonly bats_exec_status=$?

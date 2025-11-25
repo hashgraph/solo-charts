@@ -1,4 +1,5 @@
 # bats file_tags=deployment-test
+# bats docs: https://bats-core.readthedocs.io/en/stable/
 setup() {
     source "$(dirname "${BATS_TEST_FILENAME}")/env.sh"
     source "${TESTS_DIR}/load.sh"
@@ -56,6 +57,7 @@ setup() {
     # make few attempts to check systemctl status
     while [[ "${attempts}" -lt "${MAX_ATTEMPTS}" && "${systemctl_status}" -ne "${EX_OK}" ]]; do
       attempts=$((attempts + 1))
+
       kubectl exec "${node}" -c root-container -n "${NAMESPACE}" -- systemctl status --no-pager
       systemctl_status="${?}"
       log_debug "Checked systemctl status in ${node} (Attempt #${attempts}/${MAX_ATTEMPTS})... >>>>> status: ${systemctl_status} <<<<<"

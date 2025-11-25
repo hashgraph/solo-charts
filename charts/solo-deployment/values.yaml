@@ -52,7 +52,7 @@ tester:
   image:
     registry: "ghcr.io"
     repository: "hashgraph/solo-containers/kubectl-bats"
-    tag: "0.38.0"
+    tag: "0.40.4"
     pullPolicy: "IfNotPresent"
   resources: { }
 
@@ -80,7 +80,7 @@ defaults:
     image:
       registry: "ghcr.io"
       repository: "hashgraph/solo-containers/ubi8-init-java21"
-      tag: "0.39.1"
+      tag: "0.40.4"
       pullPolicy: "IfNotPresent"
     resources: { }
     extraEnv: [ ]
@@ -139,7 +139,7 @@ defaults:
       image:
         registry: "ghcr.io"
         repository: "hashgraph/solo-containers/backup-uploader"
-        tag: "0.38.0"
+        tag: "0.40.4"
         pullPolicy: "IfNotPresent"
       config:
         backupBucket: "backup"
@@ -182,6 +182,7 @@ minio-server:
     pools:
       - servers: 1
         name: pool-1
+        storageClassName: "standard" # empty-string/null ("") for default storage class is not working, a value must be provided
         volumesPerServer: 1
         size: 10Gi
         nodeSelector: { }
@@ -286,7 +287,7 @@ envoyDeployment:
 # hedera node configuration
 hedera:
   initContainers: [ ]
-  
+
   configMaps:
     apiPermissionsProperties: ""
     applicationEnv: ""
@@ -298,7 +299,7 @@ hedera:
     genesisNetworkJson: ""
     genesisThrottlesJson: ""
     blockNodesJson: ""
-  
+
   # Only the name of the node is required. The rest of the configuration will be inherited from `defaults` section
   nodes:
     - name: node1
@@ -315,7 +316,7 @@ hedera:
       affinity: { }
       priorityClassName: { }
       labels: {}
-    
+
     - name: node2
       nodeId: 1
       accountId: 0.0.4
@@ -327,7 +328,7 @@ hedera:
       affinity: { }
       priorityClassName: { }
       labels: {}
-    
+
     - name: node3
       nodeId: 2
       accountId: 0.0.5
