@@ -121,7 +121,7 @@ spec:
         {{- end }}
         - name: network-node-data-config
           configMap:
-            name: network-node-data-config-cm
+            name: network-{{ $node.name }}-data-config-cm
             optional: true
         - name: network-node-etc-init
           configMap:
