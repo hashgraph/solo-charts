@@ -152,11 +152,20 @@ spec:
             secretName: {{ $networkNodeKeySecretName }}
             optional: true
         {{- end }}
+        - name: run
+          emptyDir:
+            medium: Memory
+        - name: cgroup
+          hostPath:
+            path: /sys/fs/cgroup
+            type: Directory
       containers:
       # Root Container: {{ $node.name }}-root-container
       - name: {{ $root.nameOverride | default "root-container" }}
         image: {{ include "solo.container.image" (dict "image" $rootImage "Chart" $.Chart "defaults" $.Values.defaults) }}
         imagePullPolicy: {{ include "solo.images.pullPolicy" (dict "image" $rootImage "defaults" $.Values.defaults) }}
+        command:
+          - "/sbin/init"
         securityContext: # need to run as root with privileged mode
           {{- include "solo.root.security.context.privileged" . | nindent 10 }}
         {{- with default $defaults.root.resources $node.resources }}
@@ -173,6 +182,10 @@ spec:
           - name: network-node-etc
             mountPath: /etc/network-node/
           {{- end }}
+          - name: run
+            mountPath: /run
+          - name: cgroup
+            mountPath: /sys/fs/cgroup
           - name: shared-hapiapp
             mountPath: /shared-hapiapp
           - name: hgcapp-blockstream
@@ -213,6 +226,21 @@ spec:
           {{- with $rootExtraEnv }}
             {{- toYaml . | nindent 10 }}
           {{- end }}
+        startupProbe:
+          exec:
+            command:
+              - bash
+              - -lc
+              - test -S /run/systemd/private
+          failureThreshold: 60
+          periodSeconds: 1
+        readinessProbe:
+          exec:
+            command:
+              - bash
+              - -lc
+              - test -S /run/systemd/private
+          periodSeconds: 5
     {{- if $cheetah.deployment.single }}
       # Sidecar: {{ $node.name }}-cheetah-stream-uploader
       - name: {{ default "cheetahstream-uploader" $cheetah.deployment.nameOverride }}
