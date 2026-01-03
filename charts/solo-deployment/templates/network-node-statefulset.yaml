@@ -159,6 +159,11 @@ spec:
           hostPath:
             path: /sys/fs/cgroup
             type: Directory
+        - name: run-lock
+          emptyDir:
+            medium: Memory
+        - name: tmp
+          emptyDir: {}
       containers:
       # Root Container: {{ $node.name }}-root-container
       - name: {{ $root.nameOverride | default "root-container" }}
@@ -168,6 +173,12 @@ spec:
           - "/sbin/init"
         securityContext: # need to run as root with privileged mode
           {{- include "solo.root.security.context.privileged" . | nindent 10 }}
+          privileged: true
+          runAsUser: 0
+          runAsGroup: 0
+          allowPrivilegeEscalation: true
+          capabilities:
+            add: ["SYS_ADMIN","SYS_CHROOT","SYS_PTRACE"]
         {{- with default $defaults.root.resources $node.resources }}
         resources:
           {{- toYaml . | nindent 10 }}
@@ -184,6 +195,10 @@ spec:
           {{- end }}
           - name: run
             mountPath: /run
+          - name: run-lock
+            mountPath: /run/lock
+          - name: tmp
+            mountPath: /tmp
           - name: cgroup
             mountPath: /sys/fs/cgroup
           - name: shared-hapiapp
