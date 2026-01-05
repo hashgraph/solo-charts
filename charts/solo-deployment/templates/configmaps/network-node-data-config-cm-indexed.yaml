@@ -5,8 +5,6 @@ kind: ConfigMap
 metadata:
   name: network-{{ $node.name }}-data-config-cm
   namespace: {{ default $.Release.Namespace $.Values.global.namespaceOverride }}
-  labels:
-    {{- include "solo.testLabels" $ | nindent 4 }}
 data:
   block-nodes.json: |
 {{ $node.blockNodesJson | indent 4 }}

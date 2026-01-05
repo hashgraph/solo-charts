@@ -119,9 +119,13 @@ spec:
             secretName: network-node-hapi-app-secrets
             optional: true
         {{- end }}
-        - name: network-node-data-config
+        - name: network-node-data-config-indexed
           configMap:
             name: network-{{ $node.name }}-data-config-cm
+            optional: true
+        - name: network-node-data-config
+          configMap:
+            name: network-node-data-config-cm
             optional: true
         - name: network-node-etc-init
           configMap:
@@ -717,8 +721,8 @@ spec:
               if [ -f /data/config/genesis-throttles.json ]; then
                 cp -L /data/config/genesis-throttles.json /opt/hgcapp/services-hedera/HapiApp2.0/data/config
               fi
-              if [ -f /data/config/block-nodes.json ]; then
-                cp -L /data/config/block-nodes.json /opt/hgcapp/services-hedera/HapiApp2.0/data/config
+              if [ -f /data/config/block-node/block-nodes.json ]; then
+                cp -L /data/config/block-node/block-nodes.json /opt/hgcapp/services-hedera/HapiApp2.0/data/config/block-nodes.json
               fi
 
               chmod 755 -R /opt/hgcapp/services-hedera/HapiApp2.0/data/config
@@ -753,6 +757,8 @@ spec:
             {{- end }}
             - name: network-node-data-config
               mountPath: /data/config
+            - name: network-node-data-config-indexed
+              mountPath: /data/config/block-node
             - name: hgcapp-data-config
               mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/config
             {{- if $.Values.hedera.configMaps.applicationEnv }}
