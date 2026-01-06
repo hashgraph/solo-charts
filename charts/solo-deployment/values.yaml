@@ -171,6 +171,11 @@ defaults:
           tls:
             insecure: true
 
+tenant:
+  tenant:
+    name: minio
+
+
 # This configures the minio tenant subchart
 # Reference for configuration: https://github.com/minio/operator/blob/master/helm/tenant/values.yaml
 minio-server:
