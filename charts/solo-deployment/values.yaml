@@ -78,9 +78,9 @@ defaults:
       dataApps: "1Gi"
   root: # root container
     image:
-      registry: "ghcr.io"
-      repository: "hashgraph/solo-containers/ubi8-init-java21"
-      tag: "0.40.4"
+      registry: "gcr.io"
+      repository: "hedera-registry/consensus-node"
+      tag: "0.67.2"
       pullPolicy: "IfNotPresent"
     resources: { }
     extraEnv: [ ]
