@@ -1,0 +1,13 @@
+{{- range $index, $node := $.Values.hedera.nodes }}
+{{- if and $node.blockNodesJson (ne $node.blockNodesJson "") }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: network-{{ $node.name }}-data-config-cm
+  namespace: {{ default $.Release.Namespace $.Values.global.namespaceOverride }}
+data:
+  block-nodes.json: |
+{{ $node.blockNodesJson | indent 4 }}
+---
+{{- end }}
+{{- end }}

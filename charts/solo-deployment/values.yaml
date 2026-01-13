@@ -171,6 +171,11 @@ defaults:
           tls:
             insecure: true
 
+tenant:
+  tenant:
+    name: minio
+
+
 # This configures the minio tenant subchart
 # Reference for configuration: https://github.com/minio/operator/blob/master/helm/tenant/values.yaml
 minio-server:
@@ -298,7 +303,6 @@ hedera:
     settingsTxt: ""
     genesisNetworkJson: ""
     genesisThrottlesJson: ""
-    blockNodesJson: ""
 
   # Only the name of the node is required. The rest of the configuration will be inherited from `defaults` section
   nodes:
@@ -316,6 +320,7 @@ hedera:
       affinity: { }
       priorityClassName: { }
       labels: {}
+      blockNodesJson: ""
 
     - name: node2
       nodeId: 1
@@ -328,6 +333,7 @@ hedera:
       affinity: { }
       priorityClassName: { }
       labels: {}
+      blockNodesJson: ""
 
     - name: node3
       nodeId: 2
@@ -340,3 +346,4 @@ hedera:
       affinity: { }
       priorityClassName: { }
       labels: {}
+      blockNodesJson: ""
