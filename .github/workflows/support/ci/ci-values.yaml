@@ -3,6 +3,6 @@ tester:
   image:
     registry: "ghcr.io"
     repository: "hashgraph/solo-containers/kubectl-bats"
-    tag: "0.40.4"
+    tag: "0.41.1"
     pullPolicy: "IfNotPresent"
   resources: {}
