@@ -136,7 +136,7 @@ spec:
             items:
               - key: application.env
                 path: application.env
-        - name: network-node-etc
+        - name: network-node-etc-env
           emptyDir: {}
         - name: hapi-app-config-volume
           configMap:
@@ -176,8 +176,8 @@ spec:
             subPath: VERSION
           {{- end }}
           {{- if $.Values.hedera.configMaps.applicationEnv }}
-          - name: network-node-etc
-            mountPath: /etc/network-node/
+          - name: network-node-etc-env
+            mountPath: /etc/network-node/env/
           {{- end }}
           - name: shared-hapiapp
             mountPath: /shared-hapiapp
@@ -743,10 +743,10 @@ spec:
               {{- if $.Values.hedera.configMaps.applicationEnv }}
               # copy in the application.env to supply the environment variables to the application, will need
               # CONSENSUS_NODE_ID set to the unique Node ID with hedera platform v0.59+
-              cp /etc/network-node-temp/* /etc/network-node
+              cp /etc/network-node-temp/* /etc/network-node/env/
               chmod -R 755 /etc/network-node
               chown -R 2000:2000 /etc/network-node
-              touch /etc/network-node/application.env
+              touch /etc/network-node/env/application.env
               {{- end }}
           volumeMounts:
             {{- if $networkNodeKeySecrets }}
@@ -768,8 +768,8 @@ spec:
             {{- if $.Values.hedera.configMaps.applicationEnv }}
             - name: network-node-etc-init
               mountPath: /etc/network-node-temp/
-            - name: network-node-etc
-              mountPath: /etc/network-node/
+            - name: network-node-etc-env
+              mountPath: /etc/network-node/env/
             {{- end }}
             - name: shared-hapiapp
               mountPath: /shared-hapiapp
