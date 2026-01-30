@@ -1,0 +1,489 @@
+# SPDX-License-Identifier: Apache-2.0
+
+alertmanager:
+  inhibitRules:
+    enabled: false
+    InhibitAllWhenPlatformNotActive:
+      enabled: true
+      matches:
+        - sourceMatch:
+            - name: alertname
+              value: MonitorPublishPlatformNotActive
+          targetMatch:
+            - name: application
+              regex: true
+              value: .*
+          equal:
+            - namespace
+    InhibitGrpcAndMonitorHighLatencyWhenImporterRecordFileIssues:
+      enabled: true
+      matches:
+        - sourceMatch:
+            - name: application
+              value: importer
+            - name: type
+              value: RECORD
+          targetMatch:
+            - name: alertname
+              regex: true
+              value: (GrpcHighLatency|MonitorSubscribeLatency)
+          equal:
+            - namespace
+
+    InhibitGrpcAndMonitorHighLatencyWhenImporterHighLatencyOrNoPods:
+      enabled: true
+      matches:
+        - sourceMatch:
+            - name: alertname
+              value: ImporterNoPodsReady
+          targetMatch:
+            - name: alertname
+              regex: true
+              value: (GrpcHighLatency|MonitorSubscribeLatency)
+          equal:
+            - namespace
+
+    InhibitMonitorNoTransactionsWhenImporterNoTransactionsOrNoPods:
+      enabled: true
+      matches:
+        - sourceMatch:
+            - name: alertname
+              regex: true
+              value: (ImporterNoTransactions|ImporterNoPodsReady)
+          targetMatch:
+            - name: alertname
+              value: MonitorSubscribeStopped
+          equal:
+            - namespace
+
+applicationResource:
+  enabled: false
+  partnerId: ""
+  partnerName: ""
+  solutionId: ""
+
+db:
+  host: ""  # Auto-generated from the database sub-charts
+  name: mirror_node
+  schema: public
+  tempSchema: temporary
+  owner:
+    password: ""  # Randomly generated if left blank
+    username: mirror_node
+
+fullnameOverride: ""
+
+global:
+  config: {}
+  env: {}
+  gateway:
+    annotations: {}
+    className: "gke-l7-global-external-managed"
+    enabled: false
+    gcpGatewayPolicy: {}
+    hostnames: []
+    http:
+      enabled: true
+      port: 80
+      redirect: false
+    https:
+      enabled: false
+      port: 443
+      tls:
+        mode: Terminate
+  hostname: ""
+  image: {}
+  namespaceOverride: ""
+  security:
+    allowInsecureImages: true
+  podAnnotations: {}
+  useReleaseForNameLabel: false  # Set the name label to the release name for Marketplace
+
+graphql:
+  db:
+    password: ""  # Randomly generated if left blank
+    username: mirror_graphql
+  enabled: false
+  envFrom:
+    - secretRef:
+        name: solo-shared-resources-passwords
+
+grpc:
+  db:
+    password: ""  # Randomly generated if left blank
+    username: mirror_grpc
+  enabled: true
+  envFrom:
+    - secretRef:
+        name: solo-shared-resources-passwords
+    - secretRef:
+        name: "{{ .Release.Name }}-redis"
+
+importer:
+  db:
+    password: ""  # Randomly generated if left blank
+    username: mirror_importer
+  enabled: true
+  envFrom:
+    - secretRef:
+        name: solo-shared-resources-passwords
+    - secretRef:
+        name: "{{ .Release.Name }}-redis"
+
+labels: {}
+
+monitor:
+  enabled: true
+  env:
+    HIERO_MIRROR_MONITOR_MIRRORNODE_GRPC_HOST: "{{ .Release.Name }}-grpc"
+    HIERO_MIRROR_MONITOR_MIRRORNODE_GRPC_PORT: "5600"
+    HIERO_MIRROR_MONITOR_MIRRORNODE_REST_HOST: "{{ .Release.Name }}-rest"
+    HIERO_MIRROR_MONITOR_MIRRORNODE_REST_PORT: "80"
+    HIERO_MIRROR_MONITOR_MIRRORNODE_RESTJAVA_HOST: "{{ .Release.Name }}-restjava"
+    HIERO_MIRROR_MONITOR_MIRRORNODE_RESTJAVA_PORT: "80"
+
+nameOverride: mirror
+
+networkPolicy:
+  enabled: false
+
+postgresql:
+  enabled: true
+  metrics:
+    enabled: false
+    image:
+      repository: bitnamilegacy/postgres-exporter
+    resources:
+      limits:
+        cpu: 50m
+        memory: 50Mi
+      requests:
+        cpu: 20m
+        memory: 25Mi
+  nameOverride: postgres
+  persistence:
+    size: 500Gi
+  pgpool:
+    adminPassword: ""  # Randomly generated if left blank
+    childLifeTime: 60
+    childMaxConnections: 2
+    existingSecret: solo-shared-resources-passwords
+    extraEnvVars:
+      - name: PGPOOL_POSTGRES_CUSTOM_PASSWORDS
+        valueFrom:
+          secretKeyRef:
+            name: solo-shared-resources-passwords
+            key: PGPOOL_POSTGRES_CUSTOM_PASSWORDS
+      - name: PGPOOL_POSTGRES_CUSTOM_USERS
+        valueFrom:
+          secretKeyRef:
+            name: solo-shared-resources-passwords
+            key: PGPOOL_POSTGRES_CUSTOM_USERS
+    image:
+      debug: true
+      repository: bitnamilegacy/pgpool
+    numInitChildren: 100
+    podAntiAffinityPreset: soft
+    podLabels:
+      role: db
+    pdb:
+      create: true
+    reservedConnections: 0
+    resources:
+      limits:
+        cpu: 600m
+        memory: 750Mi
+      requests:
+        cpu: 200m
+        memory: 256Mi
+  postgresql:
+    existingSecret: solo-shared-resources-passwords
+    extraEnvVarsSecret: solo-shared-resources-passwords
+    image:
+      debug: true
+      repository: bitnamilegacy/postgresql-repmgr
+      tag: 17.6.0-debian-12-r2
+    initdbScriptsCM: "{{ .Release.Name }}-init"
+    maxConnections: 200
+    password: ""  # Randomly generated if left blank
+    podAntiAffinityPreset: soft
+    replicaCount: 1
+    repmgrPassword: ""  # Randomly generated if left blank
+    resources:
+      limits:
+        cpu: 1500m
+        memory: 1000Mi
+      requests:
+        cpu: 250m
+        memory: 500Mi
+    repmgrLogLevel: DEBUG
+
+redis:
+  auth:
+    existingSecret: "{{ .Release.Name }}-redis"
+    existingSecretPasswordKey: SPRING_DATA_REDIS_PASSWORD
+    password: ""  # Randomly generated if left blank
+  enabled: true
+  host: "{{ .Release.Name }}-redis"
+  image:
+    registry: gcr.io
+    repository: mirrornode/redis
+    tag: 8.2.2
+  kubectl:
+    image:
+      repository: rancher/kubectl
+      tag: v1.33.4
+  metrics:
+    image:
+      repository: bitnamilegacy/redis-exporter
+    resources:
+      limits:
+        cpu: 100m
+        memory: 50Mi
+      requests:
+        cpu: 50m
+        memory: 25Mi
+    serviceMonitor:
+      enabled: true
+  pdb:
+    create: true
+  port: 6379
+  rbac:
+    create: true
+  replica:
+    podAntiAffinityPreset: soft
+    podSecurityContext:
+      runAsGroup: 1001
+      runAsUser: 1001
+    replicaCount: 1
+    resources:
+      limits:
+        cpu: 1500m
+        memory: 2000Mi
+      requests:
+        cpu: 250m
+        memory: 1000Mi
+  sentinel:
+    enabled: true
+    image:
+      registry: gcr.io
+      repository: mirrornode/redis-sentinel
+      tag: 8.2.2
+    masterSet: mirror
+    persistence:
+      enabled: true
+    readinessProbe:
+      timeoutSeconds: 4
+    resources:
+      limits:
+        cpu: 150m
+        memory: 256Mi
+      requests:
+        cpu: 75m
+        memory: 75Mi
+  serviceAccount:
+    create: true
+
+rest:
+  config:
+    hiero:
+      mirror:
+        rest:
+          cache:
+            response:
+              enabled: false
+  db:
+    password: ""  # Randomly generated if left blank
+    username: mirror_rest
+  enabled: true
+  envFrom:
+    - secretRef:
+        name: solo-shared-resources-passwords
+    - secretRef:
+        name: "{{ .Release.Name }}-redis-rest"
+
+restjava:
+  db:
+    password: ""  # Randomly generated if left blank
+    username: mirror_rest_java
+  enabled: true
+  envFrom:
+    - secretRef:
+        name: solo-shared-resources-passwords
+
+rosetta:
+  db:
+    password: ""  # Randomly generated if left blank
+    username: mirror_rosetta
+  enabled: false
+  envFrom:
+    - secretRef:
+        name: solo-shared-resources-passwords
+
+stackgres:
+  backup:
+    enabled: false
+  coordinator:
+    config:
+      autovacuum_max_workers: "2"
+      checkpoint_timeout: "1800"
+      citus.executor_slow_start_interval: "10ms"
+      citus.force_max_query_parallelization: "on"
+      citus.max_cached_conns_per_worker: "6"
+      citus.max_shared_pool_size: "850"
+      citus.node_conninfo: "sslmode=disable"  # Disable SSL to work around issue 9143
+      full_page_writes: "true"  # Required for replication to work in recovery scenarios
+      log_checkpoints: "true"
+      log_timezone: "Etc/UTC"
+      maintenance_work_mem: "256MB"
+      max_connections: "800"
+      max_wal_size: "24GB"
+      password_encryption: "scram-sha-256"
+      random_page_cost: "1.1"
+      shared_buffers: "7GB"
+      timezone: "UTC"
+      wal_init_zero: "off"  # Not needed with ZFS
+      wal_recycle: "off"  # Not needed with ZFS
+      work_mem: "12MB"
+    configurations:
+      patroni:
+        dynamicConfig:
+          failsafe_mode: "true"
+    enableEnvoy: false
+    enablePostgresUtil: true
+    instances: 1
+    pgbouncer:
+      pgbouncer:
+        default_pool_size: "800"
+        ignore_startup_parameters: extra_float_digits,options,statement_timeout
+        max_client_conn: "1600"
+        max_prepared_statements: "512"
+        pool_mode: transaction
+        server_lifetime: "1200"
+      users:
+        mirror_node:
+          pool_mode: session
+        mirror_importer:
+          pool_mode: session
+        mirror_rest:
+          max_user_client_connections: 1000
+          max_user_connections: 250
+        mirror_web3:
+          max_user_client_connections: 1000
+          max_user_connections: 250
+    resources:
+      cpu: 100m
+      memory: 1Gi
+    persistentVolume:
+      size: 5Gi
+  dedicatedResourcesRequests: true  # Set to true to make the patroni/PostgreSQL container's resource requests equal to the resources section
+  enabled: false
+  extensions:
+    - name: citus
+      version: "13.2.0"
+    - name: btree_gist
+      version: stable
+    - name: pg_trgm
+      version: "1.6"
+  nameOverride: citus
+  observability:
+    enableMetricsExporter: true
+  podAntiAffinity: true
+  postgresVersion: "16.2"
+  priorityClassName: system-cluster-critical  # This fails on Helm 4 without a default. values-prod.yaml overrides it.
+  replication:
+    initialization:
+      mode: FromReplica
+    mode: sync-all
+  worker:
+    config:
+      autovacuum_max_workers: "2"
+      checkpoint_timeout: "1800"
+      citus.node_conninfo: "sslmode=disable"  # Disable SSL to work around issue 9143
+      full_page_writes: "false"  # Not required for ZFS and Enabling this causes hash indexes to have spikes in write performance.
+      log_checkpoints: "true"
+      log_timezone: "Etc/UTC"
+      maintenance_work_mem: "256MB"
+      max_connections: "900"
+      max_wal_size: "24GB"
+      password_encryption: "scram-sha-256"
+      random_page_cost: "1.1"
+      shared_buffers: "12GB"
+      timezone: "UTC"
+      wal_init_zero: "off"  # Not needed with ZFS
+      wal_recycle: "off"  # Not needed with ZFS
+      work_mem: "12MB"
+    configurations:
+      patroni:
+        dynamicConfig:
+          failsafe_mode: "true"
+    enableEnvoy: false
+    enablePostgresUtil: true
+    instances: 1
+    overrides: []  # Override shard(s) configuration
+    pgbouncer:
+      pgbouncer:
+        default_pool_size: "900"
+        ignore_startup_parameters: extra_float_digits,options,statement_timeout
+        max_client_conn: "2000"
+        max_prepared_statements: "512"
+        pool_mode: transaction
+        server_lifetime: "1200"
+      users:
+        mirror_node:
+          pool_mode: session
+        mirror_importer:
+          pool_mode: session
+    replicasPerInstance: 1
+    resources:
+      cpu: 100m
+      memory: 1Gi
+    persistentVolume:
+      size: 5Gi
+
+test:
+  annotations:
+    helm.sh/hook: test-success
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+    helm.sh/hook-weight: "10"
+  config:
+    hiero:
+      mirror:
+        test:
+          acceptance:
+            mirrorNodeAddress: "{{ .Release.Name }}-grpc:5600"
+            rest:
+              baseUrl: "http://{{ .Release.Name }}-rest"
+            restJava:
+              baseUrl: "http://{{ .Release.Name }}-restjava"
+            web3:
+              baseUrl: "http://{{ .Release.Name }}-web3"
+  cucumberTags: "@acceptance"
+  enabled: false
+  env: {}
+  args:
+    - -Dcucumber.ansi-colors.disabled=true
+    - -Dcucumber.filter.tags={{ .Values.test.cucumberTags }}
+  image:
+    pullPolicy: IfNotPresent
+    pullSecrets: []
+    registry: gcr.io
+    repository: mirrornode/hedera-mirror-test
+    tag: ""  # Defaults to the chart's app version
+  priorityClassName: ""
+  resources:
+    limits:
+      cpu: 3
+      memory: 4096Mi
+    requests:
+      cpu: 1
+      memory: 2048Mi
+
+web3:
+  db:
+    password: ""  # Randomly generated if left blank
+    username: mirror_web3
+  enabled: true
+  envFrom:
+    - secretRef:
+        name: solo-shared-resources-passwords
