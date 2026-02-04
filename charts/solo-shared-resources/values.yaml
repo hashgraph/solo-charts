@@ -441,44 +441,6 @@ stackgres:
     persistentVolume:
       size: 5Gi
 
-test:
-  annotations:
-    helm.sh/hook: test-success
-    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
-    helm.sh/hook-weight: "10"
-  config:
-    hiero:
-      mirror:
-        test:
-          acceptance:
-            mirrorNodeAddress: "{{ .Release.Name }}-grpc:5600"
-            rest:
-              baseUrl: "http://{{ .Release.Name }}-rest"
-            restJava:
-              baseUrl: "http://{{ .Release.Name }}-restjava"
-            web3:
-              baseUrl: "http://{{ .Release.Name }}-web3"
-  cucumberTags: "@acceptance"
-  enabled: false
-  env: {}
-  args:
-    - -Dcucumber.ansi-colors.disabled=true
-    - -Dcucumber.filter.tags={{ .Values.test.cucumberTags }}
-  image:
-    pullPolicy: IfNotPresent
-    pullSecrets: []
-    registry: gcr.io
-    repository: mirrornode/hedera-mirror-test
-    tag: ""  # Defaults to the chart's app version
-  priorityClassName: ""
-  resources:
-    limits:
-      cpu: 3
-      memory: 4096Mi
-    requests:
-      cpu: 1
-      memory: 2048Mi
-
 web3:
   db:
     password: ""  # Randomly generated if left blank
