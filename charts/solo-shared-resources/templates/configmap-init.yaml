@@ -4,7 +4,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  labels: {{- include "hedera-mirror.labels" . | nindent 4 }}
+  labels: {{- include "solo-shared-resources.labels" . | nindent 4 }}
   name: {{ .Release.Name }}-init
-  namespace: {{ include "hedera-mirror.namespace" . }}
+  namespace: {{ include "solo-shared-resources.namespace" . }}
 {{- end }}

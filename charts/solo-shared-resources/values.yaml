@@ -1,66 +1,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
-alertmanager:
-  inhibitRules:
-    enabled: false
-    InhibitAllWhenPlatformNotActive:
-      enabled: true
-      matches:
-        - sourceMatch:
-            - name: alertname
-              value: MonitorPublishPlatformNotActive
-          targetMatch:
-            - name: application
-              regex: true
-              value: .*
-          equal:
-            - namespace
-    InhibitGrpcAndMonitorHighLatencyWhenImporterRecordFileIssues:
-      enabled: true
-      matches:
-        - sourceMatch:
-            - name: application
-              value: importer
-            - name: type
-              value: RECORD
-          targetMatch:
-            - name: alertname
-              regex: true
-              value: (GrpcHighLatency|MonitorSubscribeLatency)
-          equal:
-            - namespace
+global:
+  namespaceOverride: ""
+  security:
+    allowInsecureImages: true
 
-    InhibitGrpcAndMonitorHighLatencyWhenImporterHighLatencyOrNoPods:
-      enabled: true
-      matches:
-        - sourceMatch:
-            - name: alertname
-              value: ImporterNoPodsReady
-          targetMatch:
-            - name: alertname
-              regex: true
-              value: (GrpcHighLatency|MonitorSubscribeLatency)
-          equal:
-            - namespace
-
-    InhibitMonitorNoTransactionsWhenImporterNoTransactionsOrNoPods:
-      enabled: true
-      matches:
-        - sourceMatch:
-            - name: alertname
-              regex: true
-              value: (ImporterNoTransactions|ImporterNoPodsReady)
-          targetMatch:
-            - name: alertname
-              value: MonitorSubscribeStopped
-          equal:
-            - namespace
-
-applicationResource:
-  enabled: false
-  partnerId: ""
-  partnerName: ""
-  solutionId: ""
+labels: {}
 
 db:
   host: ""  # Auto-generated from the database sub-charts
@@ -70,34 +15,6 @@ db:
   owner:
     password: ""  # Randomly generated if left blank
     username: mirror_node
-
-fullnameOverride: ""
-
-global:
-  config: {}
-  env: {}
-  gateway:
-    annotations: {}
-    className: "gke-l7-global-external-managed"
-    enabled: false
-    gcpGatewayPolicy: {}
-    hostnames: []
-    http:
-      enabled: true
-      port: 80
-      redirect: false
-    https:
-      enabled: false
-      port: 443
-      tls:
-        mode: Terminate
-  hostname: ""
-  image: {}
-  namespaceOverride: ""
-  security:
-    allowInsecureImages: true
-  podAnnotations: {}
-  useReleaseForNameLabel: false  # Set the name label to the release name for Marketplace
 
 graphql:
   db:
@@ -130,8 +47,6 @@ importer:
     - secretRef:
         name: "{{ .Release.Name }}-redis"
 
-labels: {}
-
 monitor:
   enabled: true
   env:
@@ -141,11 +56,6 @@ monitor:
     HIERO_MIRROR_MONITOR_MIRRORNODE_REST_PORT: "80"
     HIERO_MIRROR_MONITOR_MIRRORNODE_RESTJAVA_HOST: "{{ .Release.Name }}-restjava"
     HIERO_MIRROR_MONITOR_MIRRORNODE_RESTJAVA_PORT: "80"
-
-nameOverride: mirror
-
-networkPolicy:
-  enabled: false
 
 postgresql:
   enabled: true
@@ -319,127 +229,6 @@ rosetta:
   envFrom:
     - secretRef:
         name: solo-shared-resources-passwords
-
-stackgres:
-  backup:
-    enabled: false
-  coordinator:
-    config:
-      autovacuum_max_workers: "2"
-      checkpoint_timeout: "1800"
-      citus.executor_slow_start_interval: "10ms"
-      citus.force_max_query_parallelization: "on"
-      citus.max_cached_conns_per_worker: "6"
-      citus.max_shared_pool_size: "850"
-      citus.node_conninfo: "sslmode=disable"  # Disable SSL to work around issue 9143
-      full_page_writes: "true"  # Required for replication to work in recovery scenarios
-      log_checkpoints: "true"
-      log_timezone: "Etc/UTC"
-      maintenance_work_mem: "256MB"
-      max_connections: "800"
-      max_wal_size: "24GB"
-      password_encryption: "scram-sha-256"
-      random_page_cost: "1.1"
-      shared_buffers: "7GB"
-      timezone: "UTC"
-      wal_init_zero: "off"  # Not needed with ZFS
-      wal_recycle: "off"  # Not needed with ZFS
-      work_mem: "12MB"
-    configurations:
-      patroni:
-        dynamicConfig:
-          failsafe_mode: "true"
-    enableEnvoy: false
-    enablePostgresUtil: true
-    instances: 1
-    pgbouncer:
-      pgbouncer:
-        default_pool_size: "800"
-        ignore_startup_parameters: extra_float_digits,options,statement_timeout
-        max_client_conn: "1600"
-        max_prepared_statements: "512"
-        pool_mode: transaction
-        server_lifetime: "1200"
-      users:
-        mirror_node:
-          pool_mode: session
-        mirror_importer:
-          pool_mode: session
-        mirror_rest:
-          max_user_client_connections: 1000
-          max_user_connections: 250
-        mirror_web3:
-          max_user_client_connections: 1000
-          max_user_connections: 250
-    resources:
-      cpu: 100m
-      memory: 1Gi
-    persistentVolume:
-      size: 5Gi
-  dedicatedResourcesRequests: true  # Set to true to make the patroni/PostgreSQL container's resource requests equal to the resources section
-  enabled: false
-  extensions:
-    - name: citus
-      version: "13.2.0"
-    - name: btree_gist
-      version: stable
-    - name: pg_trgm
-      version: "1.6"
-  nameOverride: citus
-  observability:
-    enableMetricsExporter: true
-  podAntiAffinity: true
-  postgresVersion: "16.2"
-  priorityClassName: system-cluster-critical  # This fails on Helm 4 without a default. values-prod.yaml overrides it.
-  replication:
-    initialization:
-      mode: FromReplica
-    mode: sync-all
-  worker:
-    config:
-      autovacuum_max_workers: "2"
-      checkpoint_timeout: "1800"
-      citus.node_conninfo: "sslmode=disable"  # Disable SSL to work around issue 9143
-      full_page_writes: "false"  # Not required for ZFS and Enabling this causes hash indexes to have spikes in write performance.
-      log_checkpoints: "true"
-      log_timezone: "Etc/UTC"
-      maintenance_work_mem: "256MB"
-      max_connections: "900"
-      max_wal_size: "24GB"
-      password_encryption: "scram-sha-256"
-      random_page_cost: "1.1"
-      shared_buffers: "12GB"
-      timezone: "UTC"
-      wal_init_zero: "off"  # Not needed with ZFS
-      wal_recycle: "off"  # Not needed with ZFS
-      work_mem: "12MB"
-    configurations:
-      patroni:
-        dynamicConfig:
-          failsafe_mode: "true"
-    enableEnvoy: false
-    enablePostgresUtil: true
-    instances: 1
-    overrides: []  # Override shard(s) configuration
-    pgbouncer:
-      pgbouncer:
-        default_pool_size: "900"
-        ignore_startup_parameters: extra_float_digits,options,statement_timeout
-        max_client_conn: "2000"
-        max_prepared_statements: "512"
-        pool_mode: transaction
-        server_lifetime: "1200"
-      users:
-        mirror_node:
-          pool_mode: session
-        mirror_importer:
-          pool_mode: session
-    replicasPerInstance: 1
-    resources:
-      cpu: 100m
-      memory: 1Gi
-    persistentVolume:
-      size: 5Gi
 
 web3:
   db:
