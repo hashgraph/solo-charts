@@ -19,9 +19,9 @@
 {{- $cheetah := $.Values.cheetah }}
 {{- $bucketPrefixString := toString $cloud.buckets.streamBucketPrefix }}
 {{- $bucketPrefix := empty $bucketPrefixString | ternary "" (printf "%s/" $bucketPrefixString) }}
-{{- $blockStreamBucketPrefix := printf "%sblockStreams/block-%s" $bucketPrefix $node.accountId }}
-{{- $recordStreamBucketPrefix := printf "%srecordstreams/record%s" $bucketPrefix $node.accountId }}
-{{ $eventStreamsBucketPrefix := printf "%seventsStreams/events_%s" $bucketPrefix $node.accountId -}}
+{{- $blockStreamBucketPrefix := printf "%sblockStreams" $bucketPrefix }}
+{{- $recordStreamBucketPrefix := printf "%srecordstreams" $bucketPrefix }}
+{{- $eventStreamsBucketPrefix := printf "%seventsStreams" $bucketPrefix }}
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -233,22 +233,17 @@ spec:
           - upload
           - --config
           - /app/config/cheetah.yaml
+          - --config-check-interval
+          - {{ default "30s" $cheetah.configCheckInterval }}
         volumeMounts:
           - name: hgcapp-blockstream
-            mountPath: /opt/hgcapp/blockStreams/block-{{ $node.accountId }}
-            subPath: block-{{ $node.accountId }}
+            mountPath: /opt/hgcapp/blockStreams
           - name: hgcapp-record-streams
-            mountPath: /opt/hgcapp/recordStreams/record{{ $node.accountId }}
-            subPath: record{{ $node.accountId }}
-          - name: hgcapp-record-streams-sidecar
-            mountPath: /opt/hgcapp/recordStreams/record{{ $node.accountId }}/sidecar
+            mountPath: /opt/hgcapp/recordStreams
           - name: hgcapp-event-streams
-            mountPath: /opt/hgcapp/eventsStreams/events_{{ $node.accountId }}
-            subPath: events_{{ $node.accountId }}
+            mountPath: /opt/hgcapp/eventsStreams
           - name: solo-cheetah-config
-            subPath: cheetah.yaml
-            mountPath: /app/config/cheetah.yaml
-            readOnly: true
+            mountPath: /app/config
         ports:
           - name: pprof
             containerPort: 6061
@@ -335,15 +330,14 @@ spec:
           - /app/bin/cheetah
           - upload
           - --config
-          - /app/config/cheetah.yaml
+          - /app/config/cheetah-block-streams.yaml
+          - --config-check-interval
+          - {{ default "30s" $cheetah.configCheckInterval }}
         volumeMounts:
           - name: hgcapp-blockstream
-            mountPath: /opt/hgcapp/blockStreams/block-{{ $node.accountId }}
-            subPath: block-{{ $node.accountId }}
+            mountPath: /opt/hgcapp/blockStreams
           - name: solo-cheetah-config
-            subPath: cheetah-block-streams.yaml
-            mountPath: /app/config/cheetah.yaml
-            readOnly: true
+            mountPath: /app/config
         ports:
           - name: pprof
             containerPort: 6061
@@ -419,15 +413,14 @@ spec:
           - /app/bin/cheetah
           - upload
           - --config
-          - /app/config/cheetah.yaml
+          - /app/config/cheetah-record-streams.yaml
+          - --config-check-interval
+          - {{ default "30s" $cheetah.configCheckInterval }}
         volumeMounts:
           - name: hgcapp-record-streams
-            mountPath: /opt/hgcapp/recordStreams/record{{ $node.accountId }}
-            subPath: record{{ $node.accountId }}
+            mountPath: /opt/hgcapp/recordStreams
           - name: solo-cheetah-config
-            subPath: cheetah-record-streams.yaml
-            mountPath: /app/config/cheetah.yaml
-            readOnly: true
+            mountPath: /app/config
         ports:
           - name: pprof
             containerPort: 6061
@@ -504,15 +497,14 @@ spec:
           - /app/bin/cheetah
           - upload
           - --config
-          - /app/config/cheetah.yaml
+          - /app/config/cheetah-events-streams.yaml
+          - --config-check-interval
+          - {{ default "30s" $cheetah.configCheckInterval }}
         volumeMounts:
           - name: hgcapp-event-streams
-            mountPath: /opt/hgcapp/eventsStreams/events_{{ $node.accountId }}
-            subPath: events_{{ $node.accountId }}
+            mountPath: /opt/hgcapp/eventsStreams
           - name: solo-cheetah-config
-            subPath: cheetah-events-streams.yaml
-            mountPath: /app/config/cheetah.yaml
-            readOnly: true
+            mountPath: /app/config
         ports:
           - name: pprof
             containerPort: 6061

@@ -1,0 +1,198 @@
+version: '3'
+
+env:
+  CONSENSUS_NODE_VERSION: v0.66.0
+  SOLO_VERSION: v0.54.0
+  SOLO_CLUSTER_NAME: solo
+  SOLO_NAMESPACE: solo
+  SOLO_CLUSTER_SETUP_NAMESPACE: solo-cluster
+  SOLO_DEPLOYMENT: solo-deployment
+  NODEJS_VERSION: 20.18.0
+  NODES: 1
+  RELAY: false
+  MIRROR_NODE: false
+  HEDERA_EXPLORER: false
+  IMAGE: "solo-test:local"
+
+vars:
+  UUID:
+    sh: uuidgen | tr -d '-' | head -c 8 | tr '[:upper:]' '[:lower:]'
+    
+tasks:
+  install-solo:
+    desc: Install Solo CLI tool
+    silent: true
+    cmds:
+      - |
+        # Check if solo is installed and matches requested version
+        if command -v solo >/dev/null 2>&1; then
+          ver=$(solo --version 2>/dev/null || solo version 2>/dev/null || true)
+          if [ -n "$ver" ] && echo "$ver" | grep -q "{{.SOLO_VERSION}}"; then
+            echo "✅ Solo CLI {{.SOLO_VERSION}} already installed."
+            exit 0
+          else
+            echo "ℹ️  Found solo ($ver), but version differs. Installing {{.SOLO_VERSION}}..."
+          fi
+        else
+          echo "⬇️  Solo CLI not found. Installing {{.SOLO_VERSION}}..."
+        fi
+        npm install -g @hashgraph/solo@{{.SOLO_VERSION}}
+      - echo "✅ Solo CLI {{.SOLO_VERSION}} installed."
+  
+  deploy-network:
+    desc: Deploy a n-node Solo network
+    silent: true
+    deps:
+      - install-solo
+    cmds:
+      - echo "🚀 Deploying Solo network with NODES={{.NODES}} MIRROR_NODE={{.MIRROR_NODE}} HEDERA_EXPLORER={{.HEDERA_EXPLORER}} RELAY={{.RELAY}}..."
+      - task destroy-network
+      - |
+        if ! kind get clusters | grep -q "{{.SOLO_CLUSTER_NAME}}"; then
+          echo "⬇️  Creating Kind cluster {{.SOLO_CLUSTER_NAME}}..."
+          kind create cluster --name "{{.SOLO_CLUSTER_NAME}}"
+        else
+          echo "✅ Kind cluster {{.SOLO_CLUSTER_NAME}} already exists"
+        fi
+      - task enable-metrics-server
+      - task set-proxy
+      - echo "🧹 Removing old ~/.solo data..."
+      - rm -rf ~/.solo || true
+      - echo "⬇️  Initializing Solo..."
+      - solo init
+      - solo cluster-ref config connect --cluster-ref kind-{{.SOLO_CLUSTER_NAME}} --context kind-{{.SOLO_CLUSTER_NAME}}
+      - solo deployment config create -n "{{.SOLO_NAMESPACE}}" --deployment "{{.SOLO_DEPLOYMENT}}"
+      - solo deployment cluster attach --deployment "{{.SOLO_DEPLOYMENT}}" --cluster-ref kind-{{.SOLO_CLUSTER_NAME}} --num-consensus-nodes {{.NODES}}
+      - solo keys consensus generate --gossip-keys --tls-keys --deployment "{{.SOLO_DEPLOYMENT}}"
+      - solo cluster-ref config setup --prometheus-stack -s "{{.SOLO_CLUSTER_SETUP_NAMESPACE}}"
+      - solo consensus network deploy --deployment "{{.SOLO_DEPLOYMENT}}" --chart-dir ../charts
+      - solo consensus node setup --deployment "{{.SOLO_DEPLOYMENT}}" --release-tag "{{.CONSENSUS_NODE_VERSION}}"
+      - solo consensus node start --deployment "{{.SOLO_DEPLOYMENT}}"
+      - |
+        {{if .MIRROR_NODE}}
+        echo "📡 Deploying Mirror Node..."
+        solo mirror-node deploy --deployment "{{.SOLO_DEPLOYMENT}}" --cluster-ref kind-{{.SOLO_CLUSTER_NAME}}
+        {{end}}
+      - |
+        {{if .HEDERA_EXPLORER}}
+        echo "🌐 Deploying Explorer..."
+        solo explorer deploy --deployment "{{.SOLO_DEPLOYMENT}}" --cluster-ref kind-{{.SOLO_CLUSTER_NAME}}
+        {{end}}
+      - |
+        {{if .RELAY}}
+        echo "🔁 Deploying Relay..."
+        solo relay deploy -i node1 --deployment "{{.SOLO_DEPLOYMENT}}"
+        {{end}}
+      - echo "🎉 Solo network deployed with {{.NODES}} nodes! Run 👉 k9s to manage the cluster."
+  
+  destroy-network:
+    desc: Destroy the Solo network and clean up resources
+    silent: true
+    cmds:
+      - echo "💣 Destroying existing Solo network (if any)..."
+      - helm uninstall solo-cluster-setup -n "{{.SOLO_CLUSTER_SETUP_NAMESPACE}}" --wait --ignore-not-found || true
+      - kubectl delete ns "{{.SOLO_CLUSTER_SETUP_NAMESPACE}}" --wait --ignore-not-found || true
+      - kubectl delete ns "{{.SOLO_NAMESPACE}}" --wait --ignore-not-found || true
+      - rm -rf ~/.solo || true
+      - echo "✅ Solo network destroyed."
+  
+  enable-metrics-server:
+    desc: Enable metrics server in the Solo network (idempotent)
+    cmds:
+      - |
+        kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+        kubectl patch deployment -n kube-system metrics-server --type='json' \
+          -p='[{"op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--kubelet-insecure-tls"}]'
+        echo "Metrics server is enabled."
+  
+  run-proxy:
+    desc: Run a proxy to the Solo network (daemon mode, idempotent)
+    cmds:
+      - |
+        if docker ps -q --filter "name=docker_registry_proxy" | grep -q .; then
+          echo "✅ Proxy is already running."
+          exit 0
+        fi
+        echo "Starting docker_registry_proxy..."
+        docker run --rm --name docker_registry_proxy -d \
+          --net kind --hostname docker-registry-proxy \
+          -p 0.0.0.0:3128:3128 \
+          -e ENABLE_MANIFEST_CACHE=true \
+          -e REGISTRIES="docker.io registry.k8s.io quay.io ghcr.io" \
+          -v "$HOME/docker_mirror_cache":/docker_mirror_cache \
+          -v "$HOME/docker_mirror_certs":/ca \
+          rpardini/docker-registry-proxy:0.6.5
+        sleep 5 # Wait for the proxy to start
+        echo "✅Proxy is running at localhost:3128"
+  
+  stop-proxy:
+    desc: Stop and remove the proxy container (idempotent)
+    cmds:
+      - echo "💣 Stopping and removing docker_registry_proxy container (if any)..."
+      - |
+        if docker ps -q --filter "name=docker_registry_proxy" | grep -q . || true; then
+          docker stop docker_registry_proxy || true
+          docker rm docker_registry_proxy || true
+          echo "✅Stopped and removed docker_registry_proxy container."
+        fi
+  
+  set-proxy:
+    desc: Set up Docker to use the proxy (idempotent)
+    cmds:
+      - task run-proxy
+      - echo "Setting up cluster to use the proxy..."
+      - |
+        # see: https://github.com/rpardini/docker-registry-proxy
+        KIND_NAME={{.SOLO_CLUSTER_NAME}}
+        SETUP_URL=http://docker-registry-proxy:3128/setup/systemd
+        docker exec solo-control-plane sh -c "\
+          curl "${SETUP_URL}" \
+          | sed s/docker\.service/containerd\.service/g \
+          | sed '/Environment/ s/$/ \"NO_PROXY=127.0.0.0\/8,10.0.0.0\/8,172.16.0.0\/12,192.168.0.0\/16\"/' \
+          | bash" # Configure every node in background
+        wait $! # Wait for all configurations to end
+        echo "✅ Cluster configured to use the proxy."
+  
+  check-docker:
+    desc: Check docker settings
+    silent: true
+    cmds:
+      - task run-proxy
+      - |
+        echo "🔍 Checking Docker Desktop resources..."
+        docker_info=$(docker info --format '{{"{{json .}}"}}')
+        mem=$(echo "$docker_info" | jq '.MemTotal' 2>/dev/null || echo 0)
+        cpus=$(echo "$docker_info" | jq '.NCPU' 2>/dev/null || echo 0)
+        min_mem_gb=31
+        min_cpus=8
+        min_mem=$(("${min_mem_gb}" * 1024 * 1024 * 1024))
+        if [ "$mem" -lt "$min_mem" ] || [ "$cpus" -lt "$min_cpus" ]; then
+          echo "❌ Docker Desktop resources too low: CPUs=$cpus, Mem=$(($mem/1024/1024/1024))GB"
+          echo "➡️  Please set at least ${min_mem_gb}GB RAM and ${min_cpus} CPUs in Docker Desktop > Settings > Resources."
+          exit 1
+        else
+          echo "✅ Docker Desktop resources OK: CPUs=$cpus, Mem=$(($mem/1024/1024/1024))GB"
+        fi
+  load-image:
+    desc: Load a local Docker image into the Kind cluster
+    vars:
+      IMAGE: "{{.IMAGE}}"
+    cmds:
+      - echo "🚚 Loading image {{.IMAGE}} into Kind cluster {{.SOLO_CLUSTER_NAME}}..."
+      - kind load docker-image "{{.IMAGE}}" -n "{{.SOLO_CLUSTER_NAME}}"
+      - echo "✅ Image {{.IMAGE}} loaded into Kind cluster {{.SOLO_CLUSTER_NAME}}."
+  refresh-node:
+    desc: Refresh a Solo node by running setup and start (idempotent)
+    vars:
+      NODE: "{{.NODE}}"
+    cmds:
+      - echo "🔄 Refreshing Solo node {{.NODE}}..."
+      - |
+        bash -c "
+        if [ -z '{{.NODE}}' ]; then
+          echo '❌ NODE variable is required. Usage: task refresh-node -- NODE=node1'
+          exit 1
+        fi
+        "
+        solo node setup --deployment "{{.SOLO_DEPLOYMENT}}" -i {{.NODE}}
+        solo node start --deployment "{{.SOLO_DEPLOYMENT}}" -i {{.NODE}}
