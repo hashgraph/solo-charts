@@ -19,9 +19,9 @@
 {{- $cheetah := $.Values.cheetah }}
 {{- $bucketPrefixString := toString $cloud.buckets.streamBucketPrefix }}
 {{- $bucketPrefix := empty $bucketPrefixString | ternary "" (printf "%s/" $bucketPrefixString) }}
-{{- $blockStreamBucketPrefix := printf "%sblockStreams/block-%s" $bucketPrefix $node.accountId }}
-{{- $recordStreamBucketPrefix := printf "%srecordstreams/record%s" $bucketPrefix $node.accountId }}
-{{ $eventStreamsBucketPrefix := printf "%seventsStreams/events_%s" $bucketPrefix $node.accountId -}}
+{{- $blockStreamBucketPrefix := printf "%sblockStreams" $bucketPrefix }}
+{{- $recordStreamBucketPrefix := printf "%srecordstreams" $bucketPrefix }}
+{{- $eventStreamsBucketPrefix := printf "%seventsStreams" $bucketPrefix }}
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -54,6 +54,7 @@ spec:
     {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-data-keys-pvc" "storage" $nodeStorage.keys "storageClassName" $defaults.volumeClaims.storageClassName) | nindent 4 }}
     {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-data-libs-pvc" "storage" $nodeStorage.dataLibs "storageClassName" $defaults.volumeClaims.storageClassName) | nindent 4 }}
     {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-data-apps-pvc" "storage" $nodeStorage.dataApps "storageClassName" $defaults.volumeClaims.storageClassName) | nindent 4 }}
+    {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-state-pvc" "storage" $nodeStorage.config "storageClassName" $defaults.volumeClaims.storageClassName) | nindent 4 }}
   {{- end }}
   template:
     metadata:
@@ -104,6 +105,7 @@ spec:
         {{ include "solo.volumeTemplate" (dict "name" "hgcapp-data-keys" "claimName" (printf "%s-%s-%s" "hgcapp-data-keys-pvc-network" $node.name "0") "pvcEnabled" $pvcEnabled ) | nindent 8 }}
         {{ include "solo.volumeTemplate" (dict "name" "hgcapp-data-libs" "claimName" (printf "%s-%s-%s" "hgcapp-data-libs-pvc-network" $node.name "0") "pvcEnabled" $pvcEnabled ) | nindent 8 }}
         {{ include "solo.volumeTemplate" (dict "name" "hgcapp-data-apps" "claimName" (printf "%s-%s-%s" "hgcapp-data-apps-pvc-network" $node.name "0") "pvcEnabled" $pvcEnabled ) | nindent 8 }}
+        {{ include "solo.volumeTemplate" (dict "name" "hgcapp-state" "claimName" (printf "%s-%s-%s" "hgcapp-state-pvc-network" $node.name "0") "pvcEnabled" $pvcEnabled ) | nindent 8 }}
         {{- if $otelCollector.enabled }}
         - name: otel-collector-volume
           configMap:
@@ -119,6 +121,10 @@ spec:
             secretName: network-node-hapi-app-secrets
             optional: true
         {{- end }}
+        - name: network-node-data-config-indexed
+          configMap:
+            name: network-{{ $node.name }}-data-config-cm
+            optional: true
         - name: network-node-data-config
           configMap:
             name: network-node-data-config-cm
@@ -130,7 +136,7 @@ spec:
             items:
               - key: application.env
                 path: application.env
-        - name: network-node-etc
+        - name: network-node-etc-env
           emptyDir: {}
         - name: hapi-app-config-volume
           configMap:
@@ -170,8 +176,8 @@ spec:
             subPath: VERSION
           {{- end }}
           {{- if $.Values.hedera.configMaps.applicationEnv }}
-          - name: network-node-etc
-            mountPath: /etc/network-node/
+          - name: network-node-etc-env
+            mountPath: /etc/network-node/env/
           {{- end }}
           - name: shared-hapiapp
             mountPath: /shared-hapiapp
@@ -201,6 +207,8 @@ spec:
             mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/lib
           - name: hgcapp-data-apps
             mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/apps
+          - name: hgcapp-state
+            mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/state
         env:
           # these only get used as root, to set them for hedera user ID they need to be populated in the
           # /etc/network-node/application.env, if you want the docker container to use them they need to also be in
@@ -225,22 +233,17 @@ spec:
           - upload
           - --config
           - /app/config/cheetah.yaml
+          - --config-check-interval
+          - {{ default "30s" $cheetah.configCheckInterval }}
         volumeMounts:
           - name: hgcapp-blockstream
-            mountPath: /opt/hgcapp/blockStreams/block-{{ $node.accountId }}
-            subPath: block-{{ $node.accountId }}
+            mountPath: /opt/hgcapp/blockStreams
           - name: hgcapp-record-streams
-            mountPath: /opt/hgcapp/recordStreams/record{{ $node.accountId }}
-            subPath: record{{ $node.accountId }}
-          - name: hgcapp-record-streams-sidecar
-            mountPath: /opt/hgcapp/recordStreams/record{{ $node.accountId }}/sidecar
+            mountPath: /opt/hgcapp/recordStreams
           - name: hgcapp-event-streams
-            mountPath: /opt/hgcapp/eventsStreams/events_{{ $node.accountId }}
-            subPath: events_{{ $node.accountId }}
+            mountPath: /opt/hgcapp/eventsStreams
           - name: solo-cheetah-config
-            subPath: cheetah.yaml
-            mountPath: /app/config/cheetah.yaml
-            readOnly: true
+            mountPath: /app/config
         ports:
           - name: pprof
             containerPort: 6061
@@ -327,15 +330,14 @@ spec:
           - /app/bin/cheetah
           - upload
           - --config
-          - /app/config/cheetah.yaml
+          - /app/config/cheetah-block-streams.yaml
+          - --config-check-interval
+          - {{ default "30s" $cheetah.configCheckInterval }}
         volumeMounts:
           - name: hgcapp-blockstream
-            mountPath: /opt/hgcapp/blockStreams/block-{{ $node.accountId }}
-            subPath: block-{{ $node.accountId }}
+            mountPath: /opt/hgcapp/blockStreams
           - name: solo-cheetah-config
-            subPath: cheetah-block-streams.yaml
-            mountPath: /app/config/cheetah.yaml
-            readOnly: true
+            mountPath: /app/config
         ports:
           - name: pprof
             containerPort: 6061
@@ -411,15 +413,14 @@ spec:
           - /app/bin/cheetah
           - upload
           - --config
-          - /app/config/cheetah.yaml
+          - /app/config/cheetah-record-streams.yaml
+          - --config-check-interval
+          - {{ default "30s" $cheetah.configCheckInterval }}
         volumeMounts:
           - name: hgcapp-record-streams
-            mountPath: /opt/hgcapp/recordStreams/record{{ $node.accountId }}
-            subPath: record{{ $node.accountId }}
+            mountPath: /opt/hgcapp/recordStreams
           - name: solo-cheetah-config
-            subPath: cheetah-record-streams.yaml
-            mountPath: /app/config/cheetah.yaml
-            readOnly: true
+            mountPath: /app/config
         ports:
           - name: pprof
             containerPort: 6061
@@ -496,15 +497,14 @@ spec:
           - /app/bin/cheetah
           - upload
           - --config
-          - /app/config/cheetah.yaml
+          - /app/config/cheetah-events-streams.yaml
+          - --config-check-interval
+          - {{ default "30s" $cheetah.configCheckInterval }}
         volumeMounts:
           - name: hgcapp-event-streams
-            mountPath: /opt/hgcapp/eventsStreams/events_{{ $node.accountId }}
-            subPath: events_{{ $node.accountId }}
+            mountPath: /opt/hgcapp/eventsStreams
           - name: solo-cheetah-config
-            subPath: cheetah-events-streams.yaml
-            mountPath: /app/config/cheetah.yaml
-            readOnly: true
+            mountPath: /app/config
         ports:
           - name: pprof
             containerPort: 6061
@@ -717,8 +717,8 @@ spec:
               if [ -f /data/config/genesis-throttles.json ]; then
                 cp -L /data/config/genesis-throttles.json /opt/hgcapp/services-hedera/HapiApp2.0/data/config
               fi
-              if [ -f /data/config/block-nodes.json ]; then
-                cp -L /data/config/block-nodes.json /opt/hgcapp/services-hedera/HapiApp2.0/data/config
+              if [ -f /data/config/block-node/block-nodes.json ]; then
+                cp -L /data/config/block-node/block-nodes.json /opt/hgcapp/services-hedera/HapiApp2.0/data/config/block-nodes.json
               fi
 
               chmod 755 -R /opt/hgcapp/services-hedera/HapiApp2.0/data/config
@@ -735,10 +735,10 @@ spec:
               {{- if $.Values.hedera.configMaps.applicationEnv }}
               # copy in the application.env to supply the environment variables to the application, will need
               # CONSENSUS_NODE_ID set to the unique Node ID with hedera platform v0.59+
-              cp /etc/network-node-temp/* /etc/network-node
+              cp /etc/network-node-temp/* /etc/network-node/env/
               chmod -R 755 /etc/network-node
               chown -R 2000:2000 /etc/network-node
-              touch /etc/network-node/application.env
+              touch /etc/network-node/env/application.env
               {{- end }}
           volumeMounts:
             {{- if $networkNodeKeySecrets }}
@@ -753,13 +753,15 @@ spec:
             {{- end }}
             - name: network-node-data-config
               mountPath: /data/config
+            - name: network-node-data-config-indexed
+              mountPath: /data/config/block-node
             - name: hgcapp-data-config
               mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/config
             {{- if $.Values.hedera.configMaps.applicationEnv }}
             - name: network-node-etc-init
               mountPath: /etc/network-node-temp/
-            - name: network-node-etc
-              mountPath: /etc/network-node/
+            - name: network-node-etc-env
+              mountPath: /etc/network-node/env/
             {{- end }}
             - name: shared-hapiapp
               mountPath: /shared-hapiapp

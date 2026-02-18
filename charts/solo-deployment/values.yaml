@@ -22,12 +22,13 @@ cheetah:
   image:
     registry: "ghcr.io"
     repository: "hashgraph/solo-cheetah/cheetah"
-    tag: "0.3.4" # https://github.com/hashgraph/solo-cheetah/pkgs/container/solo-cheetah%2Fcheetah
+    tag: "0.4.1" # https://github.com/hashgraph/solo-cheetah/pkgs/container/solo-cheetah%2Fcheetah
     pullPolicy: "IfNotPresent"
   maxProcessors: 10 # max number of concurrent processors for each pipeline
   # whether it should stop the pipelines if any error occurs; if false, it will continue with the expectation that the
   # error may get fixed in the next run
   stopOnError: false
+  configCheckInterval: 30s # interval to check for config changes and update pipelines accordingly
   deployment:
     # if true, a single instance of cheetah will be deployed for all stream files (i.e. record-streams, events-streams, block-streams etc.)
     # WARNING: Other steams files uploader sidecar configuration will be ignored
@@ -52,7 +53,7 @@ tester:
   image:
     registry: "ghcr.io"
     repository: "hashgraph/solo-containers/kubectl-bats"
-    tag: "0.40.4"
+    tag: "0.41.2"
     pullPolicy: "IfNotPresent"
   resources: { }
 
@@ -139,7 +140,7 @@ defaults:
       image:
         registry: "ghcr.io"
         repository: "hashgraph/solo-containers/backup-uploader"
-        tag: "0.40.4"
+        tag: "0.41.2"
         pullPolicy: "IfNotPresent"
       config:
         backupBucket: "backup"
@@ -170,6 +171,11 @@ defaults:
           endpoint: "" # e.g. http://prometheus.<NAMESPACE>.svc:9090/api/v1/write
           tls:
             insecure: true
+
+tenant:
+  tenant:
+    name: minio
+
 
 # This configures the minio tenant subchart
 # Reference for configuration: https://github.com/minio/operator/blob/master/helm/tenant/values.yaml
@@ -298,7 +304,6 @@ hedera:
     settingsTxt: ""
     genesisNetworkJson: ""
     genesisThrottlesJson: ""
-    blockNodesJson: ""
 
   # Only the name of the node is required. The rest of the configuration will be inherited from `defaults` section
   nodes:
@@ -316,6 +321,7 @@ hedera:
       affinity: { }
       priorityClassName: { }
       labels: {}
+      blockNodesJson: ""
 
     - name: node2
       nodeId: 1
@@ -328,6 +334,7 @@ hedera:
       affinity: { }
       priorityClassName: { }
       labels: {}
+      blockNodesJson: ""
 
     - name: node3
       nodeId: 2
@@ -340,3 +347,4 @@ hedera:
       affinity: { }
       priorityClassName: { }
       labels: {}
+      blockNodesJson: ""
