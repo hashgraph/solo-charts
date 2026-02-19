@@ -1,0 +1,239 @@
+# SPDX-License-Identifier: Apache-2.0
+
+global:
+  namespaceOverride: ""
+  security:
+    allowInsecureImages: true
+
+labels: {}
+
+db:
+  host: ""  # Auto-generated from the database sub-charts
+  name: mirror_node
+  schema: public
+  tempSchema: temporary
+  owner:
+    password: ""  # Randomly generated if left blank
+    username: mirror_node
+
+graphql:
+  db:
+    password: ""  # Randomly generated if left blank
+    username: mirror_graphql
+  enabled: false
+  envFrom:
+    - secretRef:
+        name: solo-shared-resources-passwords
+
+grpc:
+  db:
+    password: ""  # Randomly generated if left blank
+    username: mirror_grpc
+  enabled: true
+  envFrom:
+    - secretRef:
+        name: solo-shared-resources-passwords
+    - secretRef:
+        name: "{{ .Release.Name }}-redis"
+
+importer:
+  db:
+    password: ""  # Randomly generated if left blank
+    username: mirror_importer
+  enabled: true
+  envFrom:
+    - secretRef:
+        name: solo-shared-resources-passwords
+    - secretRef:
+        name: "{{ .Release.Name }}-redis"
+
+monitor:
+  enabled: true
+  env:
+    HIERO_MIRROR_MONITOR_MIRRORNODE_GRPC_HOST: "{{ .Release.Name }}-grpc"
+    HIERO_MIRROR_MONITOR_MIRRORNODE_GRPC_PORT: "5600"
+    HIERO_MIRROR_MONITOR_MIRRORNODE_REST_HOST: "{{ .Release.Name }}-rest"
+    HIERO_MIRROR_MONITOR_MIRRORNODE_REST_PORT: "80"
+    HIERO_MIRROR_MONITOR_MIRRORNODE_RESTJAVA_HOST: "{{ .Release.Name }}-restjava"
+    HIERO_MIRROR_MONITOR_MIRRORNODE_RESTJAVA_PORT: "80"
+
+postgresql:
+  enabled: true
+  metrics:
+    enabled: false
+    image:
+      repository: bitnamilegacy/postgres-exporter
+    resources:
+      limits:
+        cpu: 50m
+        memory: 50Mi
+      requests:
+        cpu: 20m
+        memory: 25Mi
+  nameOverride: postgres
+  persistence:
+    size: 500Gi
+  pgpool:
+    adminPassword: ""  # Randomly generated if left blank
+    childLifeTime: 60
+    childMaxConnections: 2
+    existingSecret: solo-shared-resources-passwords
+    extraEnvVars:
+      - name: PGPOOL_POSTGRES_CUSTOM_PASSWORDS
+        valueFrom:
+          secretKeyRef:
+            name: solo-shared-resources-passwords
+            key: PGPOOL_POSTGRES_CUSTOM_PASSWORDS
+      - name: PGPOOL_POSTGRES_CUSTOM_USERS
+        valueFrom:
+          secretKeyRef:
+            name: solo-shared-resources-passwords
+            key: PGPOOL_POSTGRES_CUSTOM_USERS
+    image:
+      debug: true
+      repository: bitnamilegacy/pgpool
+    numInitChildren: 100
+    podAntiAffinityPreset: soft
+    podLabels:
+      role: db
+    pdb:
+      create: true
+    reservedConnections: 0
+    resources:
+      limits:
+        cpu: 600m
+        memory: 750Mi
+      requests:
+        cpu: 200m
+        memory: 256Mi
+  postgresql:
+    existingSecret: solo-shared-resources-passwords
+    extraEnvVarsSecret: solo-shared-resources-passwords
+    image:
+      debug: true
+      repository: bitnamilegacy/postgresql-repmgr
+      tag: 17.6.0-debian-12-r2
+    maxConnections: 200
+    password: ""  # Randomly generated if left blank
+    podAntiAffinityPreset: soft
+    replicaCount: 1
+    repmgrPassword: ""  # Randomly generated if left blank
+    resources:
+      limits:
+        cpu: 1500m
+        memory: 1000Mi
+      requests:
+        cpu: 250m
+        memory: 500Mi
+    repmgrLogLevel: DEBUG
+
+redis:
+  auth:
+    existingSecret: "{{ .Release.Name }}-redis"
+    existingSecretPasswordKey: SPRING_DATA_REDIS_PASSWORD
+    password: ""  # Randomly generated if left blank
+  enabled: true
+  host: "{{ .Release.Name }}-redis"
+  image:
+    registry: gcr.io
+    repository: mirrornode/redis
+    tag: 8.2.2
+  kubectl:
+    image:
+      repository: rancher/kubectl
+      tag: v1.33.4
+  metrics:
+    image:
+      repository: bitnamilegacy/redis-exporter
+    resources:
+      limits:
+        cpu: 100m
+        memory: 50Mi
+      requests:
+        cpu: 50m
+        memory: 25Mi
+    serviceMonitor:
+      enabled: true
+  pdb:
+    create: true
+  port: 6379
+  rbac:
+    create: true
+  replica:
+    podAntiAffinityPreset: soft
+    podSecurityContext:
+      runAsGroup: 1001
+      runAsUser: 1001
+    replicaCount: 1
+    resources:
+      limits:
+        cpu: 1500m
+        memory: 2000Mi
+      requests:
+        cpu: 250m
+        memory: 1000Mi
+  sentinel:
+    enabled: true
+    image:
+      registry: gcr.io
+      repository: mirrornode/redis-sentinel
+      tag: 8.2.2
+    masterSet: mirror
+    persistence:
+      enabled: true
+    readinessProbe:
+      timeoutSeconds: 4
+    resources:
+      limits:
+        cpu: 150m
+        memory: 256Mi
+      requests:
+        cpu: 75m
+        memory: 75Mi
+  serviceAccount:
+    create: true
+
+rest:
+  config:
+    hiero:
+      mirror:
+        rest:
+          cache:
+            response:
+              enabled: false
+  db:
+    password: ""  # Randomly generated if left blank
+    username: mirror_rest
+  enabled: true
+  envFrom:
+    - secretRef:
+        name: solo-shared-resources-passwords
+    - secretRef:
+        name: "{{ .Release.Name }}-redis-rest"
+
+restjava:
+  db:
+    password: ""  # Randomly generated if left blank
+    username: mirror_rest_java
+  enabled: true
+  envFrom:
+    - secretRef:
+        name: solo-shared-resources-passwords
+
+rosetta:
+  db:
+    password: ""  # Randomly generated if left blank
+    username: mirror_rosetta
+  enabled: false
+  envFrom:
+    - secretRef:
+        name: solo-shared-resources-passwords
+
+web3:
+  db:
+    password: ""  # Randomly generated if left blank
+    username: mirror_web3
+  enabled: true
+  envFrom:
+    - secretRef:
+        name: solo-shared-resources-passwords
