@@ -1,9 +1,9 @@
-enabled: true
+enabled: false # disable profiling by default, it can be enabled using CHEETAH_PROFILING_ENABLED env variable
 interval: 5s
 serverHost: 127.0.0.1
-serverPort: 6060
+serverPort: 0 # OS assigns random port
 enablePprofServer: true
-pprofPort: 6061
+pprofPort: 0 # OS assigns random port
 fileLogging: false # disable writing stats to file
 directory: stats
 maxSize: 100 # in MB
