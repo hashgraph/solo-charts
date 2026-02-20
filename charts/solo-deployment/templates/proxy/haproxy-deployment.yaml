@@ -72,6 +72,7 @@ spec:
               - |
                 rm -f livenessProbe.json || true
                 wget -q -O livenessProbe.json --header 'content-type: application/json' http://dataplane:${HAPROXY_PASSWORD}@0.0.0.0:5555/v2/services/haproxy/stats/native?type=backend || return 1
+          timeoutSeconds: {{ default 5 $haproxy.probes.timeoutSeconds }}
         readinessProbe:
           exec:
             command:
@@ -80,6 +81,7 @@ spec:
               - |
                 rm -f readinessProbe.json || true
                 wget -q -O readinessProbe.json --header 'content-type: application/json' http://dataplane:${HAPROXY_PASSWORD}@0.0.0.0:5555/v2/services/haproxy/stats/native?type=backend || return 1
+          timeoutSeconds: {{ default 5 $haproxy.probes.timeoutSeconds }}
         startupProbe:
           exec:
             command:
@@ -103,6 +105,7 @@ spec:
                 fi
               }
               probe
+          timeoutSeconds: {{ default 5 $haproxy.probes.timeoutSeconds }}
           initialDelaySeconds: 60
           periodSeconds: 5
           failureThreshold: 720
