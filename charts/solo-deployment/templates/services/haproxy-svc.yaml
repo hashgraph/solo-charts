@@ -1,6 +1,8 @@
 {{- range $index, $node := ($.Values.hedera.nodes) }}
 {{- $haproxy := $node.haproxy | default $.Values.defaults.haproxy -}}
 {{- $defaults := $.Values.defaults.haproxy }}
+{{- $service := $haproxy.service | default $defaults.service }}
+{{- $nodePorts := $service.nodePorts | default dict }}
 {{- if $haproxy.enabled }}
 ---
 apiVersion: v1
@@ -8,7 +10,7 @@ kind: Service
 metadata:
   name: haproxy-{{ $node.name }}-svc
   namespace: {{ default $.Release.Namespace $.Values.global.namespaceOverride }}
-  {{- with $defaults.service.annotations }}
+  {{- with $service.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
@@ -19,13 +21,13 @@ metadata:
     solo.hedera.com/account-id: {{ $node.accountId }}
     solo.hedera.com/prometheus-endpoint: active
     {{- include "solo.testLabels" $ | nindent 4 }}
-    {{- with $defaults.service.labels }}
+    {{- with $service.labels }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
 spec:
-  type: {{ default "ClusterIP" $defaults.service.type }}
-  {{- if or (eq $defaults.service.type "LoadBalancer") (eq $defaults.service.type "NodePort") }}
-  externalTrafficPolicy: {{ default "Local" $defaults.service.externalTrafficPolicy }}
+  type: {{ default "ClusterIP" $service.type }}
+  {{- if or (eq $service.type "LoadBalancer") (eq $service.type "NodePort") }}
+  externalTrafficPolicy: {{ default "Local" $service.externalTrafficPolicy }}
   {{- end }}
   {{- if $node.haproxyStaticIP }}
   loadBalancerIP: {{ $node.haproxyStaticIP }}
@@ -36,11 +38,20 @@ spec:
     - name: non-tls-grpc-client-port
       port: 50211
       targetPort: 50211
+      {{- if and (or (eq $service.type "LoadBalancer") (eq $service.type "NodePort")) (get $nodePorts "grpcNonTls") }}
+      nodePort: {{ get $nodePorts "grpcNonTls" }}
+      {{- end }}
     - name: tls-grpc-client-port
       port: 50212
       targetPort: 50212
+      {{- if and (or (eq $service.type "LoadBalancer") (eq $service.type "NodePort")) (get $nodePorts "grpcTls") }}
+      nodePort: {{ get $nodePorts "grpcTls" }}
+      {{- end }}
     - name: prometheus # port name must be prometheus for prometheus-svc-monitor
       port: 9090
       targetPort: 9090 # stats port
+      {{- if and (or (eq $service.type "LoadBalancer") (eq $service.type "NodePort")) (get $nodePorts "prometheus") }}
+      nodePort: {{ get $nodePorts "prometheus" }}
+      {{- end }}
 {{- end }}
 {{- end }}

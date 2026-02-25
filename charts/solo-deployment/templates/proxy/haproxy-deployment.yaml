@@ -57,6 +57,26 @@ spec:
           secret:
             secretName: {{ printf "haproxy-proxy-secret-%s" $node.name }}
       {{- end }}
+      initContainers:
+      - name: wait-backend-dns
+        image: busybox:stable-musl
+        command:
+          - /bin/sh
+          - -c
+          - |
+            set -eu
+            target="network-{{ $node.name }}.{{ default $.Release.Namespace $.Values.global.namespaceOverride }}.svc.cluster.local"
+            retries=120
+            while [ "$retries" -gt 0 ]; do
+              if nslookup "$target" >/dev/null 2>&1; then
+                echo "Resolved $target"
+                exit 0
+              fi
+              retries=$((retries - 1))
+              sleep 1
+            done
+            echo "Failed to resolve $target within timeout"
+            exit 1
       containers:
       - name: {{ default $defaults.nameOverride $haproxy.nameOverride }}
         image: {{ include "solo.container.image" (dict "image" $haproxy.image "Chart" $.Chart "defaults" $defaults ) }}
@@ -65,50 +85,26 @@ spec:
           - secretRef:
               name: haproxy-secrets
         livenessProbe:
-          exec:
-            command:
-              - "/bin/sh"
-              - "-c"
-              - |
-                rm -f livenessProbe.json || true
-                wget -q -O livenessProbe.json --header 'content-type: application/json' http://dataplane:${HAPROXY_PASSWORD}@0.0.0.0:5555/v2/services/haproxy/stats/native?type=backend || return 1
+          tcpSocket:
+            port: 50211
+          initialDelaySeconds: 15
+          periodSeconds: 10
           timeoutSeconds: {{ default 5 $haproxy.probes.timeoutSeconds }}
+          failureThreshold: 6
         readinessProbe:
-          exec:
-            command:
-              - "/bin/sh"
-              - "-c"
-              - |
-                rm -f readinessProbe.json || true
-                wget -q -O readinessProbe.json --header 'content-type: application/json' http://dataplane:${HAPROXY_PASSWORD}@0.0.0.0:5555/v2/services/haproxy/stats/native?type=backend || return 1
-          timeoutSeconds: {{ default 5 $haproxy.probes.timeoutSeconds }}
-        startupProbe:
-          exec:
-            command:
-            - "/bin/sh"
-            - "-c"
-            - |
-              jq_check() {
-                jq --version > /dev/null 2>&1 && return
-                echo "jq not found, installing jq"
-                apk add jq || return 1
-              }
-              probe() {
-                jq_check || return 1
-                wget -q -O response.json --header 'content-type: application/json' http://dataplane:${HAPROXY_PASSWORD}@0.0.0.0:5555/v2/services/haproxy/stats/native?type=backend || return 1
-                BACKEND_STATUS=$(jq -r '.[] | .stats[] | select(.name == "http_backend") | .stats.status' < response.json)
-                echo "http_backend status: $BACKEND_STATUS"
-                if [ "$BACKEND_STATUS" = "UP" ]; then
-                  return 0
-                else
-                  return 1
-                fi
-              }
-              probe
-          timeoutSeconds: {{ default 5 $haproxy.probes.timeoutSeconds }}
-          initialDelaySeconds: 60
+          tcpSocket:
+            port: 50211
+          initialDelaySeconds: 5
           periodSeconds: 5
-          failureThreshold: 720
+          timeoutSeconds: {{ default 5 $haproxy.probes.timeoutSeconds }}
+          failureThreshold: 6
+        startupProbe:
+          tcpSocket:
+            port: 50211
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: {{ default 5 $haproxy.probes.timeoutSeconds }}
+          failureThreshold: 60
         volumeMounts:
           - name: haproxy-config-volume
             # https://hub.docker.com/_/haproxy/
