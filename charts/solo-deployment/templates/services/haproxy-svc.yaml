@@ -1,7 +1,6 @@
 {{- range $index, $node := ($.Values.hedera.nodes) }}
 {{- $haproxy := $node.haproxy | default $.Values.defaults.haproxy -}}
 {{- $defaults := $.Values.defaults.haproxy }}
-{{- $service := $haproxy.service | default $defaults.service }}
 {{- if $haproxy.enabled }}
 ---
 apiVersion: v1
@@ -9,7 +8,7 @@ kind: Service
 metadata:
   name: haproxy-{{ $node.name }}-svc
   namespace: {{ default $.Release.Namespace $.Values.global.namespaceOverride }}
-  {{- with $service.annotations }}
+  {{- with $defaults.service.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
@@ -20,13 +19,13 @@ metadata:
     solo.hedera.com/account-id: {{ $node.accountId }}
     solo.hedera.com/prometheus-endpoint: active
     {{- include "solo.testLabels" $ | nindent 4 }}
-    {{- with $service.labels }}
+    {{- with $defaults.service.labels }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
 spec:
-  type: {{ default "ClusterIP" $service.type }}
-  {{- if eq $service.type "LoadBalancer" }}
-  externalTrafficPolicy: {{ default "Local" $service.externalTrafficPolicy }}
+  type: {{ default "ClusterIP" $defaults.service.type }}
+  {{- if or (eq $defaults.service.type "LoadBalancer") (eq $defaults.service.type "NodePort") }}
+  externalTrafficPolicy: {{ default "Local" $defaults.service.externalTrafficPolicy }}
   {{- end }}
   {{- if $node.haproxyStaticIP }}
   loadBalancerIP: {{ $node.haproxyStaticIP }}
