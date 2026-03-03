@@ -87,7 +87,7 @@ defaults:
     extraEnv: [ ]
   consensus:
     service:
-      type: "ClusterIP"
+      type: "NodePort"
       externalTrafficPolicy: "Local"
       annotations: { }
       labels: { }
@@ -111,14 +111,10 @@ defaults:
       timeoutSeconds: 5
     resources: { }
     service:
-      type: "ClusterIP"
+      type: "NodePort"
       externalTrafficPolicy: "Local"
       annotations: { }
       labels: { }
-      nodePorts:
-        grpcNonTls: null
-        grpcTls: null
-        prometheus: null
   envoyProxy:
     enabled: true
     nameOverride: "envoy-proxy"
@@ -129,7 +125,7 @@ defaults:
       pullPolicy: "IfNotPresent"
     resources: { }
     service:
-      type: "ClusterIP"
+      type: "NodePort"
       externalTrafficPolicy: "Local"
       annotations: { }
       labels: { }
