@@ -99,6 +99,16 @@ defaults:
       repository: "haproxytech/haproxy-alpine"
       tag: "2.4.25"
       pullPolicy: "IfNotPresent"
+    maxconn: 32
+    timeouts:
+      connect: "5s"
+      client: "120s"
+      server: "120s"
+      httpKeepAlive: "60s"
+      tunnel: "1h"
+    tcpKeepAlive: true
+    probes:
+      timeoutSeconds: 5
     resources: { }
     service:
       type: "NodePort"
