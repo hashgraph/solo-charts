@@ -2,7 +2,7 @@
   enabled: true
   stopOnError: "{{ .cheetah.stopOnError }}" # stop the pipeline if any error occurs
   scanner:
-    directory: /opt/hgcapp/recordStreams/record{{ .node.accountId }}
+    directory: /opt/hgcapp/recordStreams
     pattern: ".rcd_sig"
     interval: 100ms
     batchSize: 1000 # max number of files per scanned items batch

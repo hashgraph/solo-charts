@@ -9,6 +9,22 @@ This document outlines the steps to set up a development environment for the pro
    - K9s (https://k9scli.io/)
    - `yq` from this link: [yq](https://github.com/mikefarah/yq/#install)
 
+## Steps to run using Solo
+- Install Node
+``` 
+nvm use 24
+```
+
+- Deploy the network and other components using Solo:
+```bash
+task deploy-network
+```
+
+- Destroy the network and other components using Solo:
+```bash
+task destroy-network
+```
+
 ## Steps to run the tests
 
 - Open a separate terminal and run the following command to deploy the network and other components:
