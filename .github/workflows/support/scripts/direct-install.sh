@@ -25,12 +25,12 @@ function unzip_build() {
 
 function start_service() {
   local pod="${1}"
-  "${KCTL}" exec "${pod}" -c root-container -- bash -c "systemctl restart network-node" || true
+  "${KCTL}" exec "${pod}" -c root-container -- bash -c "/command/s6-svc -u /run/service/network-node" || true
 }
 
 function stop_service() {
   local pod="${1}"
-  "${KCTL}" exec "${pod}" -c root-container -- bash -c "systemctl stop network-node" || true
+  "${KCTL}" exec "${pod}" -c root-container -- bash -c "/command/s6-svc -d /run/service/network-node" || true
 }
 
 function setup_node_all() {

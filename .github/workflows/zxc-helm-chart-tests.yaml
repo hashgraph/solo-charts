@@ -48,7 +48,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # direct-install.sh uses ubi8-init-java17 image
+        # direct-install.sh uses ubi8-s6-java25 image
         # nmt-install.sh uses ubi8-init-dind image
         scriptName: [ direct-install.sh, nmt-install.sh ]
     steps:

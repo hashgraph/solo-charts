@@ -35,53 +35,53 @@ setup() {
   [[ "${test_status}" = "${PASS}" ]]
 }
 
-@test "Check systemctl is running in all root containers" {
+@test "Check s6-svscan is running in all root containers" {
   local resp="$(get_pod_list network-node)"
   local nodes=(${resp}) # convert into an array
 
   log_debug "---------------------------------------------------------------------------"
-  log_debug "TEST: Checking systemctl is running in all network node containers"
+  log_debug "TEST: Checking s6-svscan is running in all network node containers"
   log_debug "---------------------------------------------------------------------------"
 
   local attempts=0
-  local systemctl_status="${FAIL}"
+  local s6_status="${FAIL}"
   local MAX_ATTEMPTS=10
 
   for node in "${nodes[@]}"
   do
     attempts=0
-    systemctl_status="${EX_ERR}"
+    s6_status="${EX_ERR}"
 
     log_debug "Checking node ${node}..."
 
-    # make few attempts to check systemctl status
-    while [[ "${attempts}" -lt "${MAX_ATTEMPTS}" && "${systemctl_status}" -ne "${EX_OK}" ]]; do
+    # make few attempts to check s6 status
+    while [[ "${attempts}" -lt "${MAX_ATTEMPTS}" && "${s6_status}" -ne "${EX_OK}" ]]; do
       attempts=$((attempts + 1))
 
-      kubectl exec "${node}" -c root-container -n "${NAMESPACE}" -- systemctl status --no-pager
-      systemctl_status="${?}"
-      log_debug "Checked systemctl status in ${node} (Attempt #${attempts}/${MAX_ATTEMPTS})... >>>>> status: ${systemctl_status} <<<<<"
-      if [[ "${systemctl_status}" -ne "${EX_OK}" ]]; then
+      kubectl exec "${node}" -c root-container -n "${NAMESPACE}" -- /command/s6-svstat /run/service/network-node
+      s6_status="${?}"
+      log_debug "Checked s6-svstat status in ${node} (Attempt #${attempts}/${MAX_ATTEMPTS})... >>>>> status: ${s6_status} <<<<<"
+      if [[ "${s6_status}" -ne "${EX_OK}" ]]; then
         log_debug "Sleeping 5s..."
         sleep 5
       fi
     done
 
-    if [[ "${systemctl_status}" -ne "${EX_OK}" ]]; then
-      log_fail "systemctl is not running in node ${node}"
+    if [[ "${s6_status}" -ne "${EX_OK}" ]]; then
+      log_fail "s6-svscan is not running in node ${node}"
       break # break at first node error
     fi
 
-    log_pass "systemctl is running in node ${node}"
+    log_pass "s6-svscan is running in node ${node}"
   done
 
   local test_status="${FAIL}"
-  if [[ "${systemctl_status}" -eq "${EX_OK}" ]]; then
+  if [[ "${s6_status}" -eq "${EX_OK}" ]]; then
     test_status="${PASS}"
   fi
 
   log_debug ""
-  log_debug "[${test_status}] systemctl is running in all network node containers"
+  log_debug "[${test_status}] s6-svscan is running in all network node containers"
   log_debug ""
 
   # assert success
