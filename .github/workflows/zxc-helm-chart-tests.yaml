@@ -121,6 +121,13 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y wget
 
+      - name: Setup Java
+        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
+        if: ${{ steps.check-changed-files.outputs.run-tests && !cancelled() && !failure() }}
+        with:
+          distribution: temurin
+          java-version: "21"
+
       - name: Setup Kind
         uses: helm/kind-action@ef37e7f390d99f746eb8b610417061a60e82a6cc # v1.14.0
         if: ${{ steps.check-changed-files.outputs.run-tests && !cancelled() && !failure() }}
