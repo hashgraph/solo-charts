@@ -639,15 +639,28 @@ function verify_network_state() {
 }
 
 function verify_haproxy() {
-  # iterate over each haprox pod check if READY is 1/1
-  local pods=$("${KCTL}" get pods -l solo.hedera.com/type=haproxy -o jsonpath='{.items[*].metadata.name}')
+  # iterate over each haproxy pod and wait until it becomes ready
+  local pods
+  pods=$("${KCTL}" get pods -l solo.hedera.com/type=haproxy -o jsonpath='{.items[*].metadata.name}')
   for pod in ${pods}; do
-    local status=$("${KCTL}" get pod "${pod}" -o 'jsonpath={..status.conditions[?(@.type=="Ready")].status}')
-    if [[ "${status}" != "True" ]]; then
-      echo "ERROR: <<< HAProxy pod ${pod} is not ready. >>>"
-      return "${EX_ERR}"
-    fi
-    echo "HAProxy pod ${pod} is ready"
+    local attempt
+    for attempt in $(seq 1 "${MAX_ATTEMPTS}"); do
+      local status
+      status=$("${KCTL}" get pod "${pod}" -o 'jsonpath={..status.conditions[?(@.type=="Ready")].status}')
+      if [[ "${status}" == "True" ]]; then
+        echo "HAProxy pod ${pod} is ready"
+        break
+      fi
+
+      if [[ "${attempt}" -eq "${MAX_ATTEMPTS}" ]]; then
+        echo "ERROR: <<< HAProxy pod ${pod} is not ready after ${MAX_ATTEMPTS} attempts. >>>"
+        "${KCTL}" describe pod "${pod}" || true
+        return "${EX_ERR}"
+      fi
+
+      echo "HAProxy pod ${pod} is not ready yet, retry ${attempt}/${MAX_ATTEMPTS}"
+      sleep 5
+    done
   done
   return "${EX_OK}"
 }

@@ -46,6 +46,40 @@ function verify_otel_metrics() {
   return 1
 }
 
+function verify_consensus_metrics_endpoint() {
+  local network_node_pods
+  network_node_pods=$(kubectl get pod -l solo.hedera.com/type=network-node -o jsonpath='{.items[*].metadata.name}')
+
+  if [[ -z "${network_node_pods}" ]]; then
+    echo "ERROR: no network-node pods found for consensus metrics verification"
+    return 1
+  fi
+
+  local pod
+  for pod in ${network_node_pods}; do
+    echo "Waiting for consensus metrics endpoint in ${pod}"
+
+    local attempt
+    for attempt in {1..24}; do
+      if kubectl exec "${pod}" -c root-container -- \
+        curl -fsS http://localhost:9999/metrics | grep -q '^app_'; then
+        echo "Consensus metrics endpoint is ready in ${pod}"
+        break
+      fi
+
+      if [[ "${attempt}" -eq 24 ]]; then
+        echo "ERROR: consensus metrics endpoint did not become ready in ${pod}"
+        kubectl exec "${pod}" -c root-container -- ls -al /opt/hgcapp/services-hedera/HapiApp2.0/logs || true
+        kubectl exec "${pod}" -c root-container -- tail -n 100 /opt/hgcapp/services-hedera/HapiApp2.0/logs/swirlds.log || true
+        return 1
+      fi
+
+      echo "Consensus metrics not ready yet in ${pod}, retry ${attempt}/24"
+      sleep 10
+    done
+  done
+}
+
 echo "-----------------------------------------------------------------------------------------------------"
 echo "Creating cluster and namespace"
 # kind delete cluster -n "${CLUSTER_NAME}" || true
@@ -139,6 +173,10 @@ else
   source "${SCRIPTS_DIR}/${SCRIPT_NAME}" && setup_node_all
   source "${SCRIPTS_DIR}/${SCRIPT_NAME}" && start_node_all
 fi
+
+echo "-----------------------------------------------------------------------------------------------------"
+echo "Verify consensus metrics endpoints"
+verify_consensus_metrics_endpoint
 
 echo "-----------------------------------------------------------------------------------------------------"
 echo "Verify OTEL collector metrics"
