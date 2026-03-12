@@ -123,7 +123,7 @@ CLUSTER_NAME="${CLUSTER_NAME:-solo-charts-test}"
 NAMESPACE="${NAMESPACE:-solo-charts-test}"
 RELEASE_NAME="${RELEASE_NAME:-solo-charts}"
 NMT_VERSION=v1.2.4
-PLATFORM_VERSION=v0.54.0-alpha.4
+PLATFORM_VERSION=v0.71.0
 POD_MONITOR_ROLE="${POD_MONITOR_ROLE:-pod-monitor-role}"
 NODE_NAMES=(node1 node2 node3)
 POD_MONITOR_ROLE="${POD_MONITOR_ROLE:-pod-monitor-role}"
@@ -133,4 +133,3 @@ CHART_DIR="../../../charts/solo-deployment"
 TELEMETRY_DIR="${SCRIPT_DIR}/../telemetry"
 
 show_env_vars
-
