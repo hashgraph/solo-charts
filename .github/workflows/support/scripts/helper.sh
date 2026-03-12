@@ -910,17 +910,18 @@ function nmt_start() {
   podState="$("${KCTL}" exec "${pod}" -c root-container -- docker ps -a -f 'name=swirlds-node' --format '{{.State}}')"
   podStateErr="${?}"
 
-  if [[ "${podStateErr}" -ne 0 || -z "${podState}" || "${podState}" != "running" ]]; then
-    echo "ERROR: 'nmt_start' - swirlds-node container is not running"
-    return "${EX_ERR}"
-  fi
-
   echo "Fetching logs from swirlds-haveged..."
-
-  "${KCTL}" exec "${pod}" -c root-container -- docker logs --tail 10 swirlds-haveged || return "${EX_ERR}"
+  "${KCTL}" exec "${pod}" -c root-container -- docker logs --tail 20 swirlds-haveged || true
 
   echo "Fetching logs from swirlds-node..."
-  "${KCTL}" exec "${pod}" -c root-container -- docker logs --tail 10 swirlds-node  || return "${EX_ERR}"
+  "${KCTL}" exec "${pod}" -c root-container -- docker logs --tail 50 swirlds-node || true
+
+  if [[ "${podStateErr}" -ne 0 || -z "${podState}" || "${podState}" != "running" ]]; then
+    echo "ERROR: 'nmt_start' - swirlds-node container is not running (state=${podState})"
+    "${KCTL}" exec "${pod}" -c root-container -- ls -la "${NMT_HAPI_PATH}/logs/" || true
+    "${KCTL}" exec "${pod}" -c root-container -- bash -c "cat ${NMT_HAPI_PATH}/logs/swirlds.log 2>/dev/null | tail -50" || true
+    return "${EX_ERR}"
+  fi
 
   return "${EX_OK}"
 }
