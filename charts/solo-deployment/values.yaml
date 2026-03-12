@@ -80,8 +80,8 @@ defaults:
   root: # root container
     image:
       registry: "ghcr.io"
-      repository: "hashgraph/solo-containers/ubi8-init-java21"
-      tag: "0.42.0"
+      repository: "hashgraph/solo-containers/ubi8-s6-java25"
+      tag: "0.43.0"
       pullPolicy: "IfNotPresent"
     resources: { }
     extraEnv: [ ]
