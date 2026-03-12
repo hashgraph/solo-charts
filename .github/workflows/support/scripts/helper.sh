@@ -826,7 +826,7 @@ function nmt_preflight() {
   fi
 
   "${KCTL}" exec "${pod}" -c root-container -- \
-    node-mgmt-tool -VV -P "${NMT_INSTALL_BASE_PATH}" preflight -j "${OPENJDK_VERSION}" -df -i "${NMT_PROFILE}" -k 256m -m 512m || return "${EX_ERR}"
+    node-mgmt-tool -VV preflight -j "${OPENJDK_VERSION}" -df -i "${NMT_PROFILE}" -k 256m -m 512m || return "${EX_ERR}"
 
   return "${EX_OK}"
 }
@@ -850,7 +850,7 @@ function nmt_install() {
   fi
 
   "${KCTL}" exec "${pod}" -c root-container -- \
-    node-mgmt-tool -VV -P "${NMT_INSTALL_BASE_PATH}" install \
+    node-mgmt-tool -VV install \
     -p "${HEDERA_HOME_DIR}/${PLATFORM_INSTALLER}" \
     -n "${node_id}" \
     -x "${PLATFORM_VERSION}" ||
@@ -876,12 +876,12 @@ function nmt_start() {
 
   local node_name
   node_name="$(derive_node_name_from_pod "${pod}")" || return "${EX_ERR}"
-  sync_runtime_files "${pod}" "${node_name}" "${NMT_HAPI_PATH}" || return "${EX_ERR}"
+  sync_runtime_files "${pod}" "${node_name}" "${HAPI_PATH}" || return "${EX_ERR}"
 
   # remove old logs
-  "${KCTL}" exec "${pod}" -c root-container -- bash -c "rm -f ${NMT_HAPI_PATH}/logs/*" || true
+  "${KCTL}" exec "${pod}" -c root-container -- bash -c "rm -f ${HAPI_PATH}/logs/*" || true
 
-  "${KCTL}" exec "${pod}" -c root-container -- node-mgmt-tool -VV -P "${NMT_INSTALL_BASE_PATH}" start || return "${EX_ERR}"
+  "${KCTL}" exec "${pod}" -c root-container -- node-mgmt-tool -VV start || return "${EX_ERR}"
 
   local attempts=0
   local max_attempts=$MAX_ATTEMPTS
@@ -918,8 +918,8 @@ function nmt_start() {
 
   if [[ "${podStateErr}" -ne 0 || -z "${podState}" || "${podState}" != "running" ]]; then
     echo "ERROR: 'nmt_start' - swirlds-node container is not running (state=${podState})"
-    "${KCTL}" exec "${pod}" -c root-container -- ls -la "${NMT_HAPI_PATH}/logs/" || true
-    "${KCTL}" exec "${pod}" -c root-container -- bash -c "cat ${NMT_HAPI_PATH}/logs/swirlds.log 2>/dev/null | tail -50" || true
+    "${KCTL}" exec "${pod}" -c root-container -- ls -la "${HAPI_PATH}/logs/" || true
+    "${KCTL}" exec "${pod}" -c root-container -- bash -c "cat ${HAPI_PATH}/logs/swirlds.log 2>/dev/null | tail -50" || true
     return "${EX_ERR}"
   fi
 
@@ -938,7 +938,7 @@ function nmt_stop() {
     return "${EX_ERR}"
   fi
 
-  "${KCTL}" exec "${pod}" -c root-container -- node-mgmt-tool -VV -P "${NMT_INSTALL_BASE_PATH}" stop || return "${EX_ERR}"
+  "${KCTL}" exec "${pod}" -c root-container -- node-mgmt-tool -VV stop || return "${EX_ERR}"
 
   # cleanup
   echo "Waiting 15s to let the containers stop..."

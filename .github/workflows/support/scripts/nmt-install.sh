@@ -33,14 +33,13 @@ function setup_node_all() {
     copy_platform "${pod}" || return "${EX_ERR}"
     ls_path "${pod}" "${HEDERA_HOME_DIR}" || return "${EX_ERR}"
     install_nmt "${pod}" || return "${EX_ERR}"
-    prepare_nmt_install_base "${pod}" || return "${EX_ERR}"
     ls_path "${pod}" "${HGCAPP_DIR}" || return "${EX_ERR}"
     nmt_preflight "${pod}" || return "${EX_ERR}"
     nmt_install "${pod}" "${node_id}" || return "${EX_ERR}"
-    sync_runtime_files "${pod}" "${node_name}" "${NMT_HAPI_PATH}" || return "${EX_ERR}"
-    ls_path "${pod}" "${NMT_HAPI_PATH}/"
-    ls_path "${pod}" "${NMT_HAPI_PATH}/data/keys/"
-    set_permission "${pod}" "${NMT_HAPI_PATH}"
+    sync_runtime_files "${pod}" "${node_name}" "${HAPI_PATH}" || return "${EX_ERR}"
+    ls_path "${pod}" "${HAPI_PATH}/"
+    ls_path "${pod}" "${HAPI_PATH}/data/keys/"
+    set_permission "${pod}" "${HAPI_PATH}"
     log_time "setup_node"
   done
 
