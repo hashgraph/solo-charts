@@ -43,14 +43,18 @@ permissions:
 
 jobs:
   test:
-    name: ${{ inputs.custom-job-label || 'Helm Chart Test' }} (${{ matrix.scriptName }})
+    name: ${{ inputs.custom-job-label || 'Helm Chart Test' }} (${{ matrix.name }})
     runs-on: solo-linux-medium
     strategy:
       fail-fast: false
       matrix:
-        # direct-install.sh uses ubi8-s6-java25 image
-        # nmt-install.sh uses ubi8-init-dind image
-        scriptName: [ direct-install.sh, nmt-install.sh ]
+        include:
+          - name: direct-install, s6
+            scriptName: direct-install.sh
+            rootImageRepository: hashgraph/solo-containers/ubi8-s6-java25
+          - name: nmt-install, systemd
+            scriptName: nmt-install.sh
+            rootImageRepository: hashgraph/solo-containers/ubi8-init-dind
     steps:
       - name: Harden the runner (Audit all outbound calls)
         uses: step-security/harden-runner@a90bcbc6539c36a85cdfeb73f7e2f433735f215b # v2.15.0
@@ -110,6 +114,7 @@ jobs:
         if: ${{ steps.check-changed-files.outputs.run-tests && !cancelled() && !failure() }}
         run: |
           echo "script_name=${{ matrix.scriptName }}" >> "${GITHUB_OUTPUT}"
+          echo "root_image_repository=${{ matrix.rootImageRepository }}" >> "${GITHUB_OUTPUT}"
 
       - name: Install wget
         run: |
@@ -143,5 +148,7 @@ jobs:
       - name: Helm Chart Test
         working-directory: .github/workflows/support
         if: ${{ steps.check-changed-files.outputs.run-tests && !cancelled() && !failure() }}
+        env:
+          ROOT_IMAGE_REPOSITORY: ${{ steps.vars.outputs.root_image_repository }}
         run: |
           task test-"${{ steps.vars.outputs.script_name}}"

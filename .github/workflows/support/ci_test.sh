@@ -13,6 +13,7 @@ source "${CUR_DIR}/env.sh"
 
 CHART_VALUES_FILES=ci/ci-values.yaml
 SCRIPTS_DIR=scripts
+ROOT_IMAGE_REPOSITORY="${ROOT_IMAGE_REPOSITORY:-hashgraph/solo-containers/ubi8-s6-java25}"
 
 function verify_otel_metrics() {
   local network_node_pod
@@ -30,8 +31,10 @@ function verify_otel_metrics() {
 
   local attempt
   for attempt in {1..24}; do
-    if kubectl exec "${network_node_pod}" -c root-container -- \
-      curl -fsS "${metrics_url}" | grep -q '^app_'; then
+    local metrics_output
+    metrics_output="$(kubectl exec "${network_node_pod}" -c root-container -- curl -fsS "${metrics_url}")" || metrics_output=""
+
+    if grep -q '^app_' <<<"${metrics_output}"; then
       echo "OTEL collector is exporting Hedera metrics on ${service_name}:9090"
       return 0
     fi
@@ -61,8 +64,10 @@ function verify_consensus_metrics_endpoint() {
 
     local attempt
     for attempt in {1..24}; do
-      if kubectl exec "${pod}" -c root-container -- \
-        curl -fsS http://localhost:9999/metrics | grep -q '^app_'; then
+      local metrics_output
+      metrics_output="$(kubectl exec "${pod}" -c root-container -- curl -fsS http://localhost:9999/metrics)" || metrics_output=""
+
+      if grep -q '^app_' <<<"${metrics_output}"; then
         echo "Consensus metrics endpoint is ready in ${pod}"
         break
       fi
@@ -117,20 +122,13 @@ kubectl get clusterrole "${POD_MONITOR_ROLE}" -o wide
 echo ""
 echo "Installing helm chart... "
 echo "SCRIPT_NAME: ${SCRIPT_NAME}"
+echo "ROOT_IMAGE_REPOSITORY: ${ROOT_IMAGE_REPOSITORY}"
 echo "Additional values: ${CHART_VALUES_FILES}"
 echo "-----------------------------------------------------------------------------------------------------"
-if [ "${SCRIPT_NAME}" = "nmt-install.sh" ]; then
 if [[ -z "${CHART_VALUES_FILES}" ]]; then
-  helm install "${RELEASE_NAME}" -n "${NAMESPACE}" "${CHART_DIR}" --set defaults.root.image.repository=hashgraph/solo-containers/ubi8-init-dind
+  helm install "${RELEASE_NAME}" -n "${NAMESPACE}" "${CHART_DIR}" --set defaults.root.image.repository="${ROOT_IMAGE_REPOSITORY}"
 else
-  helm install "${RELEASE_NAME}" -n "${NAMESPACE}"  "${CHART_DIR}" -f "${CHART_DIR}/values.yaml" --values "${CHART_VALUES_FILES}" --set defaults.root.image.repository=hashgraph/solo-containers/ubi8-init-dind
-fi
-else
-if [[ -z "${CHART_VALUES_FILES}" ]]; then
-  helm install "${RELEASE_NAME}" -n "${NAMESPACE}" "${CHART_DIR}"
-else
-  helm install "${RELEASE_NAME}" -n "${NAMESPACE}" "${CHART_DIR}" -f "${CHART_DIR}/values.yaml" --values "${CHART_VALUES_FILES}"
-fi
+  helm install "${RELEASE_NAME}" -n "${NAMESPACE}" "${CHART_DIR}" -f "${CHART_DIR}/values.yaml" --values "${CHART_VALUES_FILES}" --set defaults.root.image.repository="${ROOT_IMAGE_REPOSITORY}"
 fi
 
 echo "-----------------------------------------------------------------------------------------------------"
@@ -166,9 +164,8 @@ fi
 echo "-----------------------------------------------------------------------------------------------------"
 echo "Setup and start nodes"
 if [ "${SCRIPT_NAME}" = "nmt-install.sh" ]; then
-  echo "Ignore error from nmt install due to error of removing symlink"
-  source "${SCRIPTS_DIR}/${SCRIPT_NAME}" && setup_node_all || true
-  source "${SCRIPTS_DIR}/${SCRIPT_NAME}" && start_node_all || true
+  source "${SCRIPTS_DIR}/${SCRIPT_NAME}" && setup_node_all
+  source "${SCRIPTS_DIR}/${SCRIPT_NAME}" && start_node_all
 else
   source "${SCRIPTS_DIR}/${SCRIPT_NAME}" && setup_node_all
   source "${SCRIPTS_DIR}/${SCRIPT_NAME}" && start_node_all

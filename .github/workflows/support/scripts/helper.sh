@@ -10,6 +10,8 @@ MAX_ATTEMPTS=60
 HGCAPP_DIR="/opt/hgcapp"
 NMT_DIR="${HGCAPP_DIR}/node-mgmt-tools"
 HAPI_PATH="${HGCAPP_DIR}/services-hedera/HapiApp2.0"
+NMT_INSTALL_BASE_PATH="${NMT_INSTALL_BASE_PATH:-/opt/hgcapp-nmt}"
+NMT_HAPI_PATH="${NMT_INSTALL_BASE_PATH}/services-hedera/HapiApp2.0"
 HEDERA_HOME_DIR="/home/hedera"
 RELEASE_NAME="${RELEASE_NAME:-solo}"
 
@@ -108,6 +110,7 @@ function reset_node() {
 
   "${KCTL}" exec "${pod}" -c root-container -- rm -rf "${NMT_DIR}" || true
   "${KCTL}" exec "${pod}" -c root-container -- rm -rf "${HAPI_PATH}" || true
+  "${KCTL}" exec "${pod}" -c root-container -- rm -rf "${NMT_INSTALL_BASE_PATH}" || true
 
   ls_path "${pod}" "${HGCAPP_DIR}"
   set_permission "${pod}" "${HGCAPP_DIR}"
@@ -219,6 +222,8 @@ function copy_files() {
 # Copy hedera keys
 function copy_hedera_keys() {
   local pod="${1}"
+  local node_name="${2}"
+  local app_path="${3:-${HAPI_PATH}}"
 
   echo ""
   echo "Copy hedera TLS keys to ${pod}"
@@ -229,8 +234,13 @@ function copy_hedera_keys() {
     return "${EX_ERR}"
   fi
 
-  local srcDir="${SCRIPT_DIR}/../local-node"
-  local dstDir="${HAPI_PATH}"
+  if [ -z "${node_name}" ]; then
+    echo "ERROR: 'copy_hedera_keys' - node name is required"
+    return "${EX_ERR}"
+  fi
+
+  local srcDir="${TMP_DIR}/${node_name}"
+  local dstDir="${app_path}"
   local files=(
     "hedera.key"
     "hedera.crt"
@@ -238,6 +248,153 @@ function copy_hedera_keys() {
 
   for file in "${files[@]}"; do
     copy_files "${pod}" "${srcDir}" "${file}" "${dstDir}" || return "${EX_ERR}"
+  done
+
+  return "${EX_OK}"
+}
+
+function derive_node_name_from_pod() {
+  local pod="${1}"
+
+  if [ -z "${pod}" ]; then
+    echo "ERROR: 'derive_node_name_from_pod' - pod name is required" >&2
+    return "${EX_ERR}"
+  fi
+
+  local node_name="${pod#network-}"
+  node_name="${node_name%-0}"
+  echo "${node_name}"
+  return "${EX_OK}"
+}
+
+function derive_node_id_from_name() {
+  local node_name="${1}"
+
+  if [ -z "${node_name}" ]; then
+    echo "ERROR: 'derive_node_id_from_name' - node name is required" >&2
+    return "${EX_ERR}"
+  fi
+
+  local index
+  for index in "${!NODE_NAMES[@]}"; do
+    if [[ "${NODE_NAMES[${index}]}" == "${node_name}" ]]; then
+      echo "${index}"
+      return "${EX_OK}"
+    fi
+  done
+
+  echo "ERROR: Unable to derive node id for ${node_name}" >&2
+  return "${EX_ERR}"
+}
+
+function prep_platform_keys() {
+  echo ""
+  echo "Preparing platform keys"
+  echo "-----------------------------------------------------------------------------------------------------"
+
+  local platform_extract_dir="${TMP_DIR}/platform-build"
+  local platform_keys_dir="${TMP_DIR}/platform-keys"
+  local ids=()
+  local node_id
+
+  mkdir -p "${platform_extract_dir}" "${platform_keys_dir}" || return "${EX_ERR}"
+  unzip -q -o "${PLATFORM_INSTALLER_PATH}" -d "${platform_extract_dir}" || return "${EX_ERR}"
+
+  for node_id in "${!NODE_NAMES[@]}"; do
+    ids+=("${node_id}")
+  done
+
+  java -cp "${platform_extract_dir}/data/lib/*" \
+    org.hiero.consensus.pcli.Pcli \
+    generate-keys \
+    -p "${platform_keys_dir}" \
+    "${ids[@]}" || return "${EX_ERR}"
+
+  ls -la "${platform_keys_dir}" || return "${EX_ERR}"
+  return "${EX_OK}"
+}
+
+function copy_platform_keys() {
+  local pod="${1}"
+  local app_path="${2:-${HAPI_PATH}}"
+
+  echo ""
+  echo "Copy platform keys to ${pod}"
+  echo "-----------------------------------------------------------------------------------------------------"
+
+  if [ -z "${pod}" ]; then
+    echo "ERROR: 'copy_platform_keys' - pod name is required"
+    return "${EX_ERR}"
+  fi
+
+  local srcDir="${TMP_DIR}/platform-keys"
+  local dstDir="${app_path}/data/keys"
+  local files=()
+  local node_name
+  for node_name in "${NODE_NAMES[@]}"; do
+    files+=("s-private-${node_name}.pem")
+    files+=("s-public-${node_name}.pem")
+  done
+
+  local file
+  for file in "${files[@]}"; do
+    copy_files "${pod}" "${srcDir}" "${file}" "${dstDir}" || return "${EX_ERR}"
+  done
+
+  return "${EX_OK}"
+}
+
+function prep_hedera_keys() {
+  echo ""
+  echo "Preparing per-node Hedera TLS keys"
+  echo "-----------------------------------------------------------------------------------------------------"
+
+  local namespace="${NAMESPACE}"
+  local node_name
+  for node_name in "${NODE_NAMES[@]}"; do
+    local node_dir="${TMP_DIR}/${node_name}"
+    local key_path="${node_dir}/hedera.key"
+    local cert_path="${node_dir}/hedera.crt"
+    local san_config="${node_dir}/openssl-san.cnf"
+    local service_fqdn="network-${node_name}-svc.${namespace}.svc.cluster.local"
+
+    mkdir -p "${node_dir}" || return "${EX_ERR}"
+
+    cat >"${san_config}" <<EOF || return "${EX_ERR}"
+[req]
+distinguished_name = req_distinguished_name
+x509_extensions = v3_req
+prompt = no
+
+[req_distinguished_name]
+CN = ${service_fqdn}
+O = ACME
+OU = My Unit ${node_name}
+C = US
+
+[v3_req]
+basicConstraints = critical, CA:true
+keyUsage = digitalSignature, keyEncipherment, dataEncipherment
+extendedKeyUsage = serverAuth, clientAuth
+subjectAltName = @alt_names
+subjectKeyIdentifier = hash
+authorityKeyIdentifier = keyid:always,issuer
+
+[alt_names]
+DNS.1 = ${service_fqdn}
+DNS.2 = localhost
+IP.1 = 127.0.0.1
+EOF
+
+    openssl req \
+      -x509 \
+      -nodes \
+      -newkey rsa:4096 \
+      -sha256 \
+      -days 36500 \
+      -keyout "${key_path}" \
+      -out "${cert_path}" \
+      -config "${san_config}" >/dev/null 2>&1 || return "${EX_ERR}"
   done
 
   return "${EX_OK}"
@@ -337,10 +494,90 @@ function prep_address_book() {
   return "${EX_OK}"
 }
 
+function prep_genesis_network() {
+  local genesis_network_file="${TMP_DIR}/genesis-network.json"
+  local namespace="${NAMESPACE}"
+  local account_id_prefix="${ACCOUNT_ID_PREFIX:-0.0}"
+
+  TMP_DIR="${TMP_DIR}" \
+  GENESIS_NETWORK_FILE="${genesis_network_file}" \
+  NAMESPACE="${namespace}" \
+  ACCOUNT_ID_PREFIX="${account_id_prefix}" \
+  NODE_NAMES_CSV="$(IFS=,; echo "${NODE_NAMES[*]}")" \
+  python3 <<'PY' || return "${EX_ERR}"
+import base64
+import json
+import os
+import subprocess
+
+tmp_dir = os.environ["TMP_DIR"]
+output_path = os.environ["GENESIS_NETWORK_FILE"]
+namespace = os.environ["NAMESPACE"]
+account_id_prefix = os.environ["ACCOUNT_ID_PREFIX"]
+node_names = [name for name in os.environ["NODE_NAMES_CSV"].split(",") if name]
+prefix_parts = account_id_prefix.split(".")
+if len(prefix_parts) != 2:
+    raise SystemExit(f"Invalid ACCOUNT_ID_PREFIX: {account_id_prefix}")
+admin_key_bytes = list(bytes.fromhex("0aa8e21064c61eab86e2a9c164565b4e7a9a4146106e0a6cd03a8c395a110e92"))
+
+node_metadata = []
+for node_id, node_name in enumerate(node_names):
+    service_name = f"network-{node_name}-svc.{namespace}.svc.cluster.local"
+    cert_path = os.path.join(tmp_dir, "platform-keys", f"s-public-{node_name}.pem")
+    der_cert = subprocess.check_output(
+        ["openssl", "x509", "-in", cert_path, "-outform", "der"],
+        text=False,
+    )
+    gossip_ca_certificate = base64.b64encode(der_cert).decode("ascii")
+    account_num = 3 + node_id
+    node = {
+        "nodeId": node_id,
+        "accountId": {
+            "realmNum": prefix_parts[1],
+            "shardNum": prefix_parts[0],
+            "accountNum": str(account_num),
+        },
+        "description": node_name,
+        "gossipEndpoint": [{"domainName": service_name, "port": 50111}],
+        "serviceEndpoint": [{"domainName": service_name, "port": 50211}],
+        "gossipCaCertificate": gossip_ca_certificate,
+        "grpcCertificateHash": "",
+        "weight": 500,
+        "deleted": False,
+        "adminKey": {
+            "_key": {
+                "_key": {
+                    "_keyData": {
+                        "type": "Buffer",
+                        "data": admin_key_bytes,
+                    }
+                }
+            }
+        },
+    }
+    roster_entry = {
+        "nodeId": node_id,
+        "gossipEndpoint": [{"domainName": service_name, "port": 50111}],
+        "gossipCaCertificate": gossip_ca_certificate,
+        "weight": 500,
+    }
+    node_metadata.append({"node": node, "rosterEntry": roster_entry})
+
+with open(output_path, "w", encoding="utf-8") as fp:
+    json.dump({"nodeMetadata": node_metadata}, fp, separators=(",", ":"))
+PY
+
+  echo ""
+  cat "${genesis_network_file}" || return "${EX_ERR}"
+
+  return "${EX_OK}"
+}
+
 # Copy config files
 function copy_config_files() {
   local node="${1}"
   local pod="${2}"
+  local app_path="${3:-${HAPI_PATH}}"
 
   echo ""
   echo "Copy config to ${pod}"
@@ -358,7 +595,7 @@ function copy_config_files() {
 
   # copy the correct log42j file locally before copying into the container
   local srcDir="${TMP_DIR}"
-  local dstDir="${HAPI_PATH}"
+  local dstDir="${app_path}"
   cp -f "${SCRIPT_DIR}/../local-node/log4j2-${NMT_PROFILE}.xml" "${TMP_DIR}/log4j2.xml" || return "${EX_ERR}"
   local files=(
     "config.txt"
@@ -379,7 +616,7 @@ function copy_config_files() {
 
   # copy config properties files
   local srcDir="${SCRIPT_DIR}/../local-node/data/config"
-  local dstDir="${HAPI_PATH}/data/config"
+  local dstDir="${app_path}/data/config"
   local files=(
     "api-permission.properties"
     "application.properties"
@@ -390,11 +627,95 @@ function copy_config_files() {
     copy_files "${pod}" "${srcDir}" "${file}" "${dstDir}" || return "${EX_ERR}"
   done
 
+  copy_files "${pod}" "${TMP_DIR}" "genesis-network.json" "${dstDir}" || return "${EX_ERR}"
+
   # create gc.log file since otherwise node doesn't start when using older NMT releases (e.g. v1.2.2)
-  "${KCTL}" exec  "${pod}" -c root-container -- touch "${HAPI_PATH}/gc.log" || return "${EX_ERR}"
-  set_permission "${pod}" "${HAPI_PATH}/gc.log"
+  "${KCTL}" exec  "${pod}" -c root-container -- touch "${app_path}/gc.log" || return "${EX_ERR}"
+  set_permission "${pod}" "${app_path}/gc.log"
 
+  return "${EX_OK}"
+}
 
+function verify_runtime_files() {
+  local pod="${1}"
+  local app_path="${2:-${HAPI_PATH}}"
+
+  if [ -z "${pod}" ]; then
+    echo "ERROR: 'verify_runtime_files' - pod name is required"
+    return "${EX_ERR}"
+  fi
+
+  local files=(
+    "${app_path}/config.txt"
+    "${app_path}/settings.txt"
+    "${app_path}/log4j2.xml"
+    "${app_path}/hedera.crt"
+    "${app_path}/hedera.key"
+    "${app_path}/data/config/api-permission.properties"
+    "${app_path}/data/config/application.properties"
+    "${app_path}/data/config/bootstrap.properties"
+    "${app_path}/data/config/genesis-network.json"
+  )
+
+  local file
+  for file in "${files[@]}"; do
+    "${KCTL}" exec "${pod}" -c root-container -- test -f "${file}" || {
+      echo "ERROR: Missing runtime file ${file} in ${pod}"
+      return "${EX_ERR}"
+    }
+  done
+
+  return "${EX_OK}"
+}
+
+function sync_runtime_files() {
+  local pod="${1}"
+  local node_name="${2}"
+  local app_path="${3:-${HAPI_PATH}}"
+
+  if [ -z "${pod}" ]; then
+    echo "ERROR: 'sync_runtime_files' - pod name is required"
+    return "${EX_ERR}"
+  fi
+
+  if [ -z "${node_name}" ]; then
+    echo "ERROR: 'sync_runtime_files' - node name is required"
+    return "${EX_ERR}"
+  fi
+
+  copy_hedera_keys "${pod}" "${node_name}" "${app_path}" || return "${EX_ERR}"
+  copy_platform_keys "${pod}" "${app_path}" || return "${EX_ERR}"
+  copy_config_files "${node_name}" "${pod}" "${app_path}" || return "${EX_ERR}"
+  verify_runtime_files "${pod}" "${app_path}" || return "${EX_ERR}"
+
+  return "${EX_OK}"
+}
+
+function ensure_hapi_path_is_symlink() {
+  local pod="${1}"
+
+  if [ -z "${pod}" ]; then
+    echo "ERROR: 'ensure_hapi_path_is_symlink' - pod name is required"
+    return "${EX_ERR}"
+  fi
+
+  "${KCTL}" exec "${pod}" -c root-container -- bash -lc "
+set -euo pipefail
+
+if [[ -L '${HAPI_PATH}' ]]; then
+  exit 0
+fi
+
+if [[ ! -d '${HAPI_PATH}' ]]; then
+  echo 'Missing application root: ${HAPI_PATH}' >&2
+  exit 1
+fi
+
+target='${HAPI_PATH}-bootstrap'
+rm -rf \"\${target}\"
+mv '${HAPI_PATH}' \"\${target}\"
+ln -s \"\${target}\" '${HAPI_PATH}'
+" || return "${EX_ERR}"
 
   return "${EX_OK}"
 }
@@ -463,6 +784,35 @@ function install_nmt() {
   return "${EX_OK}"
 }
 
+function prepare_nmt_install_base() {
+  local pod="${1}"
+
+  echo ""
+  echo "Prepare NMT installation base in ${pod}"
+  echo "-----------------------------------------------------------------------------------------------------"
+
+  if [ -z "${pod}" ]; then
+    echo "ERROR: 'prepare_nmt_install_base' - pod name is required"
+    return "${EX_ERR}"
+  fi
+
+  "${KCTL}" exec "${pod}" -c root-container -- bash -lc "
+set -euo pipefail
+
+mkdir -p '${NMT_INSTALL_BASE_PATH}'
+rm -rf '${NMT_INSTALL_BASE_PATH}/node-mgmt-tools'
+ln -s '${NMT_DIR}' '${NMT_INSTALL_BASE_PATH}/node-mgmt-tools'
+mkdir -p '${NMT_INSTALL_BASE_PATH}/services-hedera'
+mkdir -p '${NMT_INSTALL_BASE_PATH}/services-hedera/HapiApp2.0'
+mkdir -p '${NMT_INSTALL_BASE_PATH}/services-hedera/HapiApp2.0/data'
+mkdir -p '${NMT_INSTALL_BASE_PATH}/services-hedera/HapiApp2.0/data/config'
+mkdir -p '${NMT_INSTALL_BASE_PATH}/services-hedera/HapiApp2.0/data/keys'
+mkdir -p '${NMT_INSTALL_BASE_PATH}/services-hedera/HapiApp2.0/logs'
+" || return "${EX_ERR}"
+
+  return "${EX_OK}"
+}
+
 function nmt_preflight() {
   local pod="${1}"
 
@@ -476,13 +826,14 @@ function nmt_preflight() {
   fi
 
   "${KCTL}" exec "${pod}" -c root-container -- \
-    node-mgmt-tool -VV preflight -j "${OPENJDK_VERSION}" -df -i "${NMT_PROFILE}" -k 256m -m 512m || return "${EX_ERR}"
+    node-mgmt-tool -VV -P "${NMT_INSTALL_BASE_PATH}" preflight -j "${OPENJDK_VERSION}" -df -i "${NMT_PROFILE}" -k 256m -m 512m || return "${EX_ERR}"
 
   return "${EX_OK}"
 }
 
 function nmt_install() {
   local pod="${1}"
+  local node_id="${2}"
 
   echo ""
   echo "Run Install in ${pod}"
@@ -493,10 +844,15 @@ function nmt_install() {
     return "${EX_ERR}"
   fi
 
+  if [ -z "${node_id}" ]; then
+    echo "ERROR: 'nmt_install' - node id is required"
+    return "${EX_ERR}"
+  fi
+
   "${KCTL}" exec "${pod}" -c root-container -- \
-    node-mgmt-tool -VV install \
+    node-mgmt-tool -VV -P "${NMT_INSTALL_BASE_PATH}" install \
     -p "${HEDERA_HOME_DIR}/${PLATFORM_INSTALLER}" \
-    -n "${node_name}" \
+    -n "${node_id}" \
     -x "${PLATFORM_VERSION}" ||
     return "${EX_ERR}"
 
@@ -518,10 +874,14 @@ function nmt_start() {
     return "${EX_ERR}"
   fi
 
-  # remove old logs
-  "${KCTL}" exec "${pod}" -c root-container -- bash -c "rm -f ${HAPI_PATH}/logs/*" || true
+  local node_name
+  node_name="$(derive_node_name_from_pod "${pod}")" || return "${EX_ERR}"
+  sync_runtime_files "${pod}" "${node_name}" "${NMT_HAPI_PATH}" || return "${EX_ERR}"
 
-  "${KCTL}" exec "${pod}" -c root-container -- node-mgmt-tool -VV start || return "${EX_ERR}"
+  # remove old logs
+  "${KCTL}" exec "${pod}" -c root-container -- bash -c "rm -f ${NMT_HAPI_PATH}/logs/*" || true
+
+  "${KCTL}" exec "${pod}" -c root-container -- node-mgmt-tool -VV -P "${NMT_INSTALL_BASE_PATH}" start || return "${EX_ERR}"
 
   local attempts=0
   local max_attempts=$MAX_ATTEMPTS
@@ -577,7 +937,7 @@ function nmt_stop() {
     return "${EX_ERR}"
   fi
 
-  "${KCTL}" exec "${pod}" -c root-container -- node-mgmt-tool -VV stop || return "${EX_ERR}"
+  "${KCTL}" exec "${pod}" -c root-container -- node-mgmt-tool -VV -P "${NMT_INSTALL_BASE_PATH}" stop || return "${EX_ERR}"
 
   # cleanup
   echo "Waiting 15s to let the containers stop..."
@@ -697,7 +1057,8 @@ function replace_keys_all() {
   local node_name
   for node_name in "${NODE_NAMES[@]}"; do
     local pod="network-${node_name}-0" # pod name
-    copy_hedera_keys "${pod}" || return "${EX_ERR}"
+    copy_hedera_keys "${pod}" "${node_name}" || return "${EX_ERR}"
+    copy_platform_keys "${pod}" || return "${EX_ERR}"
     log_time "replace_keys"
   done
 
