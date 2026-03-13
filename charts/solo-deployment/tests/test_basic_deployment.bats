@@ -35,53 +35,73 @@ setup() {
   [[ "${test_status}" = "${PASS}" ]]
 }
 
-@test "Check systemctl is running in all root containers" {
+@test "Check s6-svscan or systemctl is running in all root containers" {
   local resp="$(get_pod_list network-node)"
   local nodes=(${resp}) # convert into an array
 
   log_debug "---------------------------------------------------------------------------"
-  log_debug "TEST: Checking systemctl is running in all network node containers"
+  log_debug "TEST: Checking s6-svscan or systemctl is running in all network node containers"
   log_debug "---------------------------------------------------------------------------"
 
   local attempts=0
-  local systemctl_status="${FAIL}"
+  local init_status="${FAIL}"
   local MAX_ATTEMPTS=10
 
   for node in "${nodes[@]}"
   do
     attempts=0
-    systemctl_status="${EX_ERR}"
+    init_status="${EX_ERR}"
 
     log_debug "Checking node ${node}..."
 
-    # make few attempts to check systemctl status
-    while [[ "${attempts}" -lt "${MAX_ATTEMPTS}" && "${systemctl_status}" -ne "${EX_OK}" ]]; do
-      attempts=$((attempts + 1))
+    # detect which init system is available
+    if kubectl exec "${node}" -c root-container -n "${NAMESPACE}" -- ls /command/s6-svstat > /dev/null 2>&1; then
+      log_debug "s6-overlay detected in ${node}, checking s6-svstat..."
 
-      kubectl exec "${node}" -c root-container -n "${NAMESPACE}" -- systemctl status --no-pager
-      systemctl_status="${?}"
-      log_debug "Checked systemctl status in ${node} (Attempt #${attempts}/${MAX_ATTEMPTS})... >>>>> status: ${systemctl_status} <<<<<"
-      if [[ "${systemctl_status}" -ne "${EX_OK}" ]]; then
-        log_debug "Sleeping 5s..."
-        sleep 5
-      fi
-    done
+      # make few attempts to check s6 status
+      while [[ "${attempts}" -lt "${MAX_ATTEMPTS}" && "${init_status}" -ne "${EX_OK}" ]]; do
+        attempts=$((attempts + 1))
 
-    if [[ "${systemctl_status}" -ne "${EX_OK}" ]]; then
-      log_fail "systemctl is not running in node ${node}"
+        kubectl exec "${node}" -c root-container -n "${NAMESPACE}" -- /command/s6-svstat /run/service/network-node
+        init_status="${?}"
+        log_debug "Checked s6-svstat status in ${node} (Attempt #${attempts}/${MAX_ATTEMPTS})... >>>>> status: ${init_status} <<<<<"
+        if [[ "${init_status}" -ne "${EX_OK}" ]]; then
+          log_debug "Sleeping 5s..."
+          sleep 5
+        fi
+      done
+    else
+      log_debug "systemd detected in ${node}, checking systemctl..."
+
+      # make few attempts to check systemctl status
+      while [[ "${attempts}" -lt "${MAX_ATTEMPTS}" && "${init_status}" -ne "${EX_OK}" ]]; do
+        attempts=$((attempts + 1))
+
+        kubectl exec "${node}" -c root-container -n "${NAMESPACE}" -- systemctl status --no-pager
+        init_status="${?}"
+        log_debug "Checked systemctl status in ${node} (Attempt #${attempts}/${MAX_ATTEMPTS})... >>>>> status: ${init_status} <<<<<"
+        if [[ "${init_status}" -ne "${EX_OK}" ]]; then
+          log_debug "Sleeping 5s..."
+          sleep 5
+        fi
+      done
+    fi
+
+    if [[ "${init_status}" -ne "${EX_OK}" ]]; then
+      log_fail "init system is not running in node ${node}"
       break # break at first node error
     fi
 
-    log_pass "systemctl is running in node ${node}"
+    log_pass "init system is running in node ${node}"
   done
 
   local test_status="${FAIL}"
-  if [[ "${systemctl_status}" -eq "${EX_OK}" ]]; then
+  if [[ "${init_status}" -eq "${EX_OK}" ]]; then
     test_status="${PASS}"
   fi
 
   log_debug ""
-  log_debug "[${test_status}] systemctl is running in all network node containers"
+  log_debug "[${test_status}] init system is running in all network node containers"
   log_debug ""
 
   # assert success
