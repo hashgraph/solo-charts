@@ -779,7 +779,7 @@ function install_nmt() {
   # do not call rm directoires for nmt install
   # cleanup_path "${pod}" "${HGCAPP_DIR}/*" || return "${EX_ERR}"
   "${KCTL}" exec "${pod}" -c root-container -- chmod +x "${HEDERA_HOME_DIR}/${NMT_INSTALLER}" || return "${EX_ERR}"
-  "${KCTL}" exec "${pod}" -c root-container -- sudo "${HEDERA_HOME_DIR}/${NMT_INSTALLER}" --accept -- -fg || return "${EX_ERR}"
+  "${KCTL}" exec "${pod}" -c root-container -- "${HEDERA_HOME_DIR}/${NMT_INSTALLER}" --accept -- -fg || return "${EX_ERR}"
 
   return "${EX_OK}"
 }
@@ -862,6 +862,59 @@ function nmt_install() {
   return "${EX_OK}"
 }
 
+# NMT v1.2.4 docker-compose.yml hardcodes /opt/hgcapp/ as the host-side volume source
+# for the swirlds-node container, so the K8s PVC subdirectories (data/apps, data/lib)
+# overlay—and hide—any JARs baked into the image.  This function populates those
+# K8s PVC paths from the Docker image NMT just built so the JVM can find the classes.
+function populate_hapi_apps_from_image() {
+  local pod="${1}"
+  local image_name="local/jrs-network-node:${PLATFORM_VERSION}"
+
+  echo ""
+  echo "Populating ${HAPI_PATH}/data/{apps,lib} from Docker image ${image_name}"
+  echo "-----------------------------------------------------------------------------------------------------"
+
+  if [ -z "${pod}" ]; then
+    echo "ERROR: 'populate_hapi_apps_from_image' - pod name is required"
+    return "${EX_ERR}"
+  fi
+
+  "${KCTL}" exec "${pod}" -c root-container -- bash -lc "
+set -uo pipefail
+
+image='${image_name}'
+hapi_path='${HAPI_PATH}'
+nmt_hapi_path='${NMT_HAPI_PATH}'
+
+# Method 1: extract apps/lib from the Docker image NMT built
+if docker image inspect \"\${image}\" >/dev/null 2>&1; then
+  echo \"Extracting apps/lib from Docker image \${image}...\"
+  cid=\$(docker create \"\${image}\")
+  docker cp \"\${cid}\":/opt/hgcapp/services-hedera/HapiApp2.0/data/apps/. \"\${hapi_path}/data/apps/\" 2>/dev/null || true
+  docker cp \"\${cid}\":/opt/hgcapp/services-hedera/HapiApp2.0/data/lib/.  \"\${hapi_path}/data/lib/\"  2>/dev/null || true
+  docker rm \"\${cid}\" >/dev/null || true
+  echo 'Extracted from Docker image.'
+fi
+
+# Method 2: fall back to NMT install path if it has JARs and the K8s PVC is still empty
+if [ -z \"\$(ls -A \"\${hapi_path}/data/apps/\" 2>/dev/null)\" ] && [ -d \"\${nmt_hapi_path}/data/apps\" ]; then
+  echo 'Docker image extraction produced no apps; copying from NMT install path...'
+  cp -a \"\${nmt_hapi_path}/data/apps/.\" \"\${hapi_path}/data/apps/\" || true
+fi
+if [ -z \"\$(ls -A \"\${hapi_path}/data/lib/\" 2>/dev/null)\" ] && [ -d \"\${nmt_hapi_path}/data/lib\" ]; then
+  echo 'Docker image extraction produced no lib; copying from NMT install path...'
+  cp -a \"\${nmt_hapi_path}/data/lib/.\" \"\${hapi_path}/data/lib/\" || true
+fi
+
+echo \"apps directory (${HAPI_PATH}/data/apps):\"
+ls \"\${hapi_path}/data/apps/\" 2>/dev/null | head -5 || true
+echo \"lib directory (first 5):\"
+ls \"\${hapi_path}/data/lib/\"  2>/dev/null | head -5 || true
+" || return "${EX_ERR}"
+
+  return "${EX_OK}"
+}
+
 function nmt_start() {
   local pod="${1}"
 
@@ -880,6 +933,18 @@ function nmt_start() {
 
   # remove old logs
   "${KCTL}" exec "${pod}" -c root-container -- bash -c "rm -f ${NMT_HAPI_PATH}/logs/*" || true
+
+  # Diagnostic: show what the docker-compose volumes section will mount
+  "${KCTL}" exec "${pod}" -c root-container -- bash -c "
+    compose_dir='${NMT_INSTALL_BASE_PATH}/node-mgmt-tools/compose/network-node'
+    echo '--- docker-compose.yml volumes section ---'
+    grep -A 3 'volumes:' \"\${compose_dir}/docker-compose.yml\" 2>/dev/null | head -20 || true
+    grep -A 3 'volumes:' \"\${compose_dir}/docker-compose.jrs.yml\" 2>/dev/null | head -20 || true
+    echo '--- ${HAPI_PATH}/data/apps (first 5 files) ---'
+    ls '${HAPI_PATH}/data/apps/' 2>/dev/null | head -5 || true
+    echo '--- ${HAPI_PATH}/data/lib (first 3 files) ---'
+    ls '${HAPI_PATH}/data/lib/'  2>/dev/null | head -3 || true
+  " || true
 
   "${KCTL}" exec "${pod}" -c root-container -- node-mgmt-tool -VV -P "${NMT_INSTALL_BASE_PATH}" start || return "${EX_ERR}"
 
@@ -910,17 +975,18 @@ function nmt_start() {
   podState="$("${KCTL}" exec "${pod}" -c root-container -- docker ps -a -f 'name=swirlds-node' --format '{{.State}}')"
   podStateErr="${?}"
 
-  if [[ "${podStateErr}" -ne 0 || -z "${podState}" || "${podState}" != "running" ]]; then
-    echo "ERROR: 'nmt_start' - swirlds-node container is not running"
-    return "${EX_ERR}"
-  fi
-
   echo "Fetching logs from swirlds-haveged..."
-
-  "${KCTL}" exec "${pod}" -c root-container -- docker logs --tail 10 swirlds-haveged || return "${EX_ERR}"
+  "${KCTL}" exec "${pod}" -c root-container -- docker logs --tail 20 swirlds-haveged || true
 
   echo "Fetching logs from swirlds-node..."
-  "${KCTL}" exec "${pod}" -c root-container -- docker logs --tail 10 swirlds-node  || return "${EX_ERR}"
+  "${KCTL}" exec "${pod}" -c root-container -- docker logs --tail 50 swirlds-node || true
+
+  if [[ "${podStateErr}" -ne 0 || -z "${podState}" || "${podState}" != "running" ]]; then
+    echo "ERROR: 'nmt_start' - swirlds-node container is not running (state=${podState})"
+    "${KCTL}" exec "${pod}" -c root-container -- ls -la "${NMT_HAPI_PATH}/logs/" || true
+    "${KCTL}" exec "${pod}" -c root-container -- bash -c "cat ${NMT_HAPI_PATH}/logs/swirlds.log 2>/dev/null | tail -50" || true
+    return "${EX_ERR}"
+  fi
 
   return "${EX_OK}"
 }
