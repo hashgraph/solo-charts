@@ -12,6 +12,7 @@ source "${CUR_DIR}/env.sh"
 
 CHART_VALUES_FILES=ci/ci-values.yaml
 SCRIPTS_DIR=scripts
+ROOT_IMAGE_REPOSITORY="${ROOT_IMAGE_REPOSITORY:-hashgraph/solo-containers/ubi8-s6-java25}"
 
 echo "-----------------------------------------------------------------------------------------------------"
 echo "Creating cluster and namespace"
@@ -48,20 +49,13 @@ kubectl get clusterrole "${POD_MONITOR_ROLE}" -o wide
 echo ""
 echo "Installing helm chart... "
 echo "SCRIPT_NAME: ${SCRIPT_NAME}"
+echo "ROOT_IMAGE_REPOSITORY: ${ROOT_IMAGE_REPOSITORY}"
 echo "Additional values: ${CHART_VALUES_FILES}"
 echo "-----------------------------------------------------------------------------------------------------"
-if [ "${SCRIPT_NAME}" = "nmt-install.sh" ]; then
 if [[ -z "${CHART_VALUES_FILES}" ]]; then
-  helm install "${RELEASE_NAME}" -n "${NAMESPACE}" "${CHART_DIR}" --set defaults.root.image.repository=hashgraph/solo-containers/ubi8-init-dind
+  helm install "${RELEASE_NAME}" -n "${NAMESPACE}" "${CHART_DIR}" --set defaults.root.image.repository="${ROOT_IMAGE_REPOSITORY}"
 else
-  helm install "${RELEASE_NAME}" -n "${NAMESPACE}"  "${CHART_DIR}" -f "${CHART_DIR}/values.yaml" --values "${CHART_VALUES_FILES}" --set defaults.root.image.repository=hashgraph/solo-containers/ubi8-init-dind
-fi
-else
-if [[ -z "${CHART_VALUES_FILES}" ]]; then
-  helm install "${RELEASE_NAME}" -n "${NAMESPACE}" "${CHART_DIR}"
-else
-  helm install "${RELEASE_NAME}" -n "${NAMESPACE}" "${CHART_DIR}" -f "${CHART_DIR}/values.yaml" --values "${CHART_VALUES_FILES}"
-fi
+  helm install "${RELEASE_NAME}" -n "${NAMESPACE}" "${CHART_DIR}" -f "${CHART_DIR}/values.yaml" --values "${CHART_VALUES_FILES}" --set defaults.root.image.repository="${ROOT_IMAGE_REPOSITORY}"
 fi
 
 echo "-----------------------------------------------------------------------------------------------------"
