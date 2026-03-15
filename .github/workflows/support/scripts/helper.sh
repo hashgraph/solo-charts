@@ -919,6 +919,9 @@ echo \"JAR declared Main-Class: '\${main_class}'\"
 
 if [ -n \"\${main_class}\" ] && [ \"\${main_class}\" != \"\${OLD_CLASS}\" ]; then
   sed -i \"s|\${OLD_CLASS}|\${main_class}|g\" \"\${ep}\"
+  # Fix classpath: the hardcoded -cp "data/lib/*" excludes data/apps/HederaNode.jar where
+  # com.hedera.node.app.ServicesMain lives; add data/apps/* so the class can be loaded.
+  sed -i 's|-cp \"data/lib/\*\"|-cp \"data/lib/*:data/apps/*\"|' \"\${ep}\"
   echo 'NMT entrypoint template patched.'
   echo '=== Patched NMT entrypoint template ==='
   cat \"\${ep}\"
@@ -961,6 +964,8 @@ fi
 
 echo '=== Image Entrypoint / Cmd ==='
 docker inspect \"\${image}\" --format 'Entrypoint: {{.Config.Entrypoint}}  Cmd: {{.Config.Cmd}}'
+echo '=== Image VOLUME declarations ==='
+docker inspect \"\${image}\" --format '{{json .Config.Volumes}}' 2>/dev/null || echo '(unknown)'
 
 OLD_CLASS='com.swirlds.platform.Browser'
 
@@ -1010,9 +1015,20 @@ if [ -n \"\${ep}\" ] && [ -f /tmp/ep.sh ] && grep -qF \"\${OLD_CLASS}\" /tmp/ep.
   if [ -n \"\${main_class}\" ] && [ \"\${main_class}\" != \"\${OLD_CLASS}\" ]; then
     echo \"Patching entrypoint: replacing \${OLD_CLASS} -> \${main_class}\"
     sed -i \"s|\${OLD_CLASS}|\${main_class}|g\" /tmp/ep.sh
+    # Fix classpath: the hardcoded -cp \"data/lib/*\" excludes data/apps/HederaNode.jar
+    # where com.hedera.node.app.ServicesMain lives; add data/apps/* so the class loads.
+    sed -i 's|-cp \"data/lib/\*\"|-cp \"data/lib/*:data/apps/*\"|' /tmp/ep.sh
     docker cp /tmp/ep.sh \"\${cid}\":\"\${ep}\"
     docker commit \"\${cid}\" \"\${image}\" >/dev/null
-    echo 'Image rebuilt with patched entrypoint.'
+    echo 'Image rebuilt with patched entrypoint (docker commit).'
+    # Also save to NMT_HAPI_PATH so it can be bind-mounted into the container.
+    # docker commit may not persist files that reside in a Docker VOLUME path at runtime;
+    # a host bind-mount always overrides volume mounts.
+    # ${NMT_HAPI_PATH} is expanded by the outer shell (not by the inner bash -lc script).
+    mkdir -p ${NMT_HAPI_PATH}
+    cp /tmp/ep.sh ${NMT_HAPI_PATH}/entrypoint.sh
+    chmod +x ${NMT_HAPI_PATH}/entrypoint.sh
+    echo 'Saved patched entrypoint to NMT_HAPI_PATH for bind-mount.'
     echo '=== Patched entrypoint ==='
     cat /tmp/ep.sh
   else
@@ -1023,6 +1039,61 @@ else
   echo 'Entrypoint does not reference Browser class; no patch needed.'
 fi
 " || return "${EX_ERR}"
+
+  # Patch docker-compose.jrs.yml to bind-mount the patched entrypoint.
+  # This is the reliable approach when docker commit cannot persist files
+  # that live under a Docker VOLUME path declared in the base image.
+  cat > "/tmp/patch_jrs_ep_${pod}.py" << 'PYEOF'
+import sys, os
+
+base  = sys.argv[1]
+ep_container = '/opt/hgcapp/services-hedera/HapiApp2.0/entrypoint.sh'
+compose_jrs  = os.path.join(base, 'node-mgmt-tools/compose/network-node/docker-compose.jrs.yml')
+ep_host      = os.path.join(base, 'services-hedera/HapiApp2.0/entrypoint.sh')
+
+if not os.path.exists(compose_jrs):
+    print('docker-compose.jrs.yml not found: ' + compose_jrs)
+    sys.exit(0)
+
+if not os.path.exists(ep_host):
+    print('Patched entrypoint not found at NMT_HAPI_PATH: ' + ep_host)
+    sys.exit(0)
+
+with open(compose_jrs) as f:
+    lines = f.readlines()
+
+if any('entrypoint.sh' in l for l in lines):
+    print('entrypoint.sh bind-mount already present in docker-compose.jrs.yml')
+    sys.exit(0)
+
+new_lines = []
+inserted  = False
+for line in lines:
+    new_lines.append(line)
+    if not inserted and 'gc.log:/opt/hgcapp/services-hedera/HapiApp2.0/gc.log' in line:
+        indent = len(line) - len(line.lstrip())
+        # ${APPLICATION_ROOT_PATH} is a docker-compose environment variable set by NMT at
+        # runtime (= NMT_INSTALL_BASE_PATH/services-hedera/HapiApp2.0). Writing the literal
+        # string here so docker-compose expands it when starting the container.
+        new_lines.append(
+            ' ' * indent
+            + '- "${APPLICATION_ROOT_PATH}/entrypoint.sh:'
+            + ep_container + ':ro"\n'
+        )
+        inserted = True
+
+if inserted:
+    with open(compose_jrs, 'w') as f:
+        f.writelines(new_lines)
+    print('Added entrypoint.sh bind-mount to docker-compose.jrs.yml')
+    with open(compose_jrs) as f:
+        print(f.read())
+else:
+    print('gc.log volume line not found in docker-compose.jrs.yml; bind-mount not added')
+PYEOF
+  "${KCTL}" cp "/tmp/patch_jrs_ep_${pod}.py" "${pod}":/tmp/patch_jrs_ep.py -c root-container || true
+  "${KCTL}" exec "${pod}" -c root-container -- python3 /tmp/patch_jrs_ep.py "${NMT_INSTALL_BASE_PATH}" || true
+  rm -f "/tmp/patch_jrs_ep_${pod}.py"
 
   return "${EX_OK}"
 }
@@ -1050,12 +1121,14 @@ function nmt_start() {
   "${KCTL}" exec "${pod}" -c root-container -- bash -c "
     compose_dir='${NMT_INSTALL_BASE_PATH}/node-mgmt-tools/compose/network-node'
     echo '--- docker-compose.yml volumes section ---'
-    grep -A 3 'volumes:' \"\${compose_dir}/docker-compose.yml\" 2>/dev/null | head -20 || true
-    grep -A 3 'volumes:' \"\${compose_dir}/docker-compose.jrs.yml\" 2>/dev/null | head -20 || true
-    echo '--- ${HAPI_PATH}/data/apps (first 5 files) ---'
-    ls '${HAPI_PATH}/data/apps/' 2>/dev/null | head -5 || true
-    echo '--- ${HAPI_PATH}/data/lib (first 3 files) ---'
-    ls '${HAPI_PATH}/data/lib/'  2>/dev/null | head -3 || true
+    grep -A 20 'volumes:' \"\${compose_dir}/docker-compose.yml\" 2>/dev/null | head -40 || true
+    grep -A 20 'volumes:' \"\${compose_dir}/docker-compose.jrs.yml\" 2>/dev/null | head -40 || true
+    echo '--- ${NMT_HAPI_PATH}/data/apps (first 5 files) ---'
+    ls '${NMT_HAPI_PATH}/data/apps/' 2>/dev/null | head -5 || true
+    echo '--- ${NMT_HAPI_PATH}/data/lib (first 3 files) ---'
+    ls '${NMT_HAPI_PATH}/data/lib/'  2>/dev/null | head -3 || true
+    echo '--- entrypoint.sh bind-mount source ---'
+    ls -la '${NMT_HAPI_PATH}/entrypoint.sh' 2>/dev/null || echo 'entrypoint.sh not at NMT_HAPI_PATH'
   " || true
 
   "${KCTL}" exec "${pod}" -c root-container -- node-mgmt-tool -VV -P "${NMT_INSTALL_BASE_PATH}" start || return "${EX_ERR}"
