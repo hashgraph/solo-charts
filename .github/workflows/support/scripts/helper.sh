@@ -862,11 +862,80 @@ function nmt_install() {
   return "${EX_OK}"
 }
 
+# After install_nmt extracts the NMT installer, this function patches the entrypoint.sh
+# template in the NMT source tree BEFORE nmt_install builds the Docker image.
+# NMT v1.x entrypoint.sh hardcodes com.swirlds.platform.Browser; for platform v0.40+
+# the correct main class is declared in HederaNode.jar's MANIFEST.MF Main-Class.
+function patch_nmt_entrypoint_template() {
+  local pod="${1}"
+  local nmt_ep_path="${NMT_DIR}/images/main-network-node/entrypoint.sh"
+  local platform_zip="${HEDERA_HOME_DIR}/${PLATFORM_INSTALLER}"
+
+  echo ""
+  echo "Patching NMT entrypoint template in ${pod} for platform ${PLATFORM_VERSION}"
+  echo "-----------------------------------------------------------------------------------------------------"
+
+  if [ -z "${pod}" ]; then
+    echo "ERROR: 'patch_nmt_entrypoint_template' - pod name is required"
+    return "${EX_ERR}"
+  fi
+
+  "${KCTL}" exec "${pod}" -c root-container -- bash -lc "
+set -uo pipefail
+
+ep='${nmt_ep_path}'
+platform_zip='${platform_zip}'
+OLD_CLASS='com.swirlds.platform.Browser'
+
+echo \"Checking NMT entrypoint template: \${ep}\"
+
+if [ ! -f \"\${ep}\" ]; then
+  echo 'NMT entrypoint template not found; skipping pre-build patch'
+  exit 0
+fi
+
+echo '=== Current NMT entrypoint template ==='
+cat \"\${ep}\"
+
+if ! grep -qF \"\${OLD_CLASS}\" \"\${ep}\" 2>/dev/null; then
+  echo 'Entrypoint template does not reference Browser class; no patch needed'
+  exit 0
+fi
+
+echo \"Browser class reference found in entrypoint template\"
+
+# Extract Main-Class from HederaNode.jar inside the platform zip
+main_class=''
+tmp_jar=\$(mktemp /tmp/HederaNode.XXXXXX.jar)
+if unzip -p \"\${platform_zip}\" data/apps/HederaNode.jar > \"\${tmp_jar}\" 2>/dev/null && [ -s \"\${tmp_jar}\" ]; then
+  echo '=== HederaNode.jar MANIFEST.MF ==='
+  unzip -p \"\${tmp_jar}\" META-INF/MANIFEST.MF 2>/dev/null && echo ''
+  main_class=\$(unzip -p \"\${tmp_jar}\" META-INF/MANIFEST.MF 2>/dev/null \
+    | grep '^Main-Class:' | tr -d '\\r' | sed 's/^Main-Class:[[:space:]]*//')
+fi
+rm -f \"\${tmp_jar}\"
+
+echo \"JAR declared Main-Class: '\${main_class}'\"
+
+if [ -n \"\${main_class}\" ] && [ \"\${main_class}\" != \"\${OLD_CLASS}\" ]; then
+  sed -i \"s|\${OLD_CLASS}|\${main_class}|g\" \"\${ep}\"
+  echo 'NMT entrypoint template patched.'
+  echo '=== Patched NMT entrypoint template ==='
+  cat \"\${ep}\"
+else
+  echo \"WARNING: could not determine correct Main-Class from platform zip; Docker build may use wrong class\"
+fi
+" || return "${EX_ERR}"
+
+  return "${EX_OK}"
+}
+
 # NMT v1.x builds a Docker image whose entrypoint calls com.swirlds.platform.Browser.
 # The Browser launcher was removed from the Swirlds SDK in platform v0.40+; for v0.71+
 # the correct entry point is declared in HederaNode.jar's MANIFEST.MF Main-Class header.
 # This function reads that header and, if needed, rebuilds the image with a patched
 # entrypoint so that the JVM invokes the correct class.
+# Acts as a safety net in case patch_nmt_entrypoint_template did not cover all cases.
 function fix_jrs_image_main_class() {
   local pod="${1}"
   local image_name="local/jrs-network-node:${PLATFORM_VERSION}"
@@ -893,11 +962,14 @@ fi
 echo '=== Image Entrypoint / Cmd ==='
 docker inspect \"\${image}\" --format 'Entrypoint: {{.Config.Entrypoint}}  Cmd: {{.Config.Cmd}}'
 
+OLD_CLASS='com.swirlds.platform.Browser'
+
 cid=\$(docker create \"\${image}\")
 cleanup() { docker rm -f \"\${cid}\" >/dev/null 2>&1 || true; }
 trap cleanup EXIT
 
 # Locate the entrypoint script inside the image
+# 1. Try well-known candidate paths
 ep=''
 for candidate in \
     /opt/hgcapp/services-hedera/HapiApp2.0/entrypoint.sh \
@@ -909,10 +981,10 @@ for candidate in \
   fi
 done
 
+# 2. If not found by name, try the configured entrypoint first token
 if [ -z \"\${ep}\" ]; then
-  # Try the first token from the configured entrypoint as a fallback
   ep_cmd=\$(docker inspect \"\${image}\" --format '{{index .Config.Entrypoint 0}}' 2>/dev/null || echo '')
-  if [ -n \"\${ep_cmd}\" ]; then
+  if [ -n \"\${ep_cmd}\" ] && [[ \"\${ep_cmd}\" == *.sh ]]; then
     docker cp \"\${cid}\":\"\${ep_cmd}\" /tmp/ep.sh 2>/dev/null && ep=\${ep_cmd} || true
   fi
 fi
@@ -930,13 +1002,12 @@ if docker cp \"\${cid}\":/opt/hgcapp/services-hedera/HapiApp2.0/data/apps/Hedera
     | grep '^Main-Class:' | tr -d '\\r' | sed 's/^Main-Class:[[:space:]]*//')
   echo \"JAR declared Main-Class: '\${main_class}'\"
 else
-  echo 'HederaNode.jar not found in image at expected path'
+  echo 'HederaNode.jar not found in image; cannot determine correct Main-Class'
 fi
 
 # Patch: if entrypoint references Browser but the JAR declares a different main class
-OLD_CLASS='com.swirlds.platform.Browser'
 if [ -n \"\${ep}\" ] && [ -f /tmp/ep.sh ] && grep -qF \"\${OLD_CLASS}\" /tmp/ep.sh 2>/dev/null; then
-  if [ -n \"\${main_class}\" ] && [ \"\${main_class}\" != 'com.swirlds.platform.Browser' ]; then
+  if [ -n \"\${main_class}\" ] && [ \"\${main_class}\" != \"\${OLD_CLASS}\" ]; then
     echo \"Patching entrypoint: replacing \${OLD_CLASS} -> \${main_class}\"
     sed -i \"s|\${OLD_CLASS}|\${main_class}|g\" /tmp/ep.sh
     docker cp /tmp/ep.sh \"\${cid}\":\"\${ep}\"

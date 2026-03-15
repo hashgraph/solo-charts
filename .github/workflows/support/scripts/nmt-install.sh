@@ -33,6 +33,7 @@ function setup_node_all() {
     copy_platform "${pod}" || return "${EX_ERR}"
     ls_path "${pod}" "${HEDERA_HOME_DIR}" || return "${EX_ERR}"
     install_nmt "${pod}" || return "${EX_ERR}"
+    patch_nmt_entrypoint_template "${pod}" || return "${EX_ERR}"
     prepare_nmt_install_base "${pod}" || return "${EX_ERR}"
     ls_path "${pod}" "${HGCAPP_DIR}" || return "${EX_ERR}"
     nmt_preflight "${pod}" || return "${EX_ERR}"
