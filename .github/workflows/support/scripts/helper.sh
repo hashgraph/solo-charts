@@ -862,20 +862,21 @@ function nmt_install() {
   return "${EX_OK}"
 }
 
-# NMT v1.2.4 docker-compose.yml hardcodes /opt/hgcapp/ as the host-side volume source
-# for the swirlds-node container, so the K8s PVC subdirectories (data/apps, data/lib)
-# overlay—and hide—any JARs baked into the image.  This function populates those
-# K8s PVC paths from the Docker image NMT just built so the JVM can find the classes.
-function populate_hapi_apps_from_image() {
+# NMT v1.x builds a Docker image whose entrypoint calls com.swirlds.platform.Browser.
+# The Browser launcher was removed from the Swirlds SDK in platform v0.40+; for v0.71+
+# the correct entry point is declared in HederaNode.jar's MANIFEST.MF Main-Class header.
+# This function reads that header and, if needed, rebuilds the image with a patched
+# entrypoint so that the JVM invokes the correct class.
+function fix_jrs_image_main_class() {
   local pod="${1}"
   local image_name="local/jrs-network-node:${PLATFORM_VERSION}"
 
   echo ""
-  echo "Populating ${HAPI_PATH}/data/{apps,lib} from Docker image ${image_name}"
+  echo "Checking/patching ${image_name} entrypoint for platform ${PLATFORM_VERSION} compatibility"
   echo "-----------------------------------------------------------------------------------------------------"
 
   if [ -z "${pod}" ]; then
-    echo "ERROR: 'populate_hapi_apps_from_image' - pod name is required"
+    echo "ERROR: 'fix_jrs_image_main_class' - pod name is required"
     return "${EX_ERR}"
   fi
 
@@ -883,33 +884,73 @@ function populate_hapi_apps_from_image() {
 set -uo pipefail
 
 image='${image_name}'
-hapi_path='${HAPI_PATH}'
-nmt_hapi_path='${NMT_HAPI_PATH}'
 
-# Method 1: extract apps/lib from the Docker image NMT built
-if docker image inspect \"\${image}\" >/dev/null 2>&1; then
-  echo \"Extracting apps/lib from Docker image \${image}...\"
-  cid=\$(docker create \"\${image}\")
-  docker cp \"\${cid}\":/opt/hgcapp/services-hedera/HapiApp2.0/data/apps/. \"\${hapi_path}/data/apps/\" 2>/dev/null || true
-  docker cp \"\${cid}\":/opt/hgcapp/services-hedera/HapiApp2.0/data/lib/.  \"\${hapi_path}/data/lib/\"  2>/dev/null || true
-  docker rm \"\${cid}\" >/dev/null || true
-  echo 'Extracted from Docker image.'
+if ! docker image inspect \"\${image}\" >/dev/null 2>&1; then
+  echo 'Image not found; skipping entrypoint check'
+  exit 0
 fi
 
-# Method 2: fall back to NMT install path if it has JARs and the K8s PVC is still empty
-if [ -z \"\$(ls -A \"\${hapi_path}/data/apps/\" 2>/dev/null)\" ] && [ -d \"\${nmt_hapi_path}/data/apps\" ]; then
-  echo 'Docker image extraction produced no apps; copying from NMT install path...'
-  cp -a \"\${nmt_hapi_path}/data/apps/.\" \"\${hapi_path}/data/apps/\" || true
-fi
-if [ -z \"\$(ls -A \"\${hapi_path}/data/lib/\" 2>/dev/null)\" ] && [ -d \"\${nmt_hapi_path}/data/lib\" ]; then
-  echo 'Docker image extraction produced no lib; copying from NMT install path...'
-  cp -a \"\${nmt_hapi_path}/data/lib/.\" \"\${hapi_path}/data/lib/\" || true
+echo '=== Image Entrypoint / Cmd ==='
+docker inspect \"\${image}\" --format 'Entrypoint: {{.Config.Entrypoint}}  Cmd: {{.Config.Cmd}}'
+
+cid=\$(docker create \"\${image}\")
+cleanup() { docker rm -f \"\${cid}\" >/dev/null 2>&1 || true; }
+trap cleanup EXIT
+
+# Locate the entrypoint script inside the image
+ep=''
+for candidate in \
+    /opt/hgcapp/services-hedera/HapiApp2.0/entrypoint.sh \
+    /entrypoint.sh \
+    /opt/hgcapp/entrypoint.sh; do
+  if docker cp \"\${cid}\":\"\${candidate}\" /tmp/ep.sh 2>/dev/null; then
+    ep=\${candidate}
+    break
+  fi
+done
+
+if [ -z \"\${ep}\" ]; then
+  # Try the first token from the configured entrypoint as a fallback
+  ep_cmd=\$(docker inspect \"\${image}\" --format '{{index .Config.Entrypoint 0}}' 2>/dev/null || echo '')
+  if [ -n \"\${ep_cmd}\" ]; then
+    docker cp \"\${cid}\":\"\${ep_cmd}\" /tmp/ep.sh 2>/dev/null && ep=\${ep_cmd} || true
+  fi
 fi
 
-echo \"apps directory (${HAPI_PATH}/data/apps):\"
-ls \"\${hapi_path}/data/apps/\" 2>/dev/null | head -5 || true
-echo \"lib directory (first 5):\"
-ls \"\${hapi_path}/data/lib/\"  2>/dev/null | head -5 || true
+echo \"=== Entrypoint script (\${ep:-NOT FOUND}) ===\"
+[ -f /tmp/ep.sh ] && cat /tmp/ep.sh || echo '(not extracted)'
+
+# Extract Main-Class from HederaNode.jar MANIFEST.MF
+main_class=''
+if docker cp \"\${cid}\":/opt/hgcapp/services-hedera/HapiApp2.0/data/apps/HederaNode.jar /tmp/HederaNode.jar 2>/dev/null; then
+  echo ''
+  echo '=== HederaNode.jar MANIFEST.MF ==='
+  unzip -p /tmp/HederaNode.jar META-INF/MANIFEST.MF 2>/dev/null && echo ''
+  main_class=\$(unzip -p /tmp/HederaNode.jar META-INF/MANIFEST.MF 2>/dev/null \
+    | grep '^Main-Class:' | tr -d '\\r' | sed 's/^Main-Class:[[:space:]]*//')
+  echo \"JAR declared Main-Class: '\${main_class}'\"
+else
+  echo 'HederaNode.jar not found in image at expected path'
+fi
+
+# Patch: if entrypoint references Browser but the JAR declares a different main class
+OLD_CLASS='com.swirlds.platform.Browser'
+if [ -n \"\${ep}\" ] && [ -f /tmp/ep.sh ] && grep -qF \"\${OLD_CLASS}\" /tmp/ep.sh 2>/dev/null; then
+  if [ -n \"\${main_class}\" ] && [ \"\${main_class}\" != 'com.swirlds.platform.Browser' ]; then
+    echo \"Patching entrypoint: replacing \${OLD_CLASS} -> \${main_class}\"
+    sed -i \"s|\${OLD_CLASS}|\${main_class}|g\" /tmp/ep.sh
+    docker cp /tmp/ep.sh \"\${cid}\":\"\${ep}\"
+    docker commit \"\${cid}\" \"\${image}\" >/dev/null
+    echo 'Image rebuilt with patched entrypoint.'
+    echo '=== Patched entrypoint ==='
+    cat /tmp/ep.sh
+  else
+    echo \"WARNING: entrypoint references Browser but JAR Main-Class is '\${main_class:-UNSET}'.\"
+    echo \"Cannot auto-patch. Verify NMT version is compatible with platform ${PLATFORM_VERSION}.\"
+  fi
+else
+  echo 'Entrypoint does not reference Browser class; no patch needed.'
+fi
 " || return "${EX_ERR}"
 
   return "${EX_OK}"
