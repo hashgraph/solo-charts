@@ -3,6 +3,14 @@ receivers:
     protocols:
       grpc:
       http:
+  prometheus:
+    config:
+      scrape_configs:
+        - job_name: "hedera-node"
+          scrape_interval: "{{ .otelDefaults.receivers.prometheus.scrapeInterval }}"
+          static_configs:
+            - targets:
+              {{- .otelDefaults.receivers.prometheus.scrapeTargets | toYaml | nindent 14 }}
 
 processors:
   batch:
@@ -61,7 +69,7 @@ service:
       processors: [batch]
       exporters: [otlp]
     metrics:
-      receivers: [otlp]
+      receivers: [otlp, prometheus]
       processors:
         - attributes/addLabels
         - batch
