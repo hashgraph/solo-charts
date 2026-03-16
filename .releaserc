@@ -144,7 +144,7 @@
           },
           {
             "path": "solo-cert-manager-*.tgz"
-          }
+          },
           {
             "path": "solo-shared-resources-*.tgz"
           }
