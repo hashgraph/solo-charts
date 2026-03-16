@@ -952,6 +952,7 @@ done
 # Acts as a safety net in case patch_nmt_entrypoint_template did not cover all cases.
 function fix_jrs_image_main_class() {
   local pod="${1}"
+  local node_id="${2:-0}"
   local image_name="local/jrs-network-node:${PLATFORM_VERSION}"
 
   echo ""
@@ -1051,14 +1052,17 @@ else
 fi
 " || return "${EX_ERR}"
 
-  # Patch docker-compose.jrs.yml inside the pod to bind-mount the patched entrypoint.
+  # Patch docker-compose.jrs.yml inside the pod to:
+  #   1. ALWAYS add CONSENSUS_NODE_ID env var (required by platform v0.59+ ServicesMain)
+  #   2. Optionally add entrypoint.sh bind-mount if a patched entrypoint was saved
   # A host bind-mount always takes precedence over the Docker VOLUME declaration in the
   # base image, so this ensures the container uses the patched entrypoint.sh at runtime.
   # We use a portable shell script (no python3 required) copied into the pod.
   cat > "/tmp/patch_jrs_ep_${pod}.sh" << 'SHEOF'
 #!/usr/bin/env bash
-# Usage: patch_jrs_ep.sh <NMT_INSTALL_BASE_PATH>
+# Usage: patch_jrs_ep.sh <NMT_INSTALL_BASE_PATH> <NODE_ID>
 base="${1}"
+node_id="${2:-0}"
 ep_container='/opt/hgcapp/services-hedera/HapiApp2.0/entrypoint.sh'
 compose_jrs="${base}/node-mgmt-tools/compose/network-node/docker-compose.jrs.yml"
 ep_host="${base}/services-hedera/HapiApp2.0/entrypoint.sh"
@@ -1068,36 +1072,62 @@ if [ ! -f "${compose_jrs}" ]; then
   exit 0
 fi
 
+echo "=== docker-compose.jrs.yml before patching ==="
+cat "${compose_jrs}"
+
+# ── Step 1: Add CONSENSUS_NODE_ID environment variable ──────────────────────
+# Platform v0.59+ ServicesMain requires this to identify which node to run.
+# NMT v1.2.x docker-compose does not set it; we add it here unconditionally.
+if grep -q 'CONSENSUS_NODE_ID' "${compose_jrs}" 2>/dev/null; then
+  echo "CONSENSUS_NODE_ID already present in docker-compose.jrs.yml"
+else
+  # Find the first 'volumes:' line (belongs to swirlds-node service)
+  vol_linenum=$(grep -n '^\s*volumes:' "${compose_jrs}" | head -1 | cut -d: -f1)
+  if [ -z "${vol_linenum}" ]; then
+    echo "WARNING: volumes: line not found in docker-compose.jrs.yml; appending environment block"
+    # Append at end of file — docker-compose will still merge it into the right service
+    printf '    environment:\n      - CONSENSUS_NODE_ID=%s\n' "${node_id}" >> "${compose_jrs}"
+  else
+    # Insert environment: section immediately before volumes: at matching indent
+    vol_line=$(sed -n "${vol_linenum}p" "${compose_jrs}")
+    indent=$(echo "${vol_line}" | sed 's/^\([[:space:]]*\).*/\1/')
+    {
+      head -n "$((vol_linenum - 1))" "${compose_jrs}"
+      printf '%senvironment:\n' "${indent}"
+      printf '%s  - CONSENSUS_NODE_ID=%s\n' "${indent}" "${node_id}"
+      tail -n "+${vol_linenum}" "${compose_jrs}"
+    } > "${compose_jrs}.tmp" && mv "${compose_jrs}.tmp" "${compose_jrs}"
+  fi
+  echo "Added CONSENSUS_NODE_ID=${node_id} to docker-compose.jrs.yml"
+fi
+
+# ── Step 2: Add entrypoint.sh bind-mount (only when patched file is present) ─
 if grep -q 'entrypoint.sh' "${compose_jrs}" 2>/dev/null; then
   echo 'entrypoint.sh bind-mount already present in docker-compose.jrs.yml'
-  exit 0
+elif [ ! -f "${ep_host}" ]; then
+  echo "Patched entrypoint not at NMT_HAPI_PATH (${ep_host}); skipping bind-mount"
+else
+  linenum=$(grep -n 'gc\.log:/opt/hgcapp/services-hedera/HapiApp2\.0/gc\.log' "${compose_jrs}" | head -1 | cut -d: -f1)
+  if [ -z "${linenum}" ]; then
+    echo 'gc.log volume line not found in docker-compose.jrs.yml; bind-mount not added'
+  else
+    # Insert the entrypoint bind-mount line after the gc.log volume line.
+    # ${APPLICATION_ROOT_PATH} is a docker-compose env var expanded by NMT at runtime
+    # (= NMT_INSTALL_BASE_PATH/services-hedera/HapiApp2.0).  Write it literally here.
+    {
+      head -n "${linenum}" "${compose_jrs}"
+      printf '      - "${APPLICATION_ROOT_PATH}/entrypoint.sh:%s:ro"\n' "${ep_container}"
+      tail -n "+$((linenum + 1))" "${compose_jrs}"
+    } > "${compose_jrs}.tmp" && mv "${compose_jrs}.tmp" "${compose_jrs}"
+    echo 'Added entrypoint.sh bind-mount to docker-compose.jrs.yml'
+  fi
 fi
 
-if [ ! -f "${ep_host}" ]; then
-  echo "Patched entrypoint not found at NMT_HAPI_PATH: ${ep_host}"
-  exit 0
-fi
-
-linenum=$(grep -n 'gc\.log:/opt/hgcapp/services-hedera/HapiApp2\.0/gc\.log' "${compose_jrs}" | head -1 | cut -d: -f1)
-if [ -z "${linenum}" ]; then
-  echo 'gc.log volume line not found in docker-compose.jrs.yml; bind-mount not added'
-  exit 0
-fi
-
-# Insert the entrypoint bind-mount line after the gc.log volume line.
-# ${APPLICATION_ROOT_PATH} is a docker-compose env var expanded by NMT at runtime
-# (= NMT_INSTALL_BASE_PATH/services-hedera/HapiApp2.0).  Write it literally here.
-{
-  head -n "${linenum}" "${compose_jrs}"
-  printf '      - "${APPLICATION_ROOT_PATH}/entrypoint.sh:%s:ro"\n' "${ep_container}"
-  tail -n "+$((linenum + 1))" "${compose_jrs}"
-} > "${compose_jrs}.tmp" && mv "${compose_jrs}.tmp" "${compose_jrs}"
-
-echo 'Added entrypoint.sh bind-mount to docker-compose.jrs.yml'
+echo "=== docker-compose.jrs.yml after patching ==="
 cat "${compose_jrs}"
 SHEOF
   "${KCTL}" cp "/tmp/patch_jrs_ep_${pod}.sh" "${pod}":/tmp/patch_jrs_ep.sh -c root-container || true
-  "${KCTL}" exec "${pod}" -c root-container -- bash /tmp/patch_jrs_ep.sh "${NMT_INSTALL_BASE_PATH}" || true
+  "${KCTL}" exec "${pod}" -c root-container -- bash /tmp/patch_jrs_ep.sh "${NMT_INSTALL_BASE_PATH}" "${node_id}" || true
   rm -f "/tmp/patch_jrs_ep_${pod}.sh"
 
   return "${EX_OK}"

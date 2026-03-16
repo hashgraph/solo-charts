@@ -38,7 +38,7 @@ function setup_node_all() {
     ls_path "${pod}" "${HGCAPP_DIR}" || return "${EX_ERR}"
     nmt_preflight "${pod}" || return "${EX_ERR}"
     nmt_install "${pod}" "${node_id}" || return "${EX_ERR}"
-    fix_jrs_image_main_class "${pod}" || return "${EX_ERR}"
+    fix_jrs_image_main_class "${pod}" "${node_id}" || return "${EX_ERR}"
     sync_runtime_files "${pod}" "${node_name}" "${NMT_HAPI_PATH}" || return "${EX_ERR}"
     ls_path "${pod}" "${NMT_HAPI_PATH}/"
     ls_path "${pod}" "${NMT_HAPI_PATH}/data/keys/"
