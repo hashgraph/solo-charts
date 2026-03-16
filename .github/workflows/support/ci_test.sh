@@ -1,6 +1,37 @@
 #!/usr/bin/env bash
 set -eo pipefail
 
+dump_network_node_diagnostics() {
+  echo "-----------------------------------------------------------------------------------------------------"
+  echo "Network node diagnostics"
+  echo "-----------------------------------------------------------------------------------------------------"
+
+  kubectl get pods -o wide || true
+  kubectl describe pod -l solo.hedera.com/type=network-node || true
+  kubectl get events --sort-by=.lastTimestamp -A | tail -200 || true
+
+  mapfile -t network_pods < <(kubectl get pod -l solo.hedera.com/type=network-node -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}{end}' 2>/dev/null)
+
+  for pod in "${network_pods[@]}"; do
+    if [[ -z "${pod}" ]]; then
+      continue
+    fi
+
+    mapfile -t init_containers < <(kubectl get pod "${pod}" -o jsonpath='{range .spec.initContainers[*]}{.name}{"\n"}{end}' 2>/dev/null)
+
+    for init_container in "${init_containers[@]}"; do
+      if [[ -z "${init_container}" ]]; then
+        continue
+      fi
+
+      echo "-----------------------------------------------------------------------------------------------------"
+      echo "Logs for pod ${pod}, init container ${init_container}"
+      echo "-----------------------------------------------------------------------------------------------------"
+      kubectl logs "${pod}" -c "${init_container}" || true
+    done
+  done
+}
+
 echo "Start time: $(date +"%Y-%m-%d %T")"
 echo "-----------------------------------------------------------------------------------------------------"
 echo "Setting up environment variables"
@@ -74,7 +105,10 @@ kubectl get svc -o wide && \
 kubectl get pods -o wide && \
 
 echo "Waiting for network-node pods to be phase=running (first deployment takes ~10m)...."
-kubectl wait --for=jsonpath='{.status.phase}'=Running pod -l solo.hedera.com/type=network-node --timeout=900s
+if ! kubectl wait --for=jsonpath='{.status.phase}'=Running pod -l solo.hedera.com/type=network-node --timeout=900s; then
+  dump_network_node_diagnostics
+  exit "${EX_ERR:-1}"
+fi
 
 echo "Waiting for network-node pods to be condition=ready (first deployment takes ~10m)...."
 kubectl wait --for=condition=ready pod -l solo.hedera.com/type=network-node --timeout=900s

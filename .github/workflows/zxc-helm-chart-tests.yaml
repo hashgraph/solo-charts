@@ -120,9 +120,9 @@ jobs:
         uses: helm/kind-action@ef37e7f390d99f746eb8b610417061a60e82a6cc # v1.14.0
         if: ${{ steps.check-changed-files.outputs.run-tests && !cancelled() && !failure() }}
         with:
-          node_image: kindest/node:v1.27.3@sha256:3966ac761ae0136263ffdb6cfd4db23ef8a83cba8a463690e98317add2c9ba72
+          node_image: kindest/node:v1.31.4@sha256:2cb39f7295fe7eafee0842b1052a599a4fb0f8bcf3f83d96c7f4864c357c6c30
           config: .github/workflows/support/dev-cluster.yaml
-          version: v0.20.0
+          version: v0.26.0
           verbosity: 3
           wait: 120s
 
