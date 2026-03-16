@@ -13,14 +13,14 @@ HAPI_PATH="${HGCAPP_DIR}/services-hedera/HapiApp2.0"
 HEDERA_HOME_DIR="/home/hedera"
 RELEASE_NAME="${RELEASE_NAME:-solo}"
 
-NMT_VERSION="${NMT_VERSION:-v2.0.0-alpha.0}"
+NMT_VERSION="${NMT_VERSION:-v1.3.4}"
 NMT_RELEASE_URL="https://api.github.com/repos/swirlds/swirlds-docker/releases/tags/${NMT_VERSION}"
 NMT_INSTALLER="node-mgmt-tools-installer-${NMT_VERSION}.run"
 NMT_INSTALLER_DIR="${SCRIPT_DIR}/../resources/nmt"
 NMT_INSTALLER_PATH="${NMT_INSTALLER_DIR}/${NMT_INSTALLER}"
 NMT_PROFILE="jrs" # we only allow jrs profile
 
-PLATFORM_VERSION="${PLATFORM_VERSION:-v0.39.1}"
+PLATFORM_VERSION="${PLATFORM_VERSION:-v0.71.0}"
 MINOR_VERSION=$(parse_minor_version "${PLATFORM_VERSION}")
 PLATFORM_INSTALLER="build-${PLATFORM_VERSION}.zip"
 PLATFORM_INSTALLER_DIR="${SCRIPT_DIR}/../resources/platform"
