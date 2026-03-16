@@ -868,7 +868,6 @@ function nmt_install() {
 # the correct main class is declared in HederaNode.jar's MANIFEST.MF Main-Class.
 function patch_nmt_entrypoint_template() {
   local pod="${1}"
-  local nmt_ep_path="${NMT_DIR}/images/main-network-node/entrypoint.sh"
   local platform_zip="${HEDERA_HOME_DIR}/${PLATFORM_INSTALLER}"
 
   echo ""
@@ -880,31 +879,16 @@ function patch_nmt_entrypoint_template() {
     return "${EX_ERR}"
   fi
 
+  # NMT builds the jrs-network-node Docker image from images/jrs-network-node/entrypoint.sh.
+  # images/main-network-node/entrypoint.sh is a newer variable-based variant; patch both so
+  # whichever one ends up in the Docker build context is already correct.
   "${KCTL}" exec "${pod}" -c root-container -- bash -lc "
 set -uo pipefail
 
-ep='${nmt_ep_path}'
 platform_zip='${platform_zip}'
 OLD_CLASS='com.swirlds.platform.Browser'
 
-echo \"Checking NMT entrypoint template: \${ep}\"
-
-if [ ! -f \"\${ep}\" ]; then
-  echo 'NMT entrypoint template not found; skipping pre-build patch'
-  exit 0
-fi
-
-echo '=== Current NMT entrypoint template ==='
-cat \"\${ep}\"
-
-if ! grep -qF \"\${OLD_CLASS}\" \"\${ep}\" 2>/dev/null; then
-  echo 'Entrypoint template does not reference Browser class; no patch needed'
-  exit 0
-fi
-
-echo \"Browser class reference found in entrypoint template\"
-
-# Extract Main-Class from HederaNode.jar inside the platform zip
+# Extract Main-Class from HederaNode.jar inside the platform zip (do once, reuse for both files)
 main_class=''
 tmp_jar=\$(mktemp /tmp/HederaNode.XXXXXX.jar)
 if unzip -p \"\${platform_zip}\" data/apps/HederaNode.jar > \"\${tmp_jar}\" 2>/dev/null && [ -s \"\${tmp_jar}\" ]; then
@@ -917,17 +901,44 @@ rm -f \"\${tmp_jar}\"
 
 echo \"JAR declared Main-Class: '\${main_class}'\"
 
-if [ -n \"\${main_class}\" ] && [ \"\${main_class}\" != \"\${OLD_CLASS}\" ]; then
-  sed -i \"s|\${OLD_CLASS}|\${main_class}|g\" \"\${ep}\"
-  # Fix classpath: the hardcoded -cp "data/lib/*" excludes data/apps/HederaNode.jar where
-  # com.hedera.node.app.ServicesMain lives; add data/apps/* so the class can be loaded.
-  sed -i 's|-cp \"data/lib/\*\"|-cp \"data/lib/*:data/apps/*\"|' \"\${ep}\"
-  echo 'NMT entrypoint template patched.'
-  echo '=== Patched NMT entrypoint template ==='
-  cat \"\${ep}\"
-else
+if [ -z \"\${main_class}\" ] || [ \"\${main_class}\" = \"\${OLD_CLASS}\" ]; then
   echo \"WARNING: could not determine correct Main-Class from platform zip; Docker build may use wrong class\"
+  exit 0
 fi
+
+# Patch all entrypoint.sh candidates under the NMT images directory.
+# NMT copies images/jrs-network-node/ into a temp staging dir and builds from there,
+# so that file is the primary target.  images/main-network-node/ is patched as a
+# belt-and-suspenders measure in case the layout changes across NMT versions.
+patched_any=0
+for ep in \
+    '${NMT_DIR}/images/jrs-network-node/entrypoint.sh' \
+    '${NMT_DIR}/images/main-network-node/entrypoint.sh'; do
+  if [ ! -f \"\${ep}\" ]; then
+    echo \"Skipping (not found): \${ep}\"
+    continue
+  fi
+
+  echo \"Checking NMT entrypoint template: \${ep}\"
+
+  if ! grep -qF \"\${OLD_CLASS}\" \"\${ep}\" 2>/dev/null; then
+    echo 'Entrypoint template does not reference Browser class; no patch needed'
+    continue
+  fi
+
+  echo \"Browser class reference found — patching \${ep}\"
+  # Replace the hardcoded Browser class name with the correct one.
+  sed -i \"s|\${OLD_CLASS}|\${main_class}|g\" \"\${ep}\"
+  # Fix hardcoded classpath: -cp \"data/lib/*\" excludes data/apps/HederaNode.jar where
+  # ServicesMain lives.  The newer variable-based entrypoint handles this via its own
+  # logic, but patching the literal string is harmless if it is absent.
+  sed -i 's|-cp \"data/lib/\*\"|-cp \"data/lib/*:data/apps/*\"|' \"\${ep}\"
+  echo \"=== Patched NMT entrypoint template: \${ep} ===\"
+  cat \"\${ep}\"
+  patched_any=1
+done
+
+[ \"\${patched_any}\" -eq 1 ] || echo 'No NMT entrypoint templates found to patch'
 " || return "${EX_ERR}"
 
   return "${EX_OK}"
@@ -1040,60 +1051,54 @@ else
 fi
 " || return "${EX_ERR}"
 
-  # Patch docker-compose.jrs.yml to bind-mount the patched entrypoint.
-  # This is the reliable approach when docker commit cannot persist files
-  # that live under a Docker VOLUME path declared in the base image.
-  cat > "/tmp/patch_jrs_ep_${pod}.py" << 'PYEOF'
-import sys, os
+  # Patch docker-compose.jrs.yml inside the pod to bind-mount the patched entrypoint.
+  # A host bind-mount always takes precedence over the Docker VOLUME declaration in the
+  # base image, so this ensures the container uses the patched entrypoint.sh at runtime.
+  # We use a portable shell script (no python3 required) copied into the pod.
+  cat > "/tmp/patch_jrs_ep_${pod}.sh" << 'SHEOF'
+#!/usr/bin/env bash
+# Usage: patch_jrs_ep.sh <NMT_INSTALL_BASE_PATH>
+base="${1}"
+ep_container='/opt/hgcapp/services-hedera/HapiApp2.0/entrypoint.sh'
+compose_jrs="${base}/node-mgmt-tools/compose/network-node/docker-compose.jrs.yml"
+ep_host="${base}/services-hedera/HapiApp2.0/entrypoint.sh"
 
-base  = sys.argv[1]
-ep_container = '/opt/hgcapp/services-hedera/HapiApp2.0/entrypoint.sh'
-compose_jrs  = os.path.join(base, 'node-mgmt-tools/compose/network-node/docker-compose.jrs.yml')
-ep_host      = os.path.join(base, 'services-hedera/HapiApp2.0/entrypoint.sh')
+if [ ! -f "${compose_jrs}" ]; then
+  echo "docker-compose.jrs.yml not found: ${compose_jrs}"
+  exit 0
+fi
 
-if not os.path.exists(compose_jrs):
-    print('docker-compose.jrs.yml not found: ' + compose_jrs)
-    sys.exit(0)
+if grep -q 'entrypoint.sh' "${compose_jrs}" 2>/dev/null; then
+  echo 'entrypoint.sh bind-mount already present in docker-compose.jrs.yml'
+  exit 0
+fi
 
-if not os.path.exists(ep_host):
-    print('Patched entrypoint not found at NMT_HAPI_PATH: ' + ep_host)
-    sys.exit(0)
+if [ ! -f "${ep_host}" ]; then
+  echo "Patched entrypoint not found at NMT_HAPI_PATH: ${ep_host}"
+  exit 0
+fi
 
-with open(compose_jrs) as f:
-    lines = f.readlines()
+linenum=$(grep -n 'gc\.log:/opt/hgcapp/services-hedera/HapiApp2\.0/gc\.log' "${compose_jrs}" | head -1 | cut -d: -f1)
+if [ -z "${linenum}" ]; then
+  echo 'gc.log volume line not found in docker-compose.jrs.yml; bind-mount not added'
+  exit 0
+fi
 
-if any('entrypoint.sh' in l for l in lines):
-    print('entrypoint.sh bind-mount already present in docker-compose.jrs.yml')
-    sys.exit(0)
+# Insert the entrypoint bind-mount line after the gc.log volume line.
+# ${APPLICATION_ROOT_PATH} is a docker-compose env var expanded by NMT at runtime
+# (= NMT_INSTALL_BASE_PATH/services-hedera/HapiApp2.0).  Write it literally here.
+{
+  head -n "${linenum}" "${compose_jrs}"
+  printf '      - "${APPLICATION_ROOT_PATH}/entrypoint.sh:%s:ro"\n' "${ep_container}"
+  tail -n "+$((linenum + 1))" "${compose_jrs}"
+} > "${compose_jrs}.tmp" && mv "${compose_jrs}.tmp" "${compose_jrs}"
 
-new_lines = []
-inserted  = False
-for line in lines:
-    new_lines.append(line)
-    if not inserted and 'gc.log:/opt/hgcapp/services-hedera/HapiApp2.0/gc.log' in line:
-        indent = len(line) - len(line.lstrip())
-        # ${APPLICATION_ROOT_PATH} is a docker-compose environment variable set by NMT at
-        # runtime (= NMT_INSTALL_BASE_PATH/services-hedera/HapiApp2.0). Writing the literal
-        # string here so docker-compose expands it when starting the container.
-        new_lines.append(
-            ' ' * indent
-            + '- "${APPLICATION_ROOT_PATH}/entrypoint.sh:'
-            + ep_container + ':ro"\n'
-        )
-        inserted = True
-
-if inserted:
-    with open(compose_jrs, 'w') as f:
-        f.writelines(new_lines)
-    print('Added entrypoint.sh bind-mount to docker-compose.jrs.yml')
-    with open(compose_jrs) as f:
-        print(f.read())
-else:
-    print('gc.log volume line not found in docker-compose.jrs.yml; bind-mount not added')
-PYEOF
-  "${KCTL}" cp "/tmp/patch_jrs_ep_${pod}.py" "${pod}":/tmp/patch_jrs_ep.py -c root-container || true
-  "${KCTL}" exec "${pod}" -c root-container -- python3 /tmp/patch_jrs_ep.py "${NMT_INSTALL_BASE_PATH}" || true
-  rm -f "/tmp/patch_jrs_ep_${pod}.py"
+echo 'Added entrypoint.sh bind-mount to docker-compose.jrs.yml'
+cat "${compose_jrs}"
+SHEOF
+  "${KCTL}" cp "/tmp/patch_jrs_ep_${pod}.sh" "${pod}":/tmp/patch_jrs_ep.sh -c root-container || true
+  "${KCTL}" exec "${pod}" -c root-container -- bash /tmp/patch_jrs_ep.sh "${NMT_INSTALL_BASE_PATH}" || true
+  rm -f "/tmp/patch_jrs_ep_${pod}.sh"
 
   return "${EX_OK}"
 }
