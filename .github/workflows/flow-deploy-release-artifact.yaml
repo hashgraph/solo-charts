@@ -41,7 +41,7 @@ jobs:
     runs-on: solo-linux-medium
     steps:
       - name: Harden the runner (Audit all outbound calls)
-        uses: step-security/harden-runner@58077d3c7e43986b6b15fba718e8ea69e387dfcc # v2.15.1
+        uses: step-security/harden-runner@fa2e9d605c4eeb9fcad4c99c224cee0c6c7f3594 # v2.16.0
         with:
           egress-policy: audit
 
@@ -102,7 +102,7 @@ jobs:
           git_tag_gpgsign: false
 
       - name: Login to GitHub Container Registry
-        uses: step-security/docker-login-action@c3e677aae8393bc9c81cfdf9709648720ea4bd4d # v3.6.0
+        uses: step-security/docker-login-action@6aa05fe688caf2c58e784663f01b3415ced503e8 # v3.7.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
