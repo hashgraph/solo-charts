@@ -9,54 +9,14 @@ labels: {}
 
 postgresql:
   enabled: true
-  metrics:
-    enabled: false
-    image:
-      repository: bitnamilegacy/postgres-exporter
-    resources:
-      limits:
-        cpu: 50m
-        memory: 50Mi
-      requests:
-        cpu: 20m
-        memory: 25Mi
   nameOverride: postgres
   persistence:
     size: 500Gi
-  pgpool:
-    adminPassword: ""  # Randomly generated if left blank
-    childLifeTime: 60
-    childMaxConnections: 2
+  auth:
     existingSecret: solo-shared-resources-passwords
-    image:
-      debug: true
-      repository: bitnamilegacy/pgpool
-    numInitChildren: 100
-    podAntiAffinityPreset: soft
-    podLabels:
-      role: db
-    pdb:
-      create: true
-    reservedConnections: 0
-    resources:
-      limits:
-        cpu: 600m
-        memory: 750Mi
-      requests:
-        cpu: 200m
-        memory: 256Mi
-  postgresql:
-    existingSecret: solo-shared-resources-passwords
-    extraEnvVarsSecret: solo-shared-resources-passwords
-    image:
-      debug: true
-      repository: bitnamilegacy/postgresql-repmgr
-      tag: 17.6.0-debian-12-r2
-    maxConnections: 200
-    password: ""  # Randomly generated if left blank
-    podAntiAffinityPreset: soft
-    replicaCount: 1
-    repmgrPassword: ""  # Randomly generated if left blank
+    secretKeys:
+      adminPasswordKey: password
+  primary:
     resources:
       limits:
         cpu: 1500m
@@ -64,7 +24,6 @@ postgresql:
       requests:
         cpu: 250m
         memory: 500Mi
-    repmgrLogLevel: DEBUG
 
 redis:
   auth:

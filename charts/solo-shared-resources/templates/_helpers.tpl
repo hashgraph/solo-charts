@@ -26,10 +26,8 @@ Constructs the database host that should be used by all components.
 {{- define "solo-shared-resources.db" -}}
 {{- if .Values.db.host -}}
 {{- tpl .Values.db.host . -}}
-{{- else if and .Values.postgresql.enabled (gt (.Values.postgresql.pgpool.replicaCount | int) 0) -}}
-{{- include "postgresql-ha.pgpool" .Subcharts.postgresql -}}
 {{- else if .Values.postgresql.enabled -}}
-{{- include "postgresql-ha.postgresql" .Subcharts.postgresql -}}
+{{- include "common.names.fullname" .Subcharts.postgresql -}}
 {{- end -}}
 {{- end -}}
 
