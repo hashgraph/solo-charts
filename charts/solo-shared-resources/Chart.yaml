@@ -31,9 +31,9 @@ kubeVersion: ">=1.25.0-0"
 dependencies:
   - alias: postgresql
     condition: postgresql.enabled
-    name: postgresql-ha
+    name: postgresql
     repository: oci://registry-1.docker.io/bitnamicharts
-    version: 15.3.17
+    version: 18.5.9
   - condition: redis.enabled
     name: redis
     repository: oci://registry-1.docker.io/bitnamicharts
