@@ -109,6 +109,12 @@ defaults:
     tcpKeepAlive: true
     probes:
       timeoutSeconds: 5
+      livenessInitialDelaySeconds: 0
+      livenessPeriodSeconds: 1
+      readinessInitialDelaySeconds: 0
+      readinessPeriodSeconds: 1
+      startupInitialDelaySeconds: 0
+      startupPeriodSeconds: 1
     resources: { }
     service:
       type: "NodePort"
@@ -164,6 +170,10 @@ defaults:
         tag: "0.72.0"
         pullPolicy: "IfNotPresent"
       resources: { }
+      probes:
+        initialDelaySeconds: 0
+        periodSeconds: 1
+        failureThreshold: 60
       receivers:
         prometheus:
           scrapeTargets: [ localhost:9999 ]  # hedera node metrics are exposed at port 9999
@@ -222,6 +232,18 @@ minio-server:
       name: minio-secrets
     certificate:
       requestAutoCert: false
+    readinessProbe:
+      initialDelaySeconds: 0
+      periodSeconds: 1
+      failureThreshold: 60
+    livenessProbe:
+      initialDelaySeconds: 0
+      periodSeconds: 1
+      failureThreshold: 60
+    startupProbe:
+      initialDelaySeconds: 0
+      periodSeconds: 1
+      failureThreshold: 60
   environment:
     MINIO_BROWSER_LOGIN_ANIMATION: off # https://github.com/minio/console/issues/2539#issuecomment-1619211962
 
