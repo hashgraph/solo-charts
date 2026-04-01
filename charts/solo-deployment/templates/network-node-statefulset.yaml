@@ -646,10 +646,16 @@ spec:
           httpGet:
             path: /
             port: health
+          initialDelaySeconds: {{ default 0 $otelCollector.probes.initialDelaySeconds }}
+          periodSeconds: {{ default 1 $otelCollector.probes.periodSeconds }}
+          failureThreshold: {{ default 60 $otelCollector.probes.failureThreshold }}
         readinessProbe:
           httpGet:
             path: /
             port: health
+          initialDelaySeconds: {{ default 0 $otelCollector.probes.initialDelaySeconds }}
+          periodSeconds: {{ default 1 $otelCollector.probes.periodSeconds }}
+          failureThreshold: {{ default 60 $otelCollector.probes.failureThreshold }}
         volumeMounts:
           - name: otel-collector-volume
             mountPath: /etc/otelcol-contrib/config.yaml

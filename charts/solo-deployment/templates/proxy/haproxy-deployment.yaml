@@ -87,22 +87,22 @@ spec:
         livenessProbe:
           tcpSocket:
             port: 50211
-          initialDelaySeconds: 15
-          periodSeconds: 10
+          initialDelaySeconds: {{ default 0 $haproxy.probes.livenessInitialDelaySeconds }}
+          periodSeconds: {{ default 1 $haproxy.probes.livenessPeriodSeconds }}
           timeoutSeconds: {{ default 5 $haproxy.probes.timeoutSeconds }}
           failureThreshold: 6
         readinessProbe:
           tcpSocket:
             port: 50211
-          initialDelaySeconds: 5
-          periodSeconds: 5
+          initialDelaySeconds: {{ default 0 $haproxy.probes.readinessInitialDelaySeconds }}
+          periodSeconds: {{ default 1 $haproxy.probes.readinessPeriodSeconds }}
           timeoutSeconds: {{ default 5 $haproxy.probes.timeoutSeconds }}
           failureThreshold: 6
         startupProbe:
           tcpSocket:
             port: 50211
-          initialDelaySeconds: 10
-          periodSeconds: 5
+          initialDelaySeconds: {{ default 0 $haproxy.probes.startupInitialDelaySeconds }}
+          periodSeconds: {{ default 1 $haproxy.probes.startupPeriodSeconds }}
           timeoutSeconds: {{ default 5 $haproxy.probes.timeoutSeconds }}
           failureThreshold: 60
         volumeMounts:
