@@ -131,5 +131,12 @@ jobs:
           SOLO_CHARTS_DIR: ${{ github.workspace }}
           SOLO_ONE_SHOT_MINIMAL_SETUP: "true"
         run: |
-          task test-setup
-          task test-e2e-one-shot-single-minimal
+          mkdir -p "${RUNNER_TEMP}/ci-bin"
+          cat > "${RUNNER_TEMP}/ci-bin/sh" <<'EOF'
+          #!/usr/bin/env bash
+          exec /usr/bin/bash "$@"
+          EOF
+          chmod +x "${RUNNER_TEMP}/ci-bin/sh"
+          
+          PATH="${RUNNER_TEMP}/ci-bin:${PATH}" task test-setup
+          PATH="${RUNNER_TEMP}/ci-bin:${PATH}" task test-e2e-one-shot-single-minimal
