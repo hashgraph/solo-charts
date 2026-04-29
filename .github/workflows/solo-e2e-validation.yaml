@@ -98,31 +98,41 @@ jobs:
           cache: npm
           cache-dependency-path: solo/package-lock.json
 
-      - name: Setup Kind
-        if: ${{ steps.check-changed-files.outputs.run-tests == 'true' }}
-        uses: helm/kind-action@ef37e7f390d99f746eb8b610417061a60e82a6cc # v1.14.0
-        with:
-          node_image: kindest/node:v1.31.4@sha256:2cb39f7295fe7eafee0842b1052a599a4fb0f8bcf3f83d96c7f4864c357c6c30
-          version: v0.26.0
-          verbosity: 3
-          wait: 120s
-
       - name: Setup Helm
         if: ${{ steps.check-changed-files.outputs.run-tests == 'true' }}
         uses: azure/setup-helm@dda3372f752e03dde6b3237bc9431cdc2f7a02a2 # v5.0.0
         with:
           version: v3.12.3
 
+      - name: Install Solo dependencies
+        if: ${{ steps.check-changed-files.outputs.run-tests == 'true' }}
+        working-directory: solo
+        run: npm ci
+
+      - name: Make sh use bash for this job
+        if: ${{ steps.check-changed-files.outputs.run-tests == 'true' }}
+        run: |
+          mkdir -p "${RUNNER_TEMP}/ci-bin"
+          cat > "${RUNNER_TEMP}/ci-bin/sh" <<'EOF'
+          #!/usr/bin/env bash
+          exec /usr/bin/bash "$@"
+          EOF
+          chmod +x "${RUNNER_TEMP}/ci-bin/sh"
+          echo "${RUNNER_TEMP}/ci-bin" >> "${GITHUB_PATH}"
+
+      - name: Run Solo test setup against this solo-charts checkout
+        if: ${{ steps.check-changed-files.outputs.run-tests == 'true' }}
+        working-directory: solo
+        env:
+          SOLO_CHARTS_DIR: ${{ github.workspace }}
+        run: |
+          task test-setup
+
       - name: Show Kubernetes info
         if: ${{ steps.check-changed-files.outputs.run-tests == 'true' }}
         run: |
           kubectl config get-contexts
           kubectl get nodes -o wide
-
-      - name: Install Solo dependencies
-        if: ${{ steps.check-changed-files.outputs.run-tests == 'true' }}
-        working-directory: solo
-        run: npm ci
 
       - name: Run Solo minimal one-shot E2E against this solo-charts checkout
         if: ${{ steps.check-changed-files.outputs.run-tests == 'true' }}
@@ -131,12 +141,4 @@ jobs:
           SOLO_CHARTS_DIR: ${{ github.workspace }}
           SOLO_ONE_SHOT_MINIMAL_SETUP: "true"
         run: |
-          mkdir -p "${RUNNER_TEMP}/ci-bin"
-          cat > "${RUNNER_TEMP}/ci-bin/sh" <<'EOF'
-          #!/usr/bin/env bash
-          exec /usr/bin/bash "$@"
-          EOF
-          chmod +x "${RUNNER_TEMP}/ci-bin/sh"
-          
-          PATH="${RUNNER_TEMP}/ci-bin:${PATH}" task test-setup
-          PATH="${RUNNER_TEMP}/ci-bin:${PATH}" task test-e2e-one-shot-single-minimal
+          task test-e2e-one-shot-single-minimal
