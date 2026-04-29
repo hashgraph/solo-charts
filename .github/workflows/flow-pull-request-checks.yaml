@@ -15,6 +15,7 @@
 ##
 
 name: "PR Checks"
+
 on:
   workflow_dispatch:
   pull_request:
@@ -32,8 +33,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  chart-tests:
-    name: FS Helm Chart Tests
-    uses: ./.github/workflows/zxc-helm-chart-tests.yaml
+  solo-e2e-validation:
+    name: Solo E2E Validation
+    uses: ./.github/workflows/solo-e2e-validation.yaml
     with:
       custom-job-label: Standard
