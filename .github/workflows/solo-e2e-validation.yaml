@@ -128,11 +128,10 @@ jobs:
         run: |
           task test-setup
 
-      - name: Show Kubernetes info
+      - name: Add Solo-installed tools to PATH
         if: ${{ steps.check-changed-files.outputs.run-tests == 'true' }}
         run: |
-          kubectl config get-contexts
-          kubectl get nodes -o wide
+          echo "$HOME/.solo/bin" >> "$GITHUB_PATH"
 
       - name: Run Solo minimal one-shot E2E against this solo-charts checkout
         if: ${{ steps.check-changed-files.outputs.run-tests == 'true' }}
