@@ -1,0 +1,135 @@
+##
+# Copyright (C) 2023-2024 Hedera Hashgraph, LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+##
+
+name: "ZXC: Solo E2E Validation"
+
+on:
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+      custom-job-label:
+        description: "Custom Job Label"
+        type: string
+        required: false
+        default: "Solo E2E Validation"
+
+defaults:
+  run:
+    shell: bash
+
+permissions:
+  id-token: write
+  contents: read
+  actions: read
+  pull-requests: write
+  checks: write
+  statuses: write
+
+jobs:
+  test:
+    name: ${{ inputs.custom-job-label || 'Solo E2E Validation' }}
+    runs-on: solo-linux-medium
+
+    steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@fe104658747b27e96e4f7e80cd0a94068e53901d # v2.16.1
+        with:
+          egress-policy: audit
+
+      - name: Install Task
+        uses: arduino/setup-task@b91d5d2c96a56797b48ac1e0e89220bf64044611 # v2.0.0
+        with:
+          version: 3.39.2
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node
+        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.4
+        with:
+          node-version: 23
+          cache: npm
+          cache-dependency-path: solo/package-lock.json
+
+      - name: Checkout solo-charts PR branch
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+
+      - name: Get changed files related to charts/workflows
+        id: changed-files
+        uses: step-security/changed-files@60967b822d3001fa82242f8d6b4ed46bc3600a68 # v47.0.1
+        with:
+          files_yaml: |
+            chart:
+              - charts/**
+              - .github/workflows/**
+
+      - name: Decide whether to run validation
+        id: check-changed-files
+        run: |
+          if [[ "${{ steps.changed-files.outputs.chart_any_changed }}" == "true" ]]; then
+            echo "run-tests=true" >> "${GITHUB_OUTPUT}"
+            echo "Executing Solo E2E validation..."
+          elif [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "run-tests=true" >> "${GITHUB_OUTPUT}"
+            echo "Executing Solo E2E validation due to workflow dispatch"
+          else
+            echo "No relevant chart/workflow files changed; skipping Solo E2E validation"
+          fi
+
+      - name: Checkout Solo main
+        if: ${{ steps.check-changed-files.outputs.run-tests == 'true' }}
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          repository: hiero-ledger/solo
+          ref: main
+          path: solo
+          fetch-depth: 1
+
+      - name: Setup Kind
+        if: ${{ steps.check-changed-files.outputs.run-tests == 'true' }}
+        uses: helm/kind-action@ef37e7f390d99f746eb8b610417061a60e82a6cc # v1.14.0
+        with:
+          node_image: kindest/node:v1.31.4@sha256:2cb39f7295fe7eafee0842b1052a599a4fb0f8bcf3f83d96c7f4864c357c6c30
+          version: v0.26.0
+          verbosity: 3
+          wait: 120s
+
+      - name: Setup Helm
+        if: ${{ steps.check-changed-files.outputs.run-tests == 'true' }}
+        uses: azure/setup-helm@dda3372f752e03dde6b3237bc9431cdc2f7a02a2 # v5.0.0
+        with:
+          version: v3.12.3
+
+      - name: Show Kubernetes info
+        if: ${{ steps.check-changed-files.outputs.run-tests == 'true' }}
+        run: |
+          kubectl config get-contexts
+          kubectl get nodes -o wide
+
+      - name: Install Solo dependencies
+        if: ${{ steps.check-changed-files.outputs.run-tests == 'true' }}
+        working-directory: solo
+        run: npm ci
+
+      - name: Run Solo minimal one-shot E2E against this solo-charts checkout
+        if: ${{ steps.check-changed-files.outputs.run-tests == 'true' }}
+        working-directory: solo
+        env:
+          SOLO_CHARTS_DIR: ${{ github.workspace }}
+          SOLO_ONE_SHOT_MINIMAL_SETUP: "true"
+        run: |
+          task test-setup
+          task test-e2e-one-shot-single-minimal

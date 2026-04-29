@@ -12,7 +12,6 @@ function unset_env_vars() {
     unset NMT_VERSION
     unset NODE_NAMES
     unset PLATFORM_VERSION
-    unset POD_MONITOR_ROLE
     unset RELEASE_NAME
     unset SCRIPT_DIR
     unset SETUP_CHART_DIR
@@ -51,16 +50,16 @@ function setup_kubectl_context() {
   fi
 
   echo "List of namespaces:"
-	kubectl get ns
+  kubectl get ns
 
-	echo "Setting kubectl context..."
-	local count
-	count=$(kubectl config get-contexts --no-headers | grep -c "kind-${CLUSTER_NAME}")
-	if [[ $count -ne 0 ]]; then
-	  kubectl config use-context "kind-${CLUSTER_NAME}"
-	fi
-	kubectl config set-context --current --namespace="${NAMESPACE}"
-	kubectl config get-contexts
+  echo "Setting kubectl context..."
+  local count
+  count=$(kubectl config get-contexts --no-headers | grep -c "kind-${CLUSTER_NAME}")
+  if [[ $count -ne 0 ]]; then
+    kubectl config use-context "kind-${CLUSTER_NAME}"
+  fi
+  kubectl config set-context --current --namespace="${NAMESPACE}"
+  kubectl config get-contexts
 }
 
 function log_time() {
@@ -105,9 +104,9 @@ function parse_release_dir() {
 
 function prepare_platform_software_URL() {
     local platform_version="$1"
-    local release_dir=$(parse_release_dir "${platform_version}")
+    local release_dir
+    release_dir=$(parse_release_dir "${platform_version}")
 
-    # https://builds.hedera.com/node/software/v0.40/build-v0.40.0.zip
     local platform_url="https://builds.hedera.com/node/software/${release_dir}/build-${platform_version}.zip"
     echo "${platform_url}"
 }
@@ -116,7 +115,7 @@ function prepare_platform_software_URL() {
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 TMP_DIR="${SCRIPT_DIR}/../temp"
 CLUSTER_SETUP_VALUES_FILE="${TMP_DIR}/cluster-setup-values.yaml"
-mkdir -p "$TMP_DIR"
+mkdir -p "${TMP_DIR}"
 
 USER="${USER:-solo-charts-user}"
 CLUSTER_NAME="${CLUSTER_NAME:-solo-charts-test}"
@@ -124,13 +123,9 @@ NAMESPACE="${NAMESPACE:-solo-charts-test}"
 RELEASE_NAME="${RELEASE_NAME:-solo-charts}"
 NMT_VERSION=v1.3.4
 PLATFORM_VERSION=v0.71.0
-POD_MONITOR_ROLE="${POD_MONITOR_ROLE:-pod-monitor-role}"
 NODE_NAMES=(node1 node2 node3)
-POD_MONITOR_ROLE="${POD_MONITOR_ROLE:-pod-monitor-role}"
 SETUP_CHART_DIR="../../../charts/solo-cluster-setup"
 CHART_DIR="../../../charts/solo-deployment"
-# telemetry related env variables
 TELEMETRY_DIR="${SCRIPT_DIR}/../telemetry"
 
 show_env_vars
-
