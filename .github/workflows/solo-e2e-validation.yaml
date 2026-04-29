@@ -17,6 +17,17 @@ name: "ZXC: Solo E2E Validation"
 
 on:
   workflow_dispatch:
+    inputs:
+      custom-job-label:
+        description: "Custom Job Label"
+        type: string
+        required: false
+        default: "Solo E2E Validation"
+      solo-ref:
+        description: "Solo ref to validate against (tag, branch, or commit SHA)"
+        type: string
+        required: false
+        default: "v0.70.0"
   workflow_call:
     inputs:
       custom-job-label:
@@ -24,6 +35,11 @@ on:
         type: string
         required: false
         default: "Solo E2E Validation"
+      solo-ref:
+        description: "Solo ref to validate against (tag, branch, or commit SHA)"
+        type: string
+        required: false
+        default: "v0.70.0"
 
 defaults:
   run:
@@ -81,12 +97,12 @@ jobs:
             echo "No relevant chart/workflow files changed; skipping Solo E2E validation"
           fi
 
-      - name: Checkout Solo main
+      - name: Checkout Solo
         if: ${{ steps.check-changed-files.outputs.run-tests == 'true' }}
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           repository: hiero-ledger/solo
-          ref: main
+          ref: ${{ inputs.solo-ref }}
           path: solo
           fetch-depth: 1
 
