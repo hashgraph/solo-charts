@@ -13,7 +13,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 ##
-
 name: "ZXC: Solo E2E Validation"
 
 on:
@@ -55,13 +54,6 @@ jobs:
           version: 3.39.2
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Setup Node
-        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.4
-        with:
-          node-version: 23
-          cache: npm
-          cache-dependency-path: solo/package-lock.json
-
       - name: Checkout solo-charts PR branch
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
@@ -97,6 +89,14 @@ jobs:
           ref: main
           path: solo
           fetch-depth: 1
+
+      - name: Setup Node
+        if: ${{ steps.check-changed-files.outputs.run-tests == 'true' }}
+        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.4
+        with:
+          node-version: 23
+          cache: npm
+          cache-dependency-path: solo/package-lock.json
 
       - name: Setup Kind
         if: ${{ steps.check-changed-files.outputs.run-tests == 'true' }}
