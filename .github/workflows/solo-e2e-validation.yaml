@@ -27,7 +27,7 @@ on:
         description: "Solo ref to validate against (tag, branch, or commit SHA)"
         type: string
         required: false
-        default: "v0.70.0"
+        default: ""
   workflow_call:
     inputs:
       custom-job-label:
@@ -39,7 +39,7 @@ on:
         description: "Solo ref to validate against (tag, branch, or commit SHA)"
         type: string
         required: false
-        default: "v0.70.0"
+        default: ""
 
 defaults:
   run:
@@ -102,7 +102,7 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           repository: hiero-ledger/solo
-          ref: ${{ inputs.solo-ref }}
+          ref: ${{ inputs.solo-ref || 'main' }}
           path: solo
           fetch-depth: 1
 
