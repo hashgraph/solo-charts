@@ -125,17 +125,6 @@ jobs:
         working-directory: solo
         run: npm ci
 
-      - name: Make sh use bash for this job
-        if: ${{ steps.check-changed-files.outputs.run-tests == 'true' && !failure() && !cancelled() }}
-        run: |
-          mkdir -p "${RUNNER_TEMP}/ci-bin"
-          cat > "${RUNNER_TEMP}/ci-bin/sh" <<'EOF'
-          #!/usr/bin/env bash
-          exec /usr/bin/bash "$@"
-          EOF
-          chmod +x "${RUNNER_TEMP}/ci-bin/sh"
-          echo "${RUNNER_TEMP}/ci-bin" >> "${GITHUB_PATH}"
-
       - name: Run Solo test setup against this solo-charts checkout
         if: ${{ steps.check-changed-files.outputs.run-tests == 'true' && !failure() && !cancelled() }}
         working-directory: solo
