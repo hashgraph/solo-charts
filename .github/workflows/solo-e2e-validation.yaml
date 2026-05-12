@@ -98,7 +98,7 @@ jobs:
           fi
 
       - name: Checkout Solo
-        if: ${{ steps.check-changed-files.outputs.run-tests == 'true' }}
+        if: ${{ steps.check-changed-files.outputs.run-tests == 'true' && !failure() && !cancelled() }}
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           repository: hiero-ledger/solo
@@ -107,7 +107,7 @@ jobs:
           fetch-depth: 1
 
       - name: Setup Node
-        if: ${{ steps.check-changed-files.outputs.run-tests == 'true' }}
+        if: ${{ steps.check-changed-files.outputs.run-tests == 'true' && !failure() && !cancelled() }}
         uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.4
         with:
           node-version: 23
@@ -115,18 +115,18 @@ jobs:
           cache-dependency-path: solo/package-lock.json
 
       - name: Setup Helm
-        if: ${{ steps.check-changed-files.outputs.run-tests == 'true' }}
+        if: ${{ steps.check-changed-files.outputs.run-tests == 'true' && !failure() && !cancelled() }}
         uses: azure/setup-helm@dda3372f752e03dde6b3237bc9431cdc2f7a02a2 # v5.0.0
         with:
           version: v3.12.3
 
       - name: Install Solo dependencies
-        if: ${{ steps.check-changed-files.outputs.run-tests == 'true' }}
+        if: ${{ steps.check-changed-files.outputs.run-tests == 'true' && !failure() && !cancelled() }}
         working-directory: solo
         run: npm ci
 
       - name: Make sh use bash for this job
-        if: ${{ steps.check-changed-files.outputs.run-tests == 'true' }}
+        if: ${{ steps.check-changed-files.outputs.run-tests == 'true' && !failure() && !cancelled() }}
         run: |
           mkdir -p "${RUNNER_TEMP}/ci-bin"
           cat > "${RUNNER_TEMP}/ci-bin/sh" <<'EOF'
@@ -137,20 +137,21 @@ jobs:
           echo "${RUNNER_TEMP}/ci-bin" >> "${GITHUB_PATH}"
 
       - name: Run Solo test setup against this solo-charts checkout
-        if: ${{ steps.check-changed-files.outputs.run-tests == 'true' }}
+        if: ${{ steps.check-changed-files.outputs.run-tests == 'true' && !failure() && !cancelled() }}
         working-directory: solo
         env:
           SOLO_CHARTS_DIR: ${{ github.workspace }}
+        shell: bash
         run: |
           task test-setup
 
       - name: Add Solo-installed tools to PATH
-        if: ${{ steps.check-changed-files.outputs.run-tests == 'true' }}
+        if: ${{ steps.check-changed-files.outputs.run-tests == 'true' && !failure() && !cancelled() }}
         run: |
           echo "$HOME/.solo/bin" >> "$GITHUB_PATH"
 
       - name: Run Solo minimal one-shot E2E against this solo-charts checkout
-        if: ${{ steps.check-changed-files.outputs.run-tests == 'true' }}
+        if: ${{ steps.check-changed-files.outputs.run-tests == 'true' && !failure() && !cancelled() }}
         working-directory: solo
         env:
           SOLO_CHARTS_DIR: ${{ github.workspace }}
