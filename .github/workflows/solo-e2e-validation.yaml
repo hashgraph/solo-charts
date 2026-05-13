@@ -27,7 +27,7 @@ on:
         description: "Solo ref to validate against (tag, branch, or commit SHA)"
         type: string
         required: false
-        default: ""
+        default: "update-setup-dual-e2e-sh-to-use-bash" # TODO: Revert
   workflow_call:
     inputs:
       custom-job-label:
@@ -39,7 +39,7 @@ on:
         description: "Solo ref to validate against (tag, branch, or commit SHA)"
         type: string
         required: false
-        default: ""
+        default: "update-setup-dual-e2e-sh-to-use-bash" # TODO: Revert
 
 defaults:
   run:
