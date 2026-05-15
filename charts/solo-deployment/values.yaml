@@ -46,17 +46,6 @@ crs:
 # reduce default termination grace period
 terminationGracePeriodSeconds: 10
 
-# helm test container
-tester:
-  deployPodMonitor: true
-  clusterRoleName: "pod-monitor-role" # this is a shared cluster role for all namespaces
-  image:
-    registry: "ghcr.io"
-    repository: "hashgraph/solo-containers/kubectl-bats"
-    tag: "0.41.2"
-    pullPolicy: "IfNotPresent"
-  resources: { }
-
 # default settings for a single node
 # This default configurations can be overridden for each node in the hedera.nodes section.
 defaults:

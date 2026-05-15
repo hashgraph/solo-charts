@@ -15,7 +15,6 @@ cloud:
   grafanaAgent:
     enabled: false
 
-
 minio-operator:
   operator:
     replicaCount: 1
@@ -33,7 +32,7 @@ prometheus-stack:
       ruleSelector: { }
       ruleSelectorNilUsesHelmValues: false
       serviceMonitorNamespaceSelector:
-        any: true  # fetch metrics from other namespaces
+        any: true # fetch metrics from other namespaces
       serviceMonitorSelector: { }
       serviceMonitorSelectorNilUsesHelmValues: false
 
