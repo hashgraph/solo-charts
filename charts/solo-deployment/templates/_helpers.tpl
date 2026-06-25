@@ -21,12 +21,6 @@ runAsUser: 0
 runAsGroup: 0
 {{- end }}
 
-{{- define "solo.root.security.context.privileged" -}}
-runAsUser: 0
-runAsGroup: 0
-privileged: true
-{{- end }}
-
 {{- define "solo.defaultEnvVars" -}}
 - name: POD_IP
   valueFrom:
