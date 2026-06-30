@@ -14,7 +14,7 @@ HEDERA_HOME_DIR="/home/hedera"
 RELEASE_NAME="${RELEASE_NAME:-solo}"
 
 NMT_VERSION="${NMT_VERSION:-v1.3.4}"
-NMT_RELEASE_URL="https://api.github.com/repos/swirlds/swirlds-docker/releases/tags/${NMT_VERSION}"
+NMT_RELEASE_URL="https://api.github.com/repos/hashgraph/node-management-tools/releases/tags/${NMT_VERSION}"
 NMT_INSTALLER="node-mgmt-tools-installer-${NMT_VERSION}.run"
 NMT_INSTALLER_DIR="${SCRIPT_DIR}/../resources/nmt"
 NMT_INSTALLER_PATH="${NMT_INSTALLER_DIR}/${NMT_INSTALLER}"
