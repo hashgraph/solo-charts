@@ -150,36 +150,34 @@ defaults:
       config:
         backupBucket: "backup"
       resources: { }
-    otelCollector:
-      enabled: true
+    grafanaAlloy:
+      enabled: false            # solo enables it via --enable-monitoring-support
       nameOverride: ""
+      rbac:
+        create: true            # escape hatch for namespace-only installers
       image:
         registry: "docker.io"
-        repository: "otel/opentelemetry-collector-contrib"
-        tag: "0.72.0"
+        repository: "grafana/alloy"
+        tag: "v1.11.3"          # matches GRAFANA_PODLOGS_CRD_VERSION already pinned in solo
         pullPolicy: "IfNotPresent"
       resources: { }
       probes:
         initialDelaySeconds: 0
         periodSeconds: 1
         failureThreshold: 60
-      receivers:
-        prometheus:
-          scrapeTargets: [ localhost:9999 ]  # hedera node metrics are exposed at port 9999
-          scrapeInterval: 5s
-      exporters:
-        otlp:
-          endpoint: tempo:4317
-          tls:
-            insecure: true
-        prometheus:
-          tls:
-            insecure: true
-        prometheusRemoteWrite:
-          enabled: false
-          endpoint: "" # e.g. http://prometheus.<NAMESPACE>.svc:9090/api/v1/write
-          tls:
-            insecure: true
+      scrape:
+        interval: 15s
+        kubeletPort: 10250
+        insecureSkipVerify: true   # kind/self-signed kubelet serving certs
+      remoteWrite:
+        # required when enabled; solo sets this from its cluster setup namespace, which is
+        # configurable (--cluster-setup-namespace), so the chart must not assume it
+        endpoint: ""
+        tls:
+          insecureSkipVerify: true
+        basicAuth:               # for Grafana Cloud etc.
+          username: ""
+          password: ""
 
 tenant:
   tenant:

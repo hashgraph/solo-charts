@@ -9,7 +9,7 @@
 {{- $eventStream := ($node.sidecars).eventStreamUploader | default $.Values.defaults.sidecars.eventStreamUploader }}
 {{- $blockstreamUploader := ($node.sidecars).blockstreamUploader | default $.Values.defaults.sidecars.blockstreamUploader }}
 {{- $backupUploader := ($node.sidecars).backupUploader | default $.Values.defaults.sidecars.backupUploader }}
-{{- $otelCollector := ($node.sidecars).otelCollector | default $.Values.defaults.sidecars.otelCollector }}
+{{- $grafanaAlloy := ($node.sidecars).grafanaAlloy | default $.Values.defaults.sidecars.grafanaAlloy }}
 {{- $cloud := $.Values.cloud }}
 {{- $defaults := $.Values.defaults }}
 {{- $minioserver := (index $.Values "minio-server") }}
@@ -92,6 +92,9 @@ spec:
       priorityClassName: {{ default $node.priorityClassName $.Values.deployment.priorityClassName }}
       {{- end }}
       terminationGracePeriodSeconds: {{ $.Values.terminationGracePeriodSeconds }}
+      {{- if $grafanaAlloy.enabled }}
+      serviceAccountName: solo-alloy
+      {{- end }}
       volumes:
         {{ include "solo.volumeTemplate" (dict "name" "hgcapp-blockstream" "claimName" (printf "%s-%s-%s" "hgcapp-blockstream-pvc-network" $node.name "0") "pvcEnabled" $pvcEnabled ) | nindent 8 }}
         {{ include "solo.volumeTemplate" (dict "name" "hgcapp-event-streams" "claimName" (printf "%s-%s-%s" "hgcapp-event-streams-pvc-network" $node.name "0") "pvcEnabled" $pvcEnabled ) | nindent 8 }}
@@ -106,10 +109,10 @@ spec:
         {{ include "solo.volumeTemplate" (dict "name" "hgcapp-data-libs" "claimName" (printf "%s-%s-%s" "hgcapp-data-libs-pvc-network" $node.name "0") "pvcEnabled" $pvcEnabled ) | nindent 8 }}
         {{ include "solo.volumeTemplate" (dict "name" "hgcapp-data-apps" "claimName" (printf "%s-%s-%s" "hgcapp-data-apps-pvc-network" $node.name "0") "pvcEnabled" $pvcEnabled ) | nindent 8 }}
         {{ include "solo.volumeTemplate" (dict "name" "hgcapp-state" "claimName" (printf "%s-%s-%s" "hgcapp-state-pvc-network" $node.name "0") "pvcEnabled" $pvcEnabled ) | nindent 8 }}
-        {{- if $otelCollector.enabled }}
-        - name: otel-collector-volume
+        {{- if $grafanaAlloy.enabled }}
+        - name: alloy-config-volume
           configMap:
-            name: otel-cm-{{ $node.name }}
+            name: alloy-cm-{{ $node.name }}
         {{- end }}
         {{- if $backupUploader.enabled }}
         - name: volume-for-share-version-file
@@ -618,46 +621,47 @@ spec:
         {{- end }}
       {{- end }}
 
-      {{- if $otelCollector.enabled }}
-      # Sidecar: {{ $node.name }}-otel-collector
-      - name: {{ default "otel-collector" $otelCollector.nameOverride }}
-        image: {{ include "solo.container.image" (dict "image" $otelCollector.image "Chart" $.Chart "defaults" $defaults.sidecars.otelCollector) }}
-        imagePullPolicy: {{ include "solo.images.pullPolicy" (dict "image" $otelCollector.image "defaults" $defaults.sidecars.otelCollector) }}
+      {{- if $grafanaAlloy.enabled }}
+      # Sidecar: {{ $node.name }}-grafana-alloy
+      - name: {{ default "grafana-alloy" $grafanaAlloy.nameOverride }}
+        image: {{ include "solo.container.image" (dict "image" $grafanaAlloy.image "Chart" $.Chart "defaults" $defaults.sidecars.grafanaAlloy) }}
+        imagePullPolicy: {{ include "solo.images.pullPolicy" (dict "image" $grafanaAlloy.image "defaults" $defaults.sidecars.grafanaAlloy) }}
         securityContext:
           {{- include "solo.root.security.context" . | nindent 10 }}
+        args:
+          - "run"
+          - "/etc/alloy/config.alloy"
+          - "--server.http.listen-addr=0.0.0.0:12345"
+          - "--storage.path=/tmp/alloy"
+        env:
+          - name: K8S_NODE_IP
+            valueFrom:
+              fieldRef:
+                fieldPath: status.hostIP
         ports:
-          - name: otlp # otel port defined in otel-collector config
-            containerPort: 4317
-            protocol: TCP
-          - name: prometheus
-            containerPort: 9090
-            protocol: TCP
-          - name: health # for otel-collector liveness check
-            containerPort: 13133
-            protocol: TCP
-          - name: metrics # default metrics port exposed by the otel-collector itself
-            containerPort: 8888
+          - name: http # Alloy /-/ready endpoint and self-metrics
+            containerPort: 12345
             protocol: TCP
         livenessProbe:
           httpGet:
-            path: /
-            port: health
-          initialDelaySeconds: {{ default 0 $otelCollector.probes.initialDelaySeconds }}
-          periodSeconds: {{ default 1 $otelCollector.probes.periodSeconds }}
-          failureThreshold: {{ default 60 $otelCollector.probes.failureThreshold }}
+            path: /-/ready
+            port: http
+          initialDelaySeconds: {{ default 0 $grafanaAlloy.probes.initialDelaySeconds }}
+          periodSeconds: {{ default 1 $grafanaAlloy.probes.periodSeconds }}
+          failureThreshold: {{ default 60 $grafanaAlloy.probes.failureThreshold }}
         readinessProbe:
           httpGet:
-            path: /
-            port: health
-          initialDelaySeconds: {{ default 0 $otelCollector.probes.initialDelaySeconds }}
-          periodSeconds: {{ default 1 $otelCollector.probes.periodSeconds }}
-          failureThreshold: {{ default 60 $otelCollector.probes.failureThreshold }}
+            path: /-/ready
+            port: http
+          initialDelaySeconds: {{ default 0 $grafanaAlloy.probes.initialDelaySeconds }}
+          periodSeconds: {{ default 1 $grafanaAlloy.probes.periodSeconds }}
+          failureThreshold: {{ default 60 $grafanaAlloy.probes.failureThreshold }}
         volumeMounts:
-          - name: otel-collector-volume
-            mountPath: /etc/otelcol-contrib/config.yaml
-            subPath: config.yaml #key in the configmap
+          - name: alloy-config-volume
+            mountPath: /etc/alloy/config.alloy
+            subPath: config.alloy #key in the configmap
             readOnly: true
-        {{- with default $defaults.sidecars.otelCollector.resources $otelCollector.resources }}
+        {{- with default $defaults.sidecars.grafanaAlloy.resources $grafanaAlloy.resources }}
         resources:
           {{- toYaml . | nindent 10 }}
         {{- end }}

@@ -1,0 +1,33 @@
+prometheus.scrape "cadvisor" {
+  targets           = [{ "__address__" = sys.env("K8S_NODE_IP") + ":{{ .alloyDefaults.scrape.kubeletPort }}" }]
+  scheme            = "https"
+  metrics_path      = "/metrics/cadvisor"
+  bearer_token_file = "/var/run/secrets/kubernetes.io/serviceaccount/token"
+  tls_config {
+    insecure_skip_verify = {{ .alloyDefaults.scrape.insecureSkipVerify }}
+  }
+  scrape_interval   = "{{ .alloyDefaults.scrape.interval }}"
+  forward_to        = [prometheus.remote_write.default.receiver]
+}
+
+prometheus.remote_write "default" {
+  endpoint {
+    url = "{{ .alloyDefaults.remoteWrite.endpoint }}"
+    tls_config {
+      insecure_skip_verify = {{ .alloyDefaults.remoteWrite.tls.insecureSkipVerify }}
+    }
+    {{- if .alloyDefaults.remoteWrite.basicAuth.username }}
+    basic_auth {
+      username = "{{ .alloyDefaults.remoteWrite.basicAuth.username }}"
+      password = "{{ .alloyDefaults.remoteWrite.basicAuth.password }}"
+    }
+    {{- end }}
+  }
+  external_labels = {
+    environment     = "{{ .environment_name }}",
+    node_id         = "{{ .alloy_node_id }}",
+    metrics_node_id = "{{ .alloy_node_id | add1 }}",
+    instance_type   = "hedera-node",
+    source          = "alloy-cadvisor",
+  }
+}
