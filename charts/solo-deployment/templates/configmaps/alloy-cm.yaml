@@ -1,6 +1,7 @@
 {{- range $index, $node := ($.Values.hedera.nodes) }}
 {{- $grafanaAlloy := ($node.sidecars).grafanaAlloy | default $.Values.defaults.sidecars.grafanaAlloy }}
 {{- if $grafanaAlloy.enabled }}
+{{- $_ := required "defaults.sidecars.grafanaAlloy.remoteWrite.endpoint is required when the Grafana Alloy sidecar is enabled" $grafanaAlloy.remoteWrite.endpoint }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
