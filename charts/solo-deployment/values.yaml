@@ -318,7 +318,6 @@ hedera:
     applicationEnv: ""
     applicationProperties: ""
     bootstrapProperties: ""
-    configTxt: ""
     log4j2Xml: ""
     settingsTxt: ""
     genesisNetworkJson: ""
