@@ -21,7 +21,6 @@ NMT_INSTALLER_PATH="${NMT_INSTALLER_DIR}/${NMT_INSTALLER}"
 NMT_PROFILE="jrs" # we only allow jrs profile
 
 PLATFORM_VERSION="${PLATFORM_VERSION:-v0.71.0}"
-MINOR_VERSION=$(parse_minor_version "${PLATFORM_VERSION}")
 PLATFORM_INSTALLER="build-${PLATFORM_VERSION}.zip"
 PLATFORM_INSTALLER_DIR="${SCRIPT_DIR}/../resources/platform"
 PLATFORM_INSTALLER_PATH="${PLATFORM_INSTALLER_DIR}/${PLATFORM_INSTALLER}"
@@ -243,100 +242,6 @@ function copy_hedera_keys() {
   return "${EX_OK}"
 }
 
-# prepare address book using all nodes pod IP and store as config.txt
-function prep_address_book() {
-  echo ""
-  echo "Preparing address book"
-  echo "Platform version: ${PLATFORM_VERSION}"
-  echo "Minor version: ${MINOR_VERSION}"
-  echo "-----------------------------------------------------------------------------------------------------"
-
-  local config_file="${TMP_DIR}/config.txt"
-  local node_IP=""
-  local node_seq="${NODE_SEQ:-0}" # this also used as the account ID suffix
-  local account_id_prefix="${ACCOUNT_ID_PREFIX:-0.0}"
-  local account_id_seq="${ACCOUNT_ID_SEQ:-3}"
-  local internal_port="${INTERNAL_GOSSIP_PORT:-50111}"
-  local external_port="${EXTERNAL_GOSSIP_PORT:-50111}"
-  local ledger_name="${LEDGER_NAME:-123}"
-  local app_jar_file="${APP_NAME:-HederaNode.jar}"
-  local node_stake="${NODE_DEFAULT_STAKE:-1}"
-
-  # prepare config lines
-  local config_lines=()
-  config_lines+=("swirld, ${ledger_name}")
-  config_lines+=("app, ${app_jar_file}")
-
-  # prepare address book lines
-  local addresses=()
-  for node_name in "${NODE_NAMES[@]}"; do
-    local pod="network-${node_name}-0" # pod name
-    local max_attempts=$MAX_ATTEMPTS
-    local attempts=0
-    local status=$(kubectl get pod "${pod}" -o 'jsonpath={..status.conditions[?(@.type=="Ready")].status}')
-
-    while [[ "${attempts}" -lt "${max_attempts}" &&  "${status}" != "True" ]]; do
-      kubectl get pod "${pod}" -o 'jsonpath={..status.conditions[?(@.type=="Ready")]}'
-
-      echo ""
-      echo "Waiting for the pod to be ready - ${pod}: Attempt# ${attempts}/${max_attempts} ..."
-      sleep 5
-
-      status=$(kubectl get pod "${pod}" -o 'jsonpath={..status.conditions[?(@.type=="Ready")].status}')
-      attempts=$((attempts + 1))
-    done
-
-    echo "${KCTL} get pod ${pod} -o jsonpath='{.status.podIP}' | xargs"
-    local POD_IP=$("${KCTL}" get pod "${pod}" -o jsonpath='{.status.podIP}' | xargs)
-    if [ -z "${POD_IP}" ]; then
-      echo "Could not detect pod IP for ${pod}"
-      return "${EX_ERR}"
-    fi
-
-    echo "${KCTL} get svc network-${node_name}-svc -o jsonpath='{.spec.clusterIP}' | xargs"
-    local SVC_IP=$("${KCTL}" get svc "network-${node_name}-svc" -o jsonpath='{.spec.clusterIP}' | xargs)
-    if [ -z "${SVC_IP}" ]; then
-      echo "Could not detect service IP for ${pod}"
-      return "${EX_ERR}"
-    fi
-
-    echo "pod IP: ${POD_IP}, svc IP: ${SVC_IP}"
-
-    local account="${account_id_prefix}.${account_id_seq}"
-    local internal_ip="${POD_IP}"
-    local external_ip="${SVC_IP}"
-
-    # for v.40.* onward
-    if [[ "${MINOR_VERSION}" -ge "40" ]]; then
-      local node_nick_name="${node_name}"
-      config_lines+=("address, ${node_seq}, ${node_nick_name}, ${node_name}, ${node_stake}, ${internal_ip}, ${internal_port}, ${external_ip}, ${external_port}, ${account}")
-    else
-      config_lines+=("address, ${node_seq}, ${node_name}, ${node_stake}, ${internal_ip}, ${internal_port}, ${external_ip}, ${external_port}, ${account}")
-    fi
-
-    # increment node id
-    node_seq=$((node_seq + 1))
-    account_id_seq=$((account_id_seq + 1))
-  done
-
-  # for v.41.* onward
-  if [[ "${MINOR_VERSION}" -ge "41" ]]; then
-    config_lines+=("nextNodeId, ${node_seq}")
-  fi
-
-  # write contents to config file
-  cp "${SCRIPT_DIR}/../local-node/config.template" "${config_file}" || return "${EX_ERR}"
-  for line in "${config_lines[@]}"; do
-    echo "${line}" >>"${config_file}" || return "${EX_ERR}"
-  done
-
-  # display config file contents
-  echo ""
-  cat "${TMP_DIR}/config.txt" || return "${EX_ERR}"
-
-  return "${EX_OK}"
-}
-
 # Copy config files
 function copy_config_files() {
   local node="${1}"
@@ -361,7 +266,6 @@ function copy_config_files() {
   local dstDir="${HAPI_PATH}"
   cp -f "${SCRIPT_DIR}/../local-node/log4j2-${NMT_PROFILE}.xml" "${TMP_DIR}/log4j2.xml" || return "${EX_ERR}"
   local files=(
-    "config.txt"
     "log4j2.xml"
   )
   for file in "${files[@]}"; do
