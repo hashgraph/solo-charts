@@ -52,6 +52,16 @@ defaults:
   volumeClaims:
     enabled: false
     storageClassName: ""
+    # Refuse to start a consensus node whose claims were satisfied from a filesystem too small to
+    # hold them. Provisioners that hand out directories on an existing filesystem (hostPath,
+    # local-path) ignore the requested size, so a claim binds and mounts against any disk and
+    # Kubernetes reports nothing wrong. Disabled by default because a development or single-disk
+    # cluster is legitimately oversubscribed by the sizes below.
+    capacityCheck:
+      enabled: false
+      # Percentage of the requested size a mount must provide. Filesystem metadata overhead means a
+      # correctly provisioned volume reports slightly less than requested.
+      tolerancePercent: 90
     node:
       eventStreams: "100Gi"
       recordStreams: "100Gi"
