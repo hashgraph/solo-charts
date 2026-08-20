@@ -15,6 +15,26 @@
 {{- $minioserver := (index $.Values "minio-server") }}
 {{- $nodeStorage := $.Values.defaults.volumeClaims.node }}
 {{- $pvcEnabled := $.Values.defaults.volumeClaims.enabled }}
+{{- $capacityCheck := $.Values.defaults.volumeClaims.capacityCheck }}
+{{/*
+Every claim-backed volume paired with the path root-container mounts it on and the size its claim
+requested. Kept in one place so the capacity check cannot drift from the claim templates above.
+*/}}
+{{- $claimMounts := list
+  (dict "name" "hgcapp-blockstream"  "path" "/opt/hgcapp/blockStreams"                                  "storage" $nodeStorage.blockStreams)
+  (dict "name" "hgcapp-event-streams" "path" "/opt/hgcapp/eventsStreams"                                "storage" $nodeStorage.eventStreams)
+  (dict "name" "hgcapp-record-streams" "path" "/opt/hgcapp/recordStreams"                               "storage" $nodeStorage.recordStreams)
+  (dict "name" "hgcapp-data-onboard"  "path" "/opt/hgcapp/services-hedera/HapiApp2.0/data/onboard"      "storage" $nodeStorage.dataOnboard)
+  (dict "name" "hgcapp-data-saved"    "path" "/opt/hgcapp/services-hedera/HapiApp2.0/data/saved"        "storage" $nodeStorage.dataSaved)
+  (dict "name" "hgcapp-data-stats"    "path" "/opt/hgcapp/services-hedera/HapiApp2.0/data/stats"        "storage" $nodeStorage.dataStats)
+  (dict "name" "hgcapp-data-upgrade"  "path" "/opt/hgcapp/services-hedera/HapiApp2.0/data/upgrade"      "storage" $nodeStorage.dataUpgrade)
+  (dict "name" "hgcapp-output"        "path" "/opt/hgcapp/services-hedera/HapiApp2.0/output"            "storage" $nodeStorage.output)
+  (dict "name" "hgcapp-data-config"   "path" "/opt/hgcapp/services-hedera/HapiApp2.0/data/config"       "storage" $nodeStorage.config)
+  (dict "name" "hgcapp-data-keys"     "path" "/opt/hgcapp/services-hedera/HapiApp2.0/data/keys"         "storage" $nodeStorage.keys)
+  (dict "name" "hgcapp-data-libs"     "path" "/opt/hgcapp/services-hedera/HapiApp2.0/data/lib"          "storage" $nodeStorage.dataLibs)
+  (dict "name" "hgcapp-data-apps"     "path" "/opt/hgcapp/services-hedera/HapiApp2.0/data/apps"         "storage" $nodeStorage.dataApps)
+  (dict "name" "hgcapp-state"         "path" "/opt/hgcapp/services-hedera/HapiApp2.0/state"             "storage" $nodeStorage.config)
+}}
 {{- $initContainersLength := len $.Values.hedera.initContainers }}
 {{- $cheetah := $.Values.cheetah }}
 {{- $bucketPrefixString := toString $cloud.buckets.streamBucketPrefix }}
@@ -668,6 +688,63 @@ spec:
       {{- end }}
 
       initContainers:
+        {{- if and $pvcEnabled $capacityCheck.enabled }}
+        # Fail before the consensus node starts if a claim was satisfied from a filesystem too small
+        # to hold it. The claim itself cannot reveal this: a provisioner that hands out directories
+        # on an existing filesystem binds the claim, reports the requested size back, and mounts it
+        # successfully whatever the size of the underlying disk. Comparing the mounted filesystem
+        # against the requested size is the only way to see it, and doing so here means the node
+        # never writes state to the wrong device.
+        - name: init-verify-volume-capacity
+          image: busybox:1.36.1
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              tolerance_percent={{ $capacityCheck.tolerancePercent }}
+              failures=0
+
+              check_capacity() {
+                mount_path="$1"
+                requested_kib="$2"
+                available_kib="$(df -Pk "$mount_path" 2>/dev/null | tail -n 1 | tr -s ' ' | cut -d ' ' -f 2)"
+
+                # `df` prints only its header for a path it cannot stat, which would leave a
+                # non-numeric value here and make the comparison below fall through to a pass.
+                case "$available_kib" in
+                  '' | *[!0-9]*)
+                    echo "SKIP $mount_path: filesystem size unavailable"
+                    return
+                    ;;
+                esac
+
+                minimum_kib=$(( requested_kib * tolerance_percent / 100 ))
+                if [ "$available_kib" -lt "$minimum_kib" ]; then
+                  echo "FAIL $mount_path: backed by ${available_kib}KiB, claim requested ${requested_kib}KiB"
+                  failures=$(( failures + 1 ))
+                else
+                  echo "OK   $mount_path: backed by ${available_kib}KiB, claim requested ${requested_kib}KiB"
+                fi
+              }
+
+              {{- range $claimMount := $claimMounts }}
+              check_capacity {{ $claimMount.path | quote }} {{ include "solo.quantityToKibibytes" $claimMount.storage }}
+              {{- end }}
+
+              if [ "$failures" -ne 0 ]; then
+                echo ""
+                echo "$failures volume(s) are backed by less storage than their PersistentVolumeClaim requested."
+                echo "The provisioner satisfied these claims from a filesystem too small to hold them, which"
+                echo "usually means the storage class writes into a directory that is not on the intended"
+                echo "device. Check the provisioner's host path with: findmnt <path>; lsblk; df -h <path>"
+                exit 1
+              fi
+          volumeMounts:
+            {{- range $claimMount := $claimMounts }}
+            - name: {{ $claimMount.name }}
+              mountPath: {{ $claimMount.path }}
+            {{- end }}
+        {{- end }}
+
         {{- if $backupUploader.enabled }}
         # create empty VERSION file before any volume mounted
         # otherwise VERSION will be mounted as directory by backup-uploader
