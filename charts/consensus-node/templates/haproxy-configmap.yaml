@@ -1,0 +1,12 @@
+{{- if .Values.haproxy.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: haproxy-cm-{{ .Values.name }}
+  namespace: {{ default .Release.Namespace .Values.global.namespaceOverride }}
+  labels:
+    {{- include "solo.testLabels" . | nindent 4 }}
+data:
+  haproxy.cfg: |
+    {{- tpl (.Files.Get "config-files/haproxy.cfg") (dict "nodeConfig" .Values "namespace" .Release.Namespace "Values" .Values "Template" .Template) | nindent 4 }}
+{{- end }}

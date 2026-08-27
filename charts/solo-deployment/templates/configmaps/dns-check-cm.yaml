@@ -8,7 +8,10 @@ data:
     loop=1
     while [ "$loop" -ne 0 ]; do
       loop=0;
-      {{- range $index, $node := $.Values.hedera.nodes }}
+      {{- /* The script must probe the whole roster. When this chart is installed as the shared half of a
+             split deployment its own `hedera.nodes` is empty — the per-node objects come from the
+             consensus-node chart — so `hedera.rosterNodes` carries the full list instead. */}}
+      {{- range $index, $node := ($.Values.hedera.rosterNodes | default $.Values.hedera.nodes) }}
       nslookup network-{{ $node.name }}-0.network-{{ $node.name }}.{{ default $.Release.Namespace $.Values.global.namespaceOverride }}.svc.cluster.local;
       rc=$?;
       if [ "$loop" -eq 0 -a "$rc" -eq 0 ]; then

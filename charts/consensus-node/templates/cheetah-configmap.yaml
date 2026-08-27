@@ -1,0 +1,42 @@
+{{- $params := dict "cheetah" .Values.cheetah "node" .Values "Template" .Template }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cheetah-cm-{{ .Values.name }}
+  namespace: {{ default .Release.Namespace .Values.global.namespaceOverride }}
+  labels:
+    {{- include "solo.testLabels" . | nindent 4 }}
+data:
+  {{ if .Values.cheetah.deployment.single }}
+  cheetah.yaml: |- # when a single instance of cheetah is used, this file is used as the config
+    log:
+    {{- tpl (.Files.Get "config-files/cheetah/logging.yaml") $params | nindent 6 }}
+    profiling:
+    {{- tpl (.Files.Get "config-files/cheetah/profiling.yaml") $params | nindent 6 }}
+    pipelines:
+    {{- tpl (.Files.Get "config-files/cheetah/pipelines/record-streams.yaml") $params | nindent 6 }}
+    {{- tpl (.Files.Get "config-files/cheetah/pipelines/events-streams.yaml") $params | nindent 6 }}
+    {{- tpl (.Files.Get "config-files/cheetah/pipelines/block-streams.yaml") $params | nindent 6 }}
+  {{ else }}
+  cheetah-record-streams.yaml: |-
+    log:
+    {{- tpl (.Files.Get "config-files/cheetah/logging.yaml") $params | nindent 6 }}
+    profiling:
+    {{- tpl (.Files.Get "config-files/cheetah/profiling.yaml") $params | nindent 6 }}
+    pipelines:
+    {{- tpl (.Files.Get "config-files/cheetah/pipelines/record-streams.yaml") $params | nindent 6 }}
+  cheetah-events-streams.yaml: |-
+    log:
+    {{- tpl (.Files.Get "config-files/cheetah/logging.yaml") $params | nindent 6 }}
+    profiling:
+    {{- tpl (.Files.Get "config-files/cheetah/profiling.yaml") $params | nindent 6 }}
+    pipelines:
+    {{- tpl (.Files.Get "config-files/cheetah/pipelines/events-streams.yaml") $params | nindent 6 }}
+  cheetah-block-streams.yaml: |-
+    log:
+    {{- tpl (.Files.Get "config-files/cheetah/logging.yaml") $params | nindent 6 }}
+    profiling:
+    {{- tpl (.Files.Get "config-files/cheetah/profiling.yaml") $params | nindent 6 }}
+    pipelines:
+    {{- tpl (.Files.Get "config-files/cheetah/pipelines/block-streams.yaml") $params | nindent 6 }}
+  {{ end }}

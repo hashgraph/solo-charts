@@ -1,0 +1,129 @@
+{{- $haproxy := .Values.haproxy }}
+{{- if $haproxy.enabled }}
+{{- $namespace := default .Release.Namespace .Values.global.namespaceOverride }}
+{{- $tlsSecretName := printf "haproxy-proxy-secret-%s" .Values.name }}
+{{- /* one lookup, reused by both the volume and the mount below */}}
+{{- $tlsSecret := lookup "v1" "Secret" $namespace $tlsSecretName }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: haproxy-{{ .Values.name }}
+  namespace: {{ $namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: haproxy-{{ .Values.name }}
+  template:
+    metadata:
+      labels:
+        app: haproxy-{{ .Values.name }}
+        solo.hedera.com/type: haproxy
+        solo.hedera.com/node-name: {{ .Values.name }}
+        solo.hedera.com/node-id: "{{ .Values.nodeId }}"
+        solo.hedera.com/account-id: {{ .Values.accountId }}
+        {{- include "solo.testLabels" . | nindent 8 }}
+    spec:
+      {{- if or .Values.haproxyDeployment.nodeSelector (or .Values.deployment.nodeSelector .Values.nodeSelector) }}
+      nodeSelector:
+        {{- default .Values.nodeSelector (default .Values.deployment.nodeSelector .Values.haproxyDeployment.nodeSelector) | toYaml | nindent 8 }}
+      {{- end }}
+      {{- if or .Values.haproxyDeployment.tolerations (or .Values.deployment.tolerations .Values.tolerations) }}
+      tolerations:
+        {{- default .Values.tolerations (default .Values.deployment.tolerations .Values.haproxyDeployment.tolerations) | toYaml | nindent 8 }}
+      {{- end }}
+      {{- if or .Values.haproxyDeployment.topologySpreadConstraints (or .Values.deployment.topologySpreadConstraints .Values.topologySpreadConstraints) }}
+      topologySpreadConstraints:
+        {{- default .Values.topologySpreadConstraints (default .Values.deployment.topologySpreadConstraints .Values.haproxyDeployment.topologySpreadConstraints) | toYaml | nindent 8 }}
+      {{- end }}
+      {{- if or .Values.haproxyDeployment.affinity (or .Values.deployment.affinity .Values.affinity) }}
+      affinity:
+        {{- default .Values.affinity (default .Values.deployment.affinity .Values.haproxyDeployment.affinity) | toYaml | nindent 8 }}
+      {{- end }}
+      {{- if or .Values.haproxyDeployment.priorityClassName (or .Values.deployment.priorityClassName .Values.priorityClassName) }}
+      priorityClassName: {{ default .Values.priorityClassName (default .Values.deployment.priorityClassName .Values.haproxyDeployment.priorityClassName) }}
+      {{- end }}
+      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
+      volumes:
+        - name: haproxy-config-volume
+          emptyDir: {}
+        - name: haproxy-configmap-volume
+          configMap:
+            name: haproxy-cm-{{ .Values.name }}
+        - name: haproxy-ofac-volume
+          configMap:
+            name: {{ .Values.sharedResources.ofacConfigMapName }}
+      {{- if $tlsSecret }}
+        - name: tls-volume
+          secret:
+            secretName: {{ $tlsSecretName }}
+      {{- end }}
+      initContainers:
+      - name: wait-backend-dns
+        image: busybox:1.36.1-musl
+        command:
+          - /bin/sh
+          - -c
+          - |
+            set -eu
+            target="network-{{ .Values.name }}.{{ $namespace }}.svc.cluster.local"
+            retries=120
+            while [ "$retries" -gt 0 ]; do
+              if nslookup "$target" >/dev/null 2>&1; then
+                echo "Resolved $target"
+                exit 0
+              fi
+              retries=$((retries - 1))
+              sleep 1
+            done
+            echo "Failed to resolve $target within timeout"
+            exit 1
+      containers:
+      - name: {{ $haproxy.nameOverride }}
+        image: {{ include "solo.container.image" (dict "image" $haproxy.image "Chart" .Chart ) }}
+        imagePullPolicy: {{ include "solo.images.pullPolicy" (dict "image" $haproxy.image ) }}
+        envFrom:
+          - secretRef:
+              name: {{ .Values.sharedResources.haproxySecretsName }}
+        livenessProbe:
+          tcpSocket:
+            port: 50211
+          initialDelaySeconds: {{ default 0 $haproxy.probes.livenessInitialDelaySeconds }}
+          periodSeconds: {{ default 1 $haproxy.probes.livenessPeriodSeconds }}
+          timeoutSeconds: {{ default 5 $haproxy.probes.timeoutSeconds }}
+          failureThreshold: 6
+        readinessProbe:
+          tcpSocket:
+            port: 50211
+          initialDelaySeconds: {{ default 0 $haproxy.probes.readinessInitialDelaySeconds }}
+          periodSeconds: {{ default 1 $haproxy.probes.readinessPeriodSeconds }}
+          timeoutSeconds: {{ default 5 $haproxy.probes.timeoutSeconds }}
+          failureThreshold: 6
+        startupProbe:
+          tcpSocket:
+            port: 50211
+          initialDelaySeconds: {{ default 0 $haproxy.probes.startupInitialDelaySeconds }}
+          periodSeconds: {{ default 1 $haproxy.probes.startupPeriodSeconds }}
+          timeoutSeconds: {{ default 5 $haproxy.probes.timeoutSeconds }}
+          failureThreshold: 60
+        volumeMounts:
+          - name: haproxy-config-volume
+            # https://hub.docker.com/_/haproxy/
+            mountPath: /usr/local/etc/haproxy
+          - name: haproxy-configmap-volume
+            # https://hub.docker.com/_/haproxy/
+            mountPath: /usr/local/etc/haproxy/haproxy.cfg
+            subPath: haproxy.cfg
+          - name: haproxy-ofac-volume
+            mountPath: /var/opt/
+          {{- if $tlsSecret }}
+          - name: tls-volume
+            mountPath: /usr/local/etc/certs/
+            readOnly: true
+          {{- end }}
+        {{- with $haproxy.resources }}
+        resources:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+{{- end }}

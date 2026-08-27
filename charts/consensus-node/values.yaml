@@ -1,0 +1,300 @@
+# SPDX-License-Identifier: Apache-2.0
+
+# This chart deploys exactly ONE consensus node. Values are flat: there is no `hedera.nodes` array and
+# no `defaults:` section to merge against, so a template reads `.Values.root.image` rather than
+# `$node.root | default $.Values.defaults.root`.
+#
+# Resource names are derived from `.Values.name`, never from `.Release.Name`. Solo and every other
+# component resolve consensus nodes by these exact names (`network-<name>`, `network-<name>-svc`,
+# `haproxy-<name>-svc`, ...) and by the `solo.hedera.com/*` labels, so they are a compatibility
+# contract rather than an implementation detail.
+
+global:
+  namespaceOverride: ""
+
+# ---------------------------------------------------------------------------------------------------
+# node identity
+# ---------------------------------------------------------------------------------------------------
+name: node1
+nodeId: 0
+accountId: 0.0.3
+
+# Static IPs, left empty to not use them
+envoyProxyStaticIP: ""
+haproxyStaticIP: ""
+
+# Per-node scheduling
+nodeSelector: {}
+tolerations: []
+topologySpreadConstraints: []
+affinity: {}
+priorityClassName: {}
+labels: {}
+resources: {}
+
+# Rendered into the node's data-config ConfigMap
+blockNodesJson: ""
+
+# reduce default termination grace period
+terminationGracePeriodSeconds: 10
+
+# ---------------------------------------------------------------------------------------------------
+# cloud configuration
+# ---------------------------------------------------------------------------------------------------
+cloud:
+  buckets:
+    streamBucket: "solo-streams"
+    streamBucketPrefix: ""
+    streamBucketRegion: "us-east-1"
+    backupBucket: "solo-backups" # does not need prefix to save to subfolder, just use "bucket/folder"
+  minio:
+    enabled: true
+    # Hostname of the MinIO tenant owned by the shared/parent chart; the sidecars address it as
+    # "<tenantName>-hl:9000". This chart does not deploy MinIO.
+    tenantName: "minio"
+  s3:
+    enabled: false
+  gcs:
+    enabled: false
+
+# ---------------------------------------------------------------------------------------------------
+# node containers
+# ---------------------------------------------------------------------------------------------------
+volumeClaims:
+  enabled: false
+  storageClassName: ""
+  node:
+    eventStreams: "100Gi"
+    recordStreams: "100Gi"
+    blockStreams: "100Gi"
+    recordStreamsSidecar: "100Gi"
+    dataOnboard: "1Gi"
+    dataSaved: "500Gi"
+    dataStats: "50Gi"
+    dataUpgrade: "5Gi"
+    output: "5Gi"
+    config: "1Gi"
+    keys: "1Gi"
+    dataLibs: "1Gi"
+    dataApps: "1Gi"
+
+root: # root container
+  image:
+    registry: "ghcr.io"
+    repository: "hashgraph/solo-containers/debian-s6-java25"
+    tag: "0.46.1"
+    pullPolicy: "IfNotPresent"
+  resources: {}
+  extraEnv: []
+
+consensus:
+  service:
+    type: "NodePort"
+    externalTrafficPolicy: "Local"
+    annotations: {}
+    labels: {}
+
+haproxy:
+  enabled: true
+  nameOverride: "haproxy"
+  image:
+    registry: "docker.io"
+    repository: "haproxytech/haproxy-alpine"
+    tag: "2.4.25"
+    pullPolicy: "IfNotPresent"
+  maxconn: 32
+  timeouts:
+    connect: "5s"
+    client: "120s"
+    server: "120s"
+    httpKeepAlive: "60s"
+    tunnel: "1h"
+  tcpKeepAlive: true
+  probes:
+    timeoutSeconds: 5
+    livenessInitialDelaySeconds: 0
+    livenessPeriodSeconds: 1
+    readinessInitialDelaySeconds: 0
+    readinessPeriodSeconds: 1
+    startupInitialDelaySeconds: 0
+    startupPeriodSeconds: 1
+  resources: {}
+  service:
+    type: "NodePort"
+    externalTrafficPolicy: "Local"
+    annotations: {}
+    labels: {}
+
+envoyProxy:
+  enabled: true
+  nameOverride: "envoy-proxy"
+  image:
+    registry: "docker.io"
+    repository: "envoyproxy/envoy"
+    tag: "v1.21.1"
+    pullPolicy: "IfNotPresent"
+  resources: {}
+  service:
+    type: "NodePort"
+    externalTrafficPolicy: "Local"
+    annotations: {}
+    labels: {}
+
+sidecars:
+  recordStreamUploader:
+    enabled: true
+    nameOverride: "record-stream-uploader"
+    resources: {}
+  eventStreamUploader:
+    enabled: true
+    nameOverride: "event-stream-uploader"
+    resources: {}
+  blockstreamUploader:
+    enabled: true
+    nameOverride: "blockstream-uploader"
+    resources: {}
+  backupUploader:
+    enabled: false
+    type: "s3"
+    provider: "GCS"
+    nameOverride: "backup-uploader"
+    image:
+      registry: "ghcr.io"
+      repository: "hashgraph/solo-containers/backup-uploader"
+      tag: "0.46.1"
+      pullPolicy: "IfNotPresent"
+    config:
+      backupBucket: "backup"
+    resources: {}
+  grafanaAlloy:
+    enabled: false            # solo enables it via --enable-monitoring-support
+    nameOverride: ""
+    # Cluster-scoped RBAC for Alloy lives in solo-cluster-setup, installed once per cluster; a
+    # per-node release must not own ClusterRoles. Only the namespaced ServiceAccount is referenced here.
+    serviceAccountName: "solo-alloy"
+    image:
+      registry: "docker.io"
+      repository: "grafana/alloy"
+      tag: "v1.11.3"          # matches GRAFANA_PODLOGS_CRD_VERSION already pinned in solo
+      pullPolicy: "IfNotPresent"
+    resources: {}
+    probes:
+      initialDelaySeconds: 0
+      periodSeconds: 1
+      failureThreshold: 60
+    scrape:
+      interval: 15s
+      kubeletPort: 10250
+      insecureSkipVerify: true   # kind/self-signed kubelet serving certs
+    remoteWrite:
+      # required when enabled; solo sets this from its cluster setup namespace, which is
+      # configurable (--cluster-setup-namespace), so the chart must not assume it
+      endpoint: ""
+      tls:
+        insecureSkipVerify: true
+      basicAuth:               # for Grafana Cloud etc.
+        username: ""
+        password: ""
+
+cheetah:
+  image:
+    registry: "ghcr.io"
+    repository: "hashgraph/solo-cheetah/cheetah"
+    tag: "0.4.5" # https://github.com/hashgraph/solo-cheetah/pkgs/container/solo-cheetah%2Fcheetah
+    pullPolicy: "IfNotPresent"
+  maxProcessors: 10 # max number of concurrent processors for each pipeline
+  # whether it should stop the pipelines if any error occurs; if false, it will continue with the expectation that the
+  # error may get fixed in the next run
+  stopOnError: false
+  configCheckInterval: 30s # interval to check for config changes and update pipelines accordingly
+  deployment:
+    # if true, a single instance of cheetah handles all stream files (record-streams, events-streams,
+    # block-streams) for this node instead of one sidecar per stream type
+    single: false
+    nameOverride: "cheetah-stream-uploader"
+    resources: {}
+
+# ---------------------------------------------------------------------------------------------------
+# common deployment configuration
+# ---------------------------------------------------------------------------------------------------
+deployment:
+  init:
+    enableDnsValidation: true
+  # Name of the ConfigMap holding the DNS validation script. It ranges over the whole roster, so it is
+  # owned by the shared/parent chart and merely mounted here.
+  dnsValidationConfigMapName: "dns-validation-script"
+  podAnnotations: {}
+  podLabels: {}
+  nodeSelector: {}
+  tolerations:
+    - key: "solo-scheduling.io/os"
+      operator: "Equal"
+      value: "linux"
+      effect: "NoSchedule"
+    - key: "solo-scheduling.io/role"
+      operator: "Equal"
+      value: "network"
+      effect: "NoSchedule"
+  # Specify pod topology spread
+  # Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints
+  topologySpreadConstraints: []
+  # Specify pod affinity
+  # Use complete affinity spec starting with key "nodeAffinity:"
+  # Ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#node-affinity
+  affinity: {}
+  priorityClassName: {}
+  ## PodDisruptionBudget for solo testing pods
+  ## ref: https://kubernetes.io/docs/tasks/run-application/configure-pdb/
+  podDisruptionBudget:
+    create: true
+    minAvailable: 1
+    maxUnavailable: ""
+  testMetadata:
+    enabled: false
+    testSuiteName: ""
+    testName: ""
+    testRunUID: ""
+    testCreationTimestamp: ""
+    testExpirationTimestamp: ""
+    testRequester: ""
+
+# haproxy specific deployment configuration
+haproxyDeployment:
+  podAnnotations: {}
+  podLabels: {}
+  nodeSelector: {}
+  tolerations: []
+  topologySpreadConstraints: []
+  affinity: {}
+  priorityClassName: {}
+
+# envoy specific deployment configuration
+envoyDeployment:
+  podAnnotations: {}
+  podLabels: {}
+  nodeSelector: {}
+  tolerations: []
+  topologySpreadConstraints: []
+  affinity: {}
+  priorityClassName: {}
+
+# ---------------------------------------------------------------------------------------------------
+# network-wide material injected by Solo
+# ---------------------------------------------------------------------------------------------------
+initContainers: []
+
+configMaps:
+  applicationEnv: ""
+
+# Names of the shared, network-scoped resources this node mounts. They are created by the
+# shared/parent chart or by Solo itself, not by this chart.
+sharedResources:
+  ofacConfigMapName: "haproxy-ofac-cm"
+  dataConfigMapName: "network-node-data-config-cm"
+  etcConfigMapName: "network-node-etc-cm"
+  hapiAppConfigMapName: "network-node-hapi-app-cm"
+  hapiAppSecretsName: "network-node-hapi-app-secrets"
+  uploaderMirrorSecretsName: "uploader-mirror-secrets"
+  backupUploaderSecretsName: "backup-uploader-secrets"
+  haproxySecretsName: "haproxy-secrets"
+  minioSecretsName: "minio-secrets"

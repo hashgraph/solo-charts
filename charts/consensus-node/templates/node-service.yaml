@@ -1,0 +1,57 @@
+{{- $consensus := .Values.consensus }}
+{{- range $isHeadless := list true false }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: network-{{ $.Values.name }}{{ if not $isHeadless }}-svc{{ end }}
+  namespace: {{ default $.Release.Namespace $.Values.global.namespaceOverride }}
+  {{- with $consensus.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  labels:
+    solo.hedera.com/type: network-node{{ if $isHeadless }}-headless{{ end }}-svc
+    solo.hedera.com/node-name: {{ $.Values.name }}
+    solo.hedera.com/account-id: {{ $.Values.accountId }}
+    solo.hedera.com/node-id: "{{ $.Values.nodeId }}"
+    solo.hedera.com/prometheus-endpoint: active
+    {{- include "solo.testLabels" $ | nindent 4 }}
+    {{- with $consensus.service.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  {{- if $isHeadless }}
+  clusterIP: None
+  {{- else }}
+  type: {{ $consensus.service.type | default "ClusterIP" }}
+  {{- if or (eq $consensus.service.type "LoadBalancer") (eq $consensus.service.type "NodePort") }}
+  externalTrafficPolicy: {{ $consensus.service.externalTrafficPolicy | default "Local" }}
+  {{- end }}
+  {{- end }}
+  publishNotReadyAddresses: true
+  selector:
+    app: network-{{ $.Values.name }}
+  ports:
+  # GOSSIP port is used by nodes for gossip protocol
+  - name: gossip
+    protocol: TCP
+    port: 50111 # gossip port
+    targetPort: 50111
+  # GRPC-NON-TLS port is used for services API
+  - name: grpc-non-tls
+    protocol: TCP
+    port: 50211 # non-tls grpc client port
+    targetPort: 50211
+  # GRPC-TLS port
+  - name: grpc-tls
+    protocol: TCP
+    port: 50212 # tls grpc client port
+    targetPort: 50212
+  # Node metrics service port.
+  # Expose metrics through service port 9090 while targeting consensus node metrics endpoint on 9999.
+  - name: prometheus # port name must be prometheus for prometheus-svc-monitor
+    protocol: TCP
+    port: 9090
+    targetPort: 9999
+{{- end }}

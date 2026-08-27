@@ -1,0 +1,783 @@
+{{- $hapiAppSecrets := lookup "v1" "Secret" .Release.Namespace .Values.sharedResources.hapiAppSecretsName }}
+{{- $networkNodeKeySecretName := (printf "network-%s-keys-secrets" .Values.name) }}
+{{- $networkNodeKeySecrets := lookup "v1" "Secret" .Release.Namespace $networkNodeKeySecretName }}
+{{- $recordStream := .Values.sidecars.recordStreamUploader }}
+{{- $eventStream := .Values.sidecars.eventStreamUploader }}
+{{- $blockstreamUploader := .Values.sidecars.blockstreamUploader }}
+{{- $backupUploader := .Values.sidecars.backupUploader }}
+{{- $grafanaAlloy := .Values.sidecars.grafanaAlloy }}
+{{- $cloud := .Values.cloud }}
+{{- $nodeStorage := .Values.volumeClaims.node }}
+{{- $pvcEnabled := .Values.volumeClaims.enabled }}
+{{- $initContainersLength := len .Values.initContainers }}
+{{- $cheetah := .Values.cheetah }}
+{{- $bucketPrefixString := toString $cloud.buckets.streamBucketPrefix }}
+{{- $bucketPrefix := empty $bucketPrefixString | ternary "" (printf "%s/" $bucketPrefixString) }}
+{{- $blockStreamBucketPrefix := printf "%sblockStreams" $bucketPrefix }}
+{{- $recordStreamBucketPrefix := printf "%srecordstreams" $bucketPrefix }}
+{{- $eventStreamsBucketPrefix := printf "%seventsStreams" $bucketPrefix }}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: network-{{ .Values.name }}
+  namespace: {{ default .Release.Namespace .Values.global.namespaceOverride }}
+  labels:
+    app: network-{{ .Values.name }}
+  {{- if .Values.deployment.podAnnotations }}
+  annotations:
+    {{- .Values.deployment.podAnnotations | toYaml | nindent 4 }}
+  {{- end }}
+spec:
+  replicas: 1
+  serviceName: "network-{{ .Values.name }}"
+  selector:
+    matchLabels:
+      app: network-{{ .Values.name }}
+  {{- if $pvcEnabled }}
+  volumeClaimTemplates:
+    {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-blockstream-pvc" "storage" $nodeStorage.blockStreams "storageClassName" .Values.volumeClaims.storageClassName) | nindent 4 }}
+    {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-event-streams-pvc" "storage" $nodeStorage.eventStreams "storageClassName" .Values.volumeClaims.storageClassName) | nindent 4 }}
+    {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-record-streams-pvc" "storage" $nodeStorage.recordStreams "storageClassName" .Values.volumeClaims.storageClassName) | nindent 4 }}
+    {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-data-onboard-pvc" "storage" $nodeStorage.dataOnboard "storageClassName" .Values.volumeClaims.storageClassName) | nindent 4 }}
+    {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-data-saved-pvc" "storage" $nodeStorage.dataSaved "storageClassName" .Values.volumeClaims.storageClassName) | nindent 4 }}
+    {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-data-stats-pvc" "storage" $nodeStorage.dataStats "storageClassName" .Values.volumeClaims.storageClassName) | nindent 4 }}
+    {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-data-upgrade-pvc" "storage" $nodeStorage.dataUpgrade "storageClassName" .Values.volumeClaims.storageClassName) | nindent 4 }}
+    {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-output-pvc" "storage" $nodeStorage.output "storageClassName" .Values.volumeClaims.storageClassName) | nindent 4 }}
+    {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-data-config-pvc" "storage" $nodeStorage.config "storageClassName" .Values.volumeClaims.storageClassName) | nindent 4 }}
+    {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-data-keys-pvc" "storage" $nodeStorage.keys "storageClassName" .Values.volumeClaims.storageClassName) | nindent 4 }}
+    {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-data-libs-pvc" "storage" $nodeStorage.dataLibs "storageClassName" .Values.volumeClaims.storageClassName) | nindent 4 }}
+    {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-data-apps-pvc" "storage" $nodeStorage.dataApps "storageClassName" .Values.volumeClaims.storageClassName) | nindent 4 }}
+    {{ include "solo.volumeClaimTemplate" (dict "name" "hgcapp-state-pvc" "storage" $nodeStorage.config "storageClassName" .Values.volumeClaims.storageClassName) | nindent 4 }}
+  {{- end }}
+  template:
+    metadata:
+      labels:
+        app: network-{{ .Values.name }}
+        solo.hedera.com/type: network-node
+        solo.hedera.com/node-name: {{ .Values.name }}
+        solo.hedera.com/node-id: "{{ .Values.nodeId }}"
+        solo.hedera.com/account-id: {{ .Values.accountId }}
+        {{- if .Values.labels }}
+        {{-  .Values.labels | toYaml | nindent 8 }}
+        {{- end }}
+        {{- if .Values.deployment.podLabels }}
+        {{- .Values.deployment.podLabels | toYaml | nindent 8 }}
+        {{- end }}
+        {{- include "solo.testLabels" . | nindent 8 }}
+    spec:
+      {{- if or .Values.deployment.nodeSelector .Values.nodeSelector }}
+      nodeSelector:
+      {{- default .Values.nodeSelector .Values.deployment.nodeSelector | toYaml | nindent 8 }}
+      {{- end }}
+      {{- if or .Values.deployment.tolerations .Values.tolerations }}
+      tolerations:
+      {{- default .Values.tolerations .Values.deployment.tolerations | toYaml | nindent 8 }}
+      {{- end }}
+      {{- if or .Values.deployment.affinity .Values.affinity }}
+      {{- if .Values.deployment.topologySpreadConstraints }}
+      topologySpreadConstraints:
+      {{- .Values.deployment.topologySpreadConstraints | toYaml | nindent 8 }}
+      {{- end }}
+      affinity:
+      {{- default .Values.affinity .Values.deployment.affinity | toYaml | nindent 8 }}
+      {{- end }}
+      {{- if or .Values.deployment.priorityClassName .Values.priorityClassName }}
+      priorityClassName: {{ default .Values.priorityClassName .Values.deployment.priorityClassName }}
+      {{- end }}
+      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
+      {{- if $grafanaAlloy.enabled }}
+      {{- /* the ServiceAccount and its cluster-scoped RBAC are owned by solo-cluster-setup */}}
+      serviceAccountName: {{ $grafanaAlloy.serviceAccountName }}
+      {{- end }}
+      volumes:
+        {{ include "solo.volumeTemplate" (dict "name" "hgcapp-blockstream" "claimName" (printf "%s-%s-%s" "hgcapp-blockstream-pvc-network" .Values.name "0") "pvcEnabled" $pvcEnabled ) | nindent 8 }}
+        {{ include "solo.volumeTemplate" (dict "name" "hgcapp-event-streams" "claimName" (printf "%s-%s-%s" "hgcapp-event-streams-pvc-network" .Values.name "0") "pvcEnabled" $pvcEnabled ) | nindent 8 }}
+        {{ include "solo.volumeTemplate" (dict "name" "hgcapp-record-streams" "claimName" (printf "%s-%s-%s" "hgcapp-record-streams-pvc-network" .Values.name "0") "pvcEnabled" $pvcEnabled ) | nindent 8 }}
+        {{ include "solo.volumeTemplate" (dict "name" "hgcapp-data-onboard" "claimName" (printf "%s-%s-%s" "hgcapp-data-onboard-pvc-network" .Values.name "0") "pvcEnabled" $pvcEnabled ) | nindent 8 }}
+        {{ include "solo.volumeTemplate" (dict "name" "hgcapp-data-saved" "claimName" (printf "%s-%s-%s" "hgcapp-data-saved-pvc-network" .Values.name "0") "pvcEnabled" $pvcEnabled ) | nindent 8 }}
+        {{ include "solo.volumeTemplate" (dict "name" "hgcapp-data-stats" "claimName" (printf "%s-%s-%s" "hgcapp-data-stats-pvc-network" .Values.name "0") "pvcEnabled" $pvcEnabled ) | nindent 8 }}
+        {{ include "solo.volumeTemplate" (dict "name" "hgcapp-data-upgrade" "claimName" (printf "%s-%s-%s" "hgcapp-data-upgrade-pvc-network" .Values.name "0") "pvcEnabled" $pvcEnabled ) | nindent 8 }}
+        {{ include "solo.volumeTemplate" (dict "name" "hgcapp-output" "claimName" (printf "%s-%s-%s" "hgcapp-output-pvc-network" .Values.name "0") "pvcEnabled" $pvcEnabled ) | nindent 8 }}
+        {{ include "solo.volumeTemplate" (dict "name" "hgcapp-data-config" "claimName" (printf "%s-%s-%s" "hgcapp-data-config-pvc-network" .Values.name "0") "pvcEnabled" $pvcEnabled ) | nindent 8 }}
+        {{ include "solo.volumeTemplate" (dict "name" "hgcapp-data-keys" "claimName" (printf "%s-%s-%s" "hgcapp-data-keys-pvc-network" .Values.name "0") "pvcEnabled" $pvcEnabled ) | nindent 8 }}
+        {{ include "solo.volumeTemplate" (dict "name" "hgcapp-data-libs" "claimName" (printf "%s-%s-%s" "hgcapp-data-libs-pvc-network" .Values.name "0") "pvcEnabled" $pvcEnabled ) | nindent 8 }}
+        {{ include "solo.volumeTemplate" (dict "name" "hgcapp-data-apps" "claimName" (printf "%s-%s-%s" "hgcapp-data-apps-pvc-network" .Values.name "0") "pvcEnabled" $pvcEnabled ) | nindent 8 }}
+        {{ include "solo.volumeTemplate" (dict "name" "hgcapp-state" "claimName" (printf "%s-%s-%s" "hgcapp-state-pvc-network" .Values.name "0") "pvcEnabled" $pvcEnabled ) | nindent 8 }}
+        {{- if $grafanaAlloy.enabled }}
+        - name: alloy-config-volume
+          configMap:
+            name: alloy-cm-{{ .Values.name }}
+        {{- end }}
+        {{- if $backupUploader.enabled }}
+        - name: volume-for-share-version-file
+          emptyDir: {}
+        {{- end }}
+        {{- if $hapiAppSecrets }}
+        - name: network-node-hapi-app-secrets-volume
+          secret:
+            secretName: {{ .Values.sharedResources.hapiAppSecretsName }}
+            optional: true
+        {{- end }}
+        - name: network-node-data-config-indexed
+          configMap:
+            name: network-{{ .Values.name }}-data-config-cm
+            optional: true
+        - name: network-node-data-config
+          configMap:
+            name: {{ .Values.sharedResources.dataConfigMapName }}
+            optional: true
+        - name: network-node-etc-init
+          configMap:
+            name: {{ .Values.sharedResources.etcConfigMapName }}
+            optional: true
+            items:
+              - key: application.env
+                path: application.env
+        - name: network-node-etc-env
+          emptyDir: {}
+        - name: hapi-app-config-volume
+          configMap:
+            name: {{ .Values.sharedResources.hapiAppConfigMapName }}
+            optional: true
+        - name: shared-hapiapp
+          emptyDir: {}
+        - name: script-volume
+          configMap:
+            name: {{ .Values.deployment.dnsValidationConfigMapName }}
+            defaultMode: 0755
+        - name: solo-cheetah-config
+          configMap:
+            name:  cheetah-cm-{{ .Values.name }}
+            defaultMode: 0755
+        {{- if $networkNodeKeySecrets }}
+        - name: network-node-keys
+          secret:
+            secretName: {{ $networkNodeKeySecretName }}
+            optional: true
+        {{- end }}
+      containers:
+      # Root Container: {{ .Values.name }}-root-container
+      - name: {{ .Values.root.nameOverride | default "root-container" }}
+        image: {{ include "solo.container.image" (dict "image" .Values.root.image "Chart" .Chart "defaults" .Values.defaults) }}
+        imagePullPolicy: {{ include "solo.images.pullPolicy" (dict "image" .Values.root.image "defaults" .Values.defaults) }}
+        {{- with default .Values.root.resources .Values.resources }}
+        resources:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        volumeMounts:
+          {{- if $backupUploader.enabled }}
+          - name: volume-for-share-version-file
+            mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/VERSION
+            subPath: VERSION
+          {{- end }}
+          {{- if .Values.configMaps.applicationEnv }}
+          - name: network-node-etc-env
+            mountPath: /etc/network-node/env/
+          {{- end }}
+          - name: shared-hapiapp
+            mountPath: /shared-hapiapp
+          - name: hgcapp-blockstream
+            mountPath: /opt/hgcapp/blockStreams
+          - name: hgcapp-event-streams
+            mountPath: /opt/hgcapp/eventsStreams
+          - name: hgcapp-record-streams
+            mountPath: /opt/hgcapp/recordStreams
+          - name: hapi-app-config-volume
+            mountPath: /etc/network-node/config
+          - name: hgcapp-data-onboard
+            mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/onboard
+          - name: hgcapp-data-saved
+            mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/saved
+          - name: hgcapp-data-stats
+            mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/stats
+          - name: hgcapp-data-upgrade
+            mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/upgrade
+          - name: hgcapp-output
+            mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/output
+          - name: hgcapp-data-config
+            mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/config
+          - name: hgcapp-data-keys
+            mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/keys
+          - name: hgcapp-data-libs
+            mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/lib
+          - name: hgcapp-data-apps
+            mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/apps
+          - name: hgcapp-state
+            mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/state
+        env:
+          # these only get used as root, to set them for hedera user ID they need to be populated in the
+          # /etc/network-node/application.env, if you want the docker container to use them they need to also be in
+          # solo-containers > network-node.service > PassEnvironment
+          - name: CONSENSUS_NODE_ID
+            value: "{{ .Values.nodeId }}"
+          - name: CONSENSUS_NODE_ALIAS
+            value: {{ .Values.name }}
+          {{- include "solo.defaultEnvVars" . | nindent 10 }}
+          {{- with .Values.root.extraEnv }}
+            {{- toYaml . | nindent 10 }}
+          {{- end }}
+    {{- if $cheetah.deployment.single }}
+      # Sidecar: {{ .Values.name }}-cheetah-stream-uploader
+      - name: {{ default "cheetahstream-uploader" $cheetah.deployment.nameOverride }}
+        image: {{ include "solo.container.image" (dict "image" $cheetah.image "Chart" .Chart ) }}
+        imagePullPolicy: {{ include "solo.images.pullPolicy" (dict "image" $cheetah.image ) }}
+        securityContext:
+          {{- include "solo.hedera.security.context" . | nindent 10 }}
+        command:
+          - /app/bin/cheetah
+          - upload
+          - --config
+          - /app/config/cheetah.yaml
+          - --config-check-interval
+          - {{ default "30s" $cheetah.configCheckInterval }}
+        volumeMounts:
+          - name: hgcapp-blockstream
+            mountPath: /opt/hgcapp/blockStreams
+          - name: hgcapp-record-streams
+            mountPath: /opt/hgcapp/recordStreams
+          - name: hgcapp-event-streams
+            mountPath: /opt/hgcapp/eventsStreams
+          - name: solo-cheetah-config
+            mountPath: /app/config
+        ports:
+          - name: pprof
+            containerPort: 6061
+            protocol: TCP
+          - name: stats
+            containerPort: 6060
+            protocol: TCP
+        env:
+          {{- if .Values.cloud.minio.enabled }}
+          - name: S3_ENABLED
+            value: "true"
+          - name: S3_BUCKET_NAME
+            value: {{ $cloud.buckets.streamBucket | quote }}
+          - name: S3_BUCKET_REGION
+            value: {{ $cloud.buckets.streamBucketRegion | quote }}
+          - name: S3_BLOCK_STREAMS_BUCKET_PREFIX
+            value: {{ $blockStreamBucketPrefix | quote }}
+          - name: S3_RECORD_STREAMS_BUCKET_PREFIX
+            value: {{ $recordStreamBucketPrefix | quote }}
+          - name: S3_EVENTS_STREAMS_BUCKET_PREFIX
+            value: {{ $eventStreamsBucketPrefix | quote }}
+          - name: S3_ENDPOINT
+            value: "{{ .Values.cloud.minio.tenantName }}-hl:9000" # do not use http:// here instead use useSsl=false
+          - name: S3_USE_SSL
+            value: "false"
+          {{- else if .Values.cloud.s3.enabled }}
+          - name: S3_ENABLED
+            value: "true"
+          - name: S3_BUCKET_NAME
+            value: {{ $cloud.buckets.streamBucket | quote }}
+          - name: S3_BUCKET_REGION
+            value: {{ $cloud.buckets.streamBucketRegion | quote }}
+          - name: S3_BLOCK_STREAMS_BUCKET_PREFIX
+            value: {{ $blockStreamBucketPrefix | quote }}
+          - name: S3_RECORD_STREAMS_BUCKET_PREFIX
+            value: {{ $recordStreamBucketPrefix | quote }}
+          - name: S3_EVENTS_STREAMS_BUCKET_PREFIX
+            value: {{ $eventStreamsBucketPrefix | quote }}
+          - name: S3_ENDPOINT
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.sharedResources.uploaderMirrorSecretsName }}
+                key: S3_ENDPOINT # do not use https:// here instead use useSsl=true
+          - name: S3_USE_SSL
+            value: "true"
+          {{- end }}
+          {{- if .Values.cloud.gcs.enabled }}
+          - name: GCS_ENABLED
+            value: "true"
+          - name: GCS_BUCKET_NAME
+            value: {{ $cloud.buckets.streamBucket | quote }}
+          - name: GCS_BUCKET_REGION
+            value: {{ $cloud.buckets.streamBucketRegion | quote }}
+          - name: GCS_BLOCK_STREAMS_BUCKET_PREFIX
+            value: {{ $blockStreamBucketPrefix | quote }}
+          - name: GCS_RECORD_STREAMS_BUCKET_PREFIX
+            value: {{ $recordStreamBucketPrefix | quote }}
+          - name: GCS_EVENTS_STREAMS_BUCKET_PREFIX
+            value: {{ $eventStreamsBucketPrefix | quote }}
+          - name: GCS_ENDPOINT
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.sharedResources.uploaderMirrorSecretsName }}
+                key: GCS_ENDPOINT
+          - name: GCS_USE_SSL
+            value: "true"
+          {{- end }}
+        envFrom:
+          - secretRef:
+              name: {{ .Values.sharedResources.uploaderMirrorSecretsName }}
+          {{- with $blockstreamUploader.resources }}
+        resources:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+    {{- else }}
+      {{- if $blockstreamUploader.enabled }}
+      # Sidecar: {{ .Values.name }}-blockstream-uploader
+      - name: {{ default "blockstream-uploader" $blockstreamUploader.nameOverride }}
+        image: {{ include "solo.container.image" (dict "image" $cheetah.image "Chart" .Chart ) }}
+        imagePullPolicy: {{ include "solo.images.pullPolicy" (dict "image" $cheetah.image ) }}
+        securityContext:
+          {{- include "solo.hedera.security.context" . | nindent 10 }}
+        command:
+          - /app/bin/cheetah
+          - upload
+          - --config
+          - /app/config/cheetah-block-streams.yaml
+          - --config-check-interval
+          - {{ default "30s" $cheetah.configCheckInterval }}
+        volumeMounts:
+          - name: hgcapp-blockstream
+            mountPath: /opt/hgcapp/blockStreams
+          - name: solo-cheetah-config
+            mountPath: /app/config
+        ports:
+          - name: pprof
+            containerPort: 6061
+            protocol: TCP
+          - name: stats
+            containerPort: 6060
+            protocol: TCP
+        env:
+          {{- if .Values.cloud.minio.enabled }}
+          - name: S3_ENABLED
+            value: "true"
+          - name: S3_BUCKET_NAME
+            value: {{ $cloud.buckets.streamBucket | quote }}
+          - name: S3_BUCKET_REGION
+            value: {{ $cloud.buckets.streamBucketRegion | quote }}
+          - name: S3_BLOCK_STREAMS_BUCKET_PREFIX
+            value: {{ $blockStreamBucketPrefix | quote }}
+          - name: S3_ENDPOINT
+            value: "{{ .Values.cloud.minio.tenantName }}-hl:9000" # do not use http:// here instead use useSsl=false
+          - name: S3_USE_SSL
+            value: "false"
+          {{- else if .Values.cloud.s3.enabled }}
+          - name: S3_ENABLED
+            value: "true"
+          - name: S3_BUCKET_NAME
+            value: {{ $cloud.buckets.streamBucket | quote }}
+          - name: S3_BUCKET_REGION
+            value: {{ $cloud.buckets.streamBucketRegion | quote }}
+          - name: S3_BLOCK_STREAMS_BUCKET_PREFIX
+            value: {{ $blockStreamBucketPrefix | quote }}
+          - name: S3_ENDPOINT
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.sharedResources.uploaderMirrorSecretsName }}
+                key: S3_ENDPOINT # do not use https:// here instead use useSsl=true
+          - name: S3_USE_SSL
+            value: "true"
+          {{- end }}
+          {{- if .Values.cloud.gcs.enabled }}
+          - name: GCS_ENABLED
+            value: "true"
+          - name: GCS_BUCKET_NAME
+            value: {{ $cloud.buckets.streamBucket | quote }}
+          - name: GCS_BUCKET_REGION
+            value: {{ $cloud.buckets.streamBucketRegion | quote }}
+          - name: GCS_BLOCK_STREAMS_BUCKET_PREFIX
+            value: {{ $blockStreamBucketPrefix | quote }}
+          - name: GCS_ENDPOINT
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.sharedResources.uploaderMirrorSecretsName }}
+                key: GCS_ENDPOINT
+          - name: GCS_USE_SSL
+            value: "true"
+          {{- end }}
+        envFrom:
+          - secretRef:
+              name: {{ .Values.sharedResources.uploaderMirrorSecretsName }}
+          {{- with $blockstreamUploader.resources }}
+        resources:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+      {{- end }}
+
+      {{- if $recordStream.enabled }}
+      # Sidecar: {{ .Values.name }}-record-stream-uploader
+      - name: {{ default "record-stream-uploader" $recordStream.nameOverride }}
+        image: {{ include "solo.container.image" (dict "image" $cheetah.image "Chart" .Chart ) }}
+        imagePullPolicy: {{ include "solo.images.pullPolicy" (dict "image" $cheetah.image ) }}
+        securityContext:
+          {{- include "solo.hedera.security.context" . | nindent 10 }}
+        command:
+          - /app/bin/cheetah
+          - upload
+          - --config
+          - /app/config/cheetah-record-streams.yaml
+          - --config-check-interval
+          - {{ default "30s" $cheetah.configCheckInterval }}
+        volumeMounts:
+          - name: hgcapp-record-streams
+            mountPath: /opt/hgcapp/recordStreams
+          - name: solo-cheetah-config
+            mountPath: /app/config
+        ports:
+          - name: pprof
+            containerPort: 6061
+            protocol: TCP
+          - name: stats
+            containerPort: 6060
+            protocol: TCP
+        env:
+          {{ $bucketPrefix := printf "%s/recordstreams/record%s" $cloud.buckets.streamBucketPrefix .Values.accountId }}
+          {{- if .Values.cloud.minio.enabled }}
+          - name: S3_ENABLED
+            value: "true"
+          - name: S3_BUCKET_NAME
+            value: {{ $cloud.buckets.streamBucket | quote }}
+          - name: S3_BUCKET_REGION
+            value: {{ $cloud.buckets.streamBucketRegion | quote }}
+          - name: S3_RECORD_STREAMS_BUCKET_PREFIX
+            value: {{ $recordStreamBucketPrefix | quote }}
+          - name: S3_ENDPOINT
+            value: "{{ .Values.cloud.minio.tenantName }}-hl:9000" # do not use http:// here instead use useSsl=false
+          - name: S3_USE_SSL
+            value: "false"
+          {{- else if .Values.cloud.s3.enabled }}
+          - name: S3_ENABLED
+            value: "true"
+          - name: S3_BUCKET_NAME
+            value: {{ $cloud.buckets.streamBucket | quote }}
+          - name: S3_BUCKET_REGION
+            value: {{ $cloud.buckets.streamBucketRegion | quote }}
+          - name: S3_RECORD_STREAMS_BUCKET_PREFIX
+            value: {{ $recordStreamBucketPrefix | quote }}
+          - name: S3_ENDPOINT
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.sharedResources.uploaderMirrorSecretsName }}
+                key: S3_ENDPOINT # do not use https:// here instead use useSsl=true
+          - name: S3_USE_SSL
+            value: "true"
+          {{- end }}
+          {{- if .Values.cloud.gcs.enabled }}
+          - name: GCS_ENABLED
+            value: "true"
+          - name: GCS_BUCKET_NAME
+            value: {{ $cloud.buckets.streamBucket | quote }}
+          - name: GCS_BUCKET_REGION
+            value: {{ $cloud.buckets.streamBucketRegion | quote }}
+          - name: GCS_RECORD_STREAMS_BUCKET_PREFIX
+            value: {{ $recordStreamBucketPrefix | quote }}
+          - name: GCS_ENDPOINT
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.sharedResources.uploaderMirrorSecretsName }}
+                key: GCS_ENDPOINT
+          - name: GCS_USE_SSL
+            value: "true"
+          {{- end }}
+        envFrom:
+          - secretRef:
+              name: {{ .Values.sharedResources.uploaderMirrorSecretsName }}
+        {{- with $recordStream.resources }}
+        resources:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+      {{- end }}
+
+      {{- if $eventStream.enabled }}
+        # Sidecar: {{ .Values.name }}-event-stream-uploader
+      - name: {{ default "event-stream-uploader" $eventStream.nameOverride }}
+        image: {{ include "solo.container.image" (dict "image" $cheetah.image "Chart" .Chart ) }}
+        imagePullPolicy: {{ include "solo.images.pullPolicy" (dict "image" $cheetah.image ) }}
+        securityContext:
+          {{- include "solo.hedera.security.context" . | nindent 10 }}
+        command:
+          - /app/bin/cheetah
+          - upload
+          - --config
+          - /app/config/cheetah-events-streams.yaml
+          - --config-check-interval
+          - {{ default "30s" $cheetah.configCheckInterval }}
+        volumeMounts:
+          - name: hgcapp-event-streams
+            mountPath: /opt/hgcapp/eventsStreams
+          - name: solo-cheetah-config
+            mountPath: /app/config
+        ports:
+          - name: pprof
+            containerPort: 6061
+            protocol: TCP
+        env:
+          {{- if .Values.cloud.minio.enabled }}
+          - name: S3_ENABLED
+            value: "true"
+          - name: S3_BUCKET_NAME
+            value: {{ $cloud.buckets.streamBucket | quote }}
+          - name: S3_BUCKET_REGION
+            value: {{ $cloud.buckets.streamBucketRegion | quote }}
+          - name: S3_EVENTS_STREAMS_BUCKET_PREFIX
+            value: {{ $eventStreamsBucketPrefix | quote }}
+          - name: S3_ENDPOINT
+            value: "{{ .Values.cloud.minio.tenantName }}-hl:9000" # do not use http:// here instead use useSsl=false
+          - name: S3_USE_SSL
+            value: "false"
+          {{- else if .Values.cloud.s3.enabled }}
+          - name: S3_ENABLED
+            value: "true"
+          - name: S3_BUCKET_NAME
+            value: {{ $cloud.buckets.streamBucket | quote }}
+          - name: S3_BUCKET_REGION
+            value: {{ $cloud.buckets.streamBucketRegion | quote }}
+          - name: S3_EVENTS_STREAMS_BUCKET_PREFIX
+            value: {{ $eventStreamsBucketPrefix | quote }}
+          - name: S3_ENDPOINT
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.sharedResources.uploaderMirrorSecretsName }}
+                key: S3_ENDPOINT # do not use https:// here instead use useSsl=true
+          - name: S3_USE_SSL
+            value: "true"
+          {{- end }}
+          {{- if .Values.cloud.gcs.enabled }}
+          - name: GCS_ENABLED
+            value: "true"
+          - name: GCS_BUCKET_NAME
+            value: {{ $cloud.buckets.streamBucket | quote }}
+          - name: GCS_BUCKET_REGION
+            value: {{ $cloud.buckets.streamBucketRegion | quote }}
+          - name: GCS_EVENTS_STREAMS_BUCKET_PREFIX
+            value: {{ $eventStreamsBucketPrefix | quote }}
+          - name: GCS_ENDPOINT
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.sharedResources.uploaderMirrorSecretsName }}
+                key: GCS_ENDPOINT
+          - name: GCS_USE_SSL
+            value: "true"
+          {{- end }}
+        envFrom:
+          - secretRef:
+              name: {{ .Values.sharedResources.uploaderMirrorSecretsName }}
+        {{- with $eventStream.resources }}
+        resources:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+      {{- end }}
+
+  {{- end }}
+
+      {{- if $backupUploader.enabled }}
+      # Sidecar: {{ .Values.name }}-backup-uploader
+      - name: {{ default "backup-uploader" $backupUploader.nameOverride }}
+        image: {{ include "solo.container.image" (dict "image" $backupUploader.image "Chart" .Chart "defaults" .Values.sidecars.backupUploader) }}
+        imagePullPolicy: {{ include "solo.images.pullPolicy" (dict "image" $backupUploader.image "defaults" .Values.sidecars.backupUploader ) }}
+        volumeMounts:
+          - name: volume-for-share-version-file
+            mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/VERSION
+            subPath: VERSION
+          - name: hgcapp-data-saved
+            mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/saved
+          - name: hgcapp-data-stats
+            mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/stats
+        env:
+          - name: AWS_ACCESS_KEY_ID
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.sharedResources.backupUploaderSecretsName }}
+                key: AWS_ACCESS_KEY_ID
+          - name: AWS_SECRET_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.sharedResources.backupUploaderSecretsName }}
+                key: AWS_SECRET_ACCESS_KEY
+          - name: RCLONE_CONFIG_BACKUPS_ENDPOINT
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.sharedResources.backupUploaderSecretsName }}
+                key: RCLONE_CONFIG_BACKUPS_ENDPOINT
+          - name: RCLONE_CONFIG_BACKUPS_REGION
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.sharedResources.backupUploaderSecretsName }}
+                key: RCLONE_CONFIG_BACKUPS_REGION
+          - name: RCLONE_CONFIG_BACKUPS_TYPE
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.sharedResources.backupUploaderSecretsName }}
+                key: RCLONE_CONFIG_BACKUPS_TYPE
+          - name: RCLONE_CONFIG_BACKUPS_PROVIDER
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.sharedResources.backupUploaderSecretsName }}
+                key: RCLONE_CONFIG_BACKUPS_PROVIDER
+          - name: BACKUP_UPLOADER_BUCKET_1
+            value: {{ default .Values.sidecars.backupUploader.config.backupBucket ($backupUploader.config).backupBucket | quote }}
+        {{- with $backupUploader.resources }}
+        resources:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+      {{- end }}
+
+      {{- if $grafanaAlloy.enabled }}
+      # Sidecar: {{ .Values.name }}-grafana-alloy
+      - name: {{ default "grafana-alloy" $grafanaAlloy.nameOverride }}
+        image: {{ include "solo.container.image" (dict "image" $grafanaAlloy.image "Chart" .Chart "defaults" .Values.sidecars.grafanaAlloy) }}
+        imagePullPolicy: {{ include "solo.images.pullPolicy" (dict "image" $grafanaAlloy.image "defaults" .Values.sidecars.grafanaAlloy) }}
+        securityContext:
+          {{- include "solo.root.security.context" . | nindent 10 }}
+        args:
+          - "run"
+          - "/etc/alloy/config.alloy"
+          - "--server.http.listen-addr=0.0.0.0:12345"
+          - "--storage.path=/tmp/alloy"
+        env:
+          - name: K8S_NODE_IP
+            valueFrom:
+              fieldRef:
+                fieldPath: status.hostIP
+        ports:
+          - name: http # Alloy /-/ready endpoint and self-metrics
+            containerPort: 12345
+            protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: /-/ready
+            port: http
+          initialDelaySeconds: {{ default 0 $grafanaAlloy.probes.initialDelaySeconds }}
+          periodSeconds: {{ default 1 $grafanaAlloy.probes.periodSeconds }}
+          failureThreshold: {{ default 60 $grafanaAlloy.probes.failureThreshold }}
+        readinessProbe:
+          httpGet:
+            path: /-/ready
+            port: http
+          initialDelaySeconds: {{ default 0 $grafanaAlloy.probes.initialDelaySeconds }}
+          periodSeconds: {{ default 1 $grafanaAlloy.probes.periodSeconds }}
+          failureThreshold: {{ default 60 $grafanaAlloy.probes.failureThreshold }}
+        volumeMounts:
+          - name: alloy-config-volume
+            mountPath: /etc/alloy/config.alloy
+            subPath: config.alloy #key in the configmap
+            readOnly: true
+        {{- with $grafanaAlloy.resources }}
+        resources:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+      {{- end }}
+
+      initContainers:
+        {{- if $backupUploader.enabled }}
+        # create empty VERSION file before any volume mounted
+        # otherwise VERSION will be mounted as directory by backup-uploader
+        # since root-container has not created the file yet during the mount
+        - name: init-version-file
+          image: busybox:1.36.1
+          command: ["sh", "-c", "echo '' > /mnt/VERSION"]
+          volumeMounts:
+            - name: volume-for-share-version-file
+              mountPath: /mnt
+        {{- end }}
+
+        - name: init-streams-directories
+          image: busybox:1.36.1
+          command:
+            - "/bin/sh"
+            - "-c"
+            - |
+              mkdir -p /opt/hgcapp/recordStreams/record{{ .Values.accountId }}/uploader-stats
+              mkdir -p /opt/hgcapp/recordStreams/record{{ .Values.accountId }}/sidecar
+              chmod -R 777 /opt/hgcapp/recordStreams # cheetah needs write access to delete files after upload
+
+              mkdir -p /opt/hgcapp/blockStreams/block-{{ .Values.accountId }}
+              chmod 777 /opt/hgcapp/blockStreams
+              chmod -R 777 /opt/hgcapp/blockStreams # cheetah needs write access to delete files after upload
+
+              mkdir -p /opt/hgcapp/eventsStreams/events_{{ .Values.accountId }}
+              chmod -R 777 /opt/hgcapp/eventsStreams # cheetah needs write access to delete files after upload
+          volumeMounts:
+            - name: hgcapp-record-streams
+              mountPath: /opt/hgcapp/recordStreams
+            - name: hgcapp-blockstream
+              mountPath: /opt/hgcapp/blockStreams
+            - name: hgcapp-event-streams
+              mountPath: /opt/hgcapp/eventsStreams
+
+        - name: init-copier
+          image: busybox:1.36.1
+          command: ["sh", "-c"]
+          args:
+            - |
+              {{- if $hapiAppSecrets }}
+              cp -L /data/secret/hedera-{{ .Values.name }}.crt /shared-hapiapp/hedera.crt
+              cp -L /data/secret/hedera-{{ .Values.name }}.key /shared-hapiapp/hedera.key
+              ls -la /shared-hapiapp
+              {{- end }}
+
+              cp -rL /data/config/* /opt/hgcapp/services-hedera/HapiApp2.0/data/config
+
+              if [ -f /data/config/genesis-network.json ]; then
+                cp -L /data/config/genesis-network.json /opt/hgcapp/services-hedera/HapiApp2.0/data/config
+              fi
+              if [ -f /data/config/genesis-throttles.json ]; then
+                cp -L /data/config/genesis-throttles.json /opt/hgcapp/services-hedera/HapiApp2.0/data/config
+              fi
+              if [ -f /data/config/block-node/block-nodes.json ]; then
+                cp -L /data/config/block-node/block-nodes.json /opt/hgcapp/services-hedera/HapiApp2.0/data/config/block-nodes.json
+              fi
+
+              chmod 755 -R /opt/hgcapp/services-hedera/HapiApp2.0/data/config
+              ls -la /opt/hgcapp/services-hedera/HapiApp2.0/data/config
+
+              {{- if $networkNodeKeySecrets }}
+              cp /opt/hgcapp/keys/* /opt/hgcapp/services-hedera/HapiApp2.0/data/keys
+              chmod 755 -R /opt/hgcapp/services-hedera/HapiApp2.0/data/keys
+              ls -la /opt/hgcapp/services-hedera/HapiApp2.0/data/keys
+              {{- end }}
+
+              chmod 755 -R /opt/hgcapp/services-hedera/HapiApp2.0/data
+
+              {{- if .Values.configMaps.applicationEnv }}
+              # copy in the application.env to supply the environment variables to the application, will need
+              # CONSENSUS_NODE_ID set to the unique Node ID with hedera platform v0.59+
+              cp /etc/network-node-temp/* /etc/network-node/env/
+              chmod -R 755 /etc/network-node
+              chown -R 2000:2000 /etc/network-node
+              touch /etc/network-node/env/application.env
+              {{- end }}
+          volumeMounts:
+            {{- if $networkNodeKeySecrets }}
+            - name: hgcapp-data-keys
+              mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/keys
+            - name: network-node-keys
+              mountPath: /opt/hgcapp/keys
+            {{- end }}
+            {{- if $hapiAppSecrets }}
+            - name: network-node-hapi-app-secrets-volume
+              mountPath: /data/secret
+            {{- end }}
+            - name: network-node-data-config
+              mountPath: /data/config
+            - name: network-node-data-config-indexed
+              mountPath: /data/config/block-node
+            - name: hgcapp-data-config
+              mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/config
+            {{- if .Values.configMaps.applicationEnv }}
+            - name: network-node-etc-init
+              mountPath: /etc/network-node-temp/
+            - name: network-node-etc-env
+              mountPath: /etc/network-node/env/
+            {{- end }}
+            - name: shared-hapiapp
+              mountPath: /shared-hapiapp
+            - name: hgcapp-data-libs
+              mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/lib
+            - name: hgcapp-data-apps
+              mountPath: /opt/hgcapp/services-hedera/HapiApp2.0/data/apps
+        {{- if .Values.deployment.init.enableDnsValidation }}
+        - name: init-hedera
+          image: curlimages/curl:8.9.1
+          command: ["/bin/sh", "-c", "/script/dns-validation.sh"]
+          volumeMounts:
+            - name: script-volume
+              mountPath: /script
+        {{- end }}
+      {{- if gt $initContainersLength 0 }}
+        {{- toYaml .Values.initContainers | nindent 8 }}
+      {{- end }}

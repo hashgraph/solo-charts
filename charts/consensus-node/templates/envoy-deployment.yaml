@@ -1,0 +1,74 @@
+{{- $envoyProxy := .Values.envoyProxy }}
+{{- if $envoyProxy.enabled }}
+{{- $namespace := default .Release.Namespace .Values.global.namespaceOverride }}
+{{- $tlsSecretName := printf "envoy-proxy-secret-%s" .Values.name }}
+{{- /* one lookup, reused by both the volume and the mount below */}}
+{{- $tlsSecret := lookup "v1" "Secret" $namespace $tlsSecretName }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: envoy-proxy-{{ .Values.name }}
+  namespace: {{ $namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: envoy-proxy-{{ .Values.name }}
+  template:
+    metadata:
+      labels:
+        app: envoy-proxy-{{ .Values.name }}
+        solo.hedera.com/type: envoy-proxy
+        solo.hedera.com/node-name: {{ .Values.name }}
+        solo.hedera.com/node-id: "{{ .Values.nodeId }}"
+        solo.hedera.com/account-id: {{ .Values.accountId }}
+        {{- include "solo.testLabels" . | nindent 8 }}
+    spec:
+      {{- if or .Values.envoyDeployment.nodeSelector (or .Values.deployment.nodeSelector .Values.nodeSelector) }}
+      nodeSelector:
+        {{- default .Values.nodeSelector (default .Values.deployment.nodeSelector .Values.envoyDeployment.nodeSelector) | toYaml | nindent 8 }}
+      {{- end }}
+      {{- if or .Values.envoyDeployment.tolerations (or .Values.deployment.tolerations .Values.tolerations) }}
+      tolerations:
+        {{- default .Values.tolerations (default .Values.deployment.tolerations .Values.envoyDeployment.tolerations) | toYaml | nindent 8 }}
+      {{- end }}
+      {{- if or .Values.envoyDeployment.topologySpreadConstraints (or .Values.deployment.topologySpreadConstraints .Values.topologySpreadConstraints) }}
+      topologySpreadConstraints:
+        {{- default .Values.topologySpreadConstraints (default .Values.deployment.topologySpreadConstraints .Values.envoyDeployment.topologySpreadConstraints) | toYaml | nindent 8 }}
+      {{- end }}
+      {{- if or .Values.envoyDeployment.affinity (or .Values.deployment.affinity .Values.affinity) }}
+      affinity:
+        {{- default .Values.affinity (default .Values.deployment.affinity .Values.envoyDeployment.affinity) | toYaml | nindent 8 }}
+      {{- end }}
+      {{- if or .Values.envoyDeployment.priorityClassName (or .Values.deployment.priorityClassName .Values.priorityClassName) }}
+      priorityClassName: {{ default .Values.priorityClassName (default .Values.deployment.priorityClassName .Values.envoyDeployment.priorityClassName) }}
+      {{- end }}
+      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
+      volumes:
+        - name: config-volume
+          configMap:
+            name: envoy-proxy-cm-{{ .Values.name }}
+        {{- if $tlsSecret }}
+        - name: tls-volume
+          secret:
+            secretName: {{ $tlsSecretName }}
+        {{- end }}
+      containers:
+      - name: {{ $envoyProxy.nameOverride }}
+        image: {{ include "solo.container.image" (dict "image" $envoyProxy.image "Chart" .Chart ) }}
+        imagePullPolicy: {{ include "solo.images.pullPolicy" (dict "image" $envoyProxy.image) }}
+        volumeMounts:
+          - name: config-volume
+            # https://www.envoyproxy.io/docs/envoy/v1.26.2/start/docker
+            mountPath: /etc/envoy
+          {{- if $tlsSecret }}
+          - name: tls-volume
+            mountPath: /etc/envoy/tls
+            readOnly: true
+          {{- end }}
+        {{- with $envoyProxy.resources }}
+        resources:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+{{- end }}

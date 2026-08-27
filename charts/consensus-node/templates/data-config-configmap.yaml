@@ -1,0 +1,10 @@
+{{- if .Values.blockNodesJson }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: network-{{ .Values.name }}-data-config-cm
+  namespace: {{ default .Release.Namespace .Values.global.namespaceOverride }}
+data:
+  block-nodes.json: |
+{{ .Values.blockNodesJson | indent 4 }}
+{{- end }}

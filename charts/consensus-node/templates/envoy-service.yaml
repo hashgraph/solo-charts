@@ -1,0 +1,40 @@
+{{- $envoyProxy := .Values.envoyProxy }}
+{{- if .Values.envoyProxy.enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: envoy-proxy-{{ .Values.name }}-svc
+  namespace: {{ default .Release.Namespace .Values.global.namespaceOverride }}
+  {{- with $envoyProxy.service.annotations }}
+  annotations:
+      {{- toYaml . | nindent 4 }}
+  {{- end }}
+  labels:
+    solo.hedera.com/type: envoy-proxy-svc
+    solo.hedera.com/node-name: {{ .Values.name }}
+    solo.hedera.com/node-id: "{{ .Values.nodeId }}"
+    solo.hedera.com/account-id: {{ .Values.accountId }}
+    solo.hedera.com/prometheus-endpoint: active
+    {{- include "solo.testLabels" . | nindent 4 }}
+    {{- with $envoyProxy.service.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  type: {{ $envoyProxy.service.type | default "ClusterIP" }}
+  {{- if or (eq $envoyProxy.service.type "LoadBalancer") (eq $envoyProxy.service.type "NodePort") }}
+  externalTrafficPolicy: {{ $envoyProxy.service.externalTrafficPolicy | default "Local" }}
+  {{- end }}
+  {{- if .Values.envoyProxyStaticIP }}
+  loadBalancerIP: {{ .Values.envoyProxyStaticIP }}
+  {{- end }}
+  selector:
+    app: envoy-proxy-{{ .Values.name }}
+  ports:
+    - name: hedera-grpc-web
+      port: 8080
+      targetPort: 8080 # hedera-grpc-web-listener port
+    - name: prometheus # port name must be prometheus for prometheus-svc-monitor
+      port: 9090
+      targetPort: 9090 # envoy-proxy's prometheus-listener port
+{{- end }}
