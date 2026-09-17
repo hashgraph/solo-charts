@@ -118,7 +118,21 @@ jobs:
         if: ${{ steps.check-changed-files.outputs.run-tests == 'true' && !failure() && !cancelled() }}
         uses: azure/setup-helm@9bc31f4ebc9c6b171d7bfbaa5d006ae7abdb4310 # v5.0.1
         with:
-          version: v3.12.3
+          version: v3.14.2
+
+      - name: Install Kubectl
+        if: ${{ steps.check-changed-files.outputs.run-tests == 'true' && !failure() && !cancelled() }}
+        uses: step-security/setup-kubectl@b256bc71248a59f1e3a278fc75a65646d6a8a1c4 # v5.1.0
+        with:
+          version: v1.32.2
+
+      - name: Setup Kind
+        if: ${{ steps.check-changed-files.outputs.run-tests == 'true' && !failure() && !cancelled() }}
+        uses: helm/kind-action@06c1ae10762d3b9c1644e7fe69596ae519e015a2 # v1.15.0
+        with:
+          install_only: true
+          version: v0.29.0
+          kubectl_version: v1.32.2
 
       - name: Install Solo dependencies
         if: ${{ steps.check-changed-files.outputs.run-tests == 'true' && !failure() && !cancelled() }}
